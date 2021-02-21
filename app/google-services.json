@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1017103204243",
+    "firebase_url": "https://giftly-305502-default-rtdb.firebaseio.com",
+    "project_id": "giftly-305502",
+    "storage_bucket": "giftly-305502.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1017103204243:android:3968e00e8f9601dff7f266",
+        "android_client_info": {
+          "package_name": "com.rayhc.giftly"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1017103204243-5l8lqcurl87to30835u0808b42mrnnqk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFvRMmdKrDjNcnBMFnhxr703QtIexW68s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1017103204243-5l8lqcurl87to30835u0808b42mrnnqk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
