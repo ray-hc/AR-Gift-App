@@ -16,8 +16,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -60,8 +63,48 @@ public class LoginActivity extends AppCompatActivity {
             DatabaseReference db = FirebaseDatabase.getInstance().getReference();
             if (resultCode == RESULT_OK) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                Log.d("iandebug", "User Logged in");
+                Query query = db.child("users").orderByChild("userId").equalTo(user.getUid());
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot){
+                        if(snapshot.exists()){
+                            Log.d("iandebug", "fetched old one");
+                            DataSnapshot storedUser = snapshot.child(user.getUid());
+                            activityUser = storedUser.getValue(User.class);
+                            Log.d("iandebug", "" + activityUser.getSentGifts());
+                            activityUser.addSentGifts("some gift id");
+                            db.child("users").child(activityUser.getUserId()).setValue(activityUser);
+                            Log.d("iandebug", "old one: " + activityUser);
+                        }else {
+                            User tempUser = new User();
 
+                            tempUser.setName(user.getDisplayName());
+                            tempUser.setEmail(user.getEmail());
+                            tempUser.setPhotoUri(user.getPhotoUrl().toString());
+                            tempUser.setEmailVerified(user.isEmailVerified());
+                            tempUser.setUserId(user.getUid());
+
+                            tempUser.setReceivedGifts(new HashMap<>());
+                            tempUser.setSentGifts(new HashMap<>());
+                            tempUser.setReceivedFriends(new HashMap<>());
+                            tempUser.setSentFriends(new HashMap<>());
+                            tempUser.setFriends(new HashMap<>());
+
+                            db.child("users").child(tempUser.getUserId()).setValue(tempUser);
+                            activityUser = tempUser;
+
+                            Log.d("iandebug", "created new user");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+                /*
+                //logan says this is poopoo
                 db.child("users").child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -95,6 +138,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
+                */
 
             } else {
                 Log.d("iandebug", "User Login Failed");
