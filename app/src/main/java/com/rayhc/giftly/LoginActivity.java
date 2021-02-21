@@ -78,8 +78,8 @@ public class LoginActivity extends AppCompatActivity {
                         }else {
                             User tempUser = new User();
 
-                            tempUser.setName(user.getDisplayName());
-                            tempUser.setEmail(user.getEmail());
+                            if(user.getDisplayName() != null) tempUser.setName(user.getDisplayName());
+                            if(user.getEmail() != null) tempUser.setEmail(user.getEmail());
                             if(user.getPhotoUrl() != null) tempUser.setPhotoUri(user.getPhotoUrl().toString());
                             tempUser.setEmailVerified(user.isEmailVerified());
                             tempUser.setUserId(user.getUid());
