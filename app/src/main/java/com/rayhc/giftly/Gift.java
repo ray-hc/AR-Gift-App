@@ -1,5 +1,5 @@
 //TODO: change so it matches the rest of the project
-package com.loganchang.giftly;
+package com.rayhc.giftly;
 
 import android.net.Uri;
 
@@ -9,7 +9,7 @@ import android.net.Uri;
  */
 public class Gift {
     //attributes
-    private int id;
+    private String id;
     private String link;    //nulled out if not sending a link
     private Uri file;       //nulled out if not sending a file
     private int contentType;    //i think it'll be something like "1" is a link, "2" is a multimedia file, etc.
@@ -29,7 +29,7 @@ public class Gift {
     /**
      * Value constructor
      */
-    public Gift(int id, String link, Uri file, int contentType, int giftType, String sender, String receiver,
+    public Gift(String id, String link, Uri file, int contentType, int giftType, String sender, String receiver,
                 boolean isEncrypted, String hashValue, String qrCode, boolean opened){
         this.id = id;
         this.link = link;
@@ -49,7 +49,7 @@ public class Gift {
     /**
      * Getters & Setters
      */
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -93,7 +93,7 @@ public class Gift {
         return hashValue;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
