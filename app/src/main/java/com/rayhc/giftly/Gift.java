@@ -22,6 +22,7 @@ public class Gift {
     private boolean opened;
 
     // comment by ray: :)
+    // comment by uhuru (:
 
     /**
      * Default Constructor
