@@ -21,6 +21,9 @@ public class Gift {
     private String qrCode;
     private boolean opened;
 
+    // comment by ray: :)
+    // comment by uhuru (:
+
     /**
      * Default Constructor
      */
