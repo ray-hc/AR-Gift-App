@@ -48,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //starts login page
-        //Intent intent = new Intent(this, LoginActivity.class);
-        //startActivity(intent);
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
 
     }
 }
