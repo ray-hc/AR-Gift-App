@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         myAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_home,
                 R.id.nav_create_gift).setOpenableLayout(drawerLayout).
                 build();
@@ -36,10 +35,9 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, myAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
+        //starts login page
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
-
-
 
     }
 }

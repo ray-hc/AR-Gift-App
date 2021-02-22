@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/inbox_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Click on any gift to open it"
+        android:gravity="center" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/inbox_gifts_recieved"
+        android:text="You have no unopened gifts"
+        android:nestedScrollingEnabled="true"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_marginBottom="50dp" />
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/inbox_gifts_sent"
+        android:text="You haven't sent any gifts yet"
+        android:nestedScrollingEnabled="true"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_marginBottom="50dp" />
+
+</LinearLayout>
