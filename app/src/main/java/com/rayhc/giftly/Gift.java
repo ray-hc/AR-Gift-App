@@ -139,4 +139,23 @@ public class Gift {
     public void setOpened(boolean opened) {
         this.opened = opened;
     }
+
+    //for testing purposes
+    @Override
+    public String toString() {
+        return "Gift From " + sender;
+        /*return "Gift{" +
+                "id='" + id + '\'' +
+                ", link='" + link + '\'' +
+                ", file=" + file +
+                ", contentType=" + contentType +
+                ", giftType=" + giftType +
+                ", sender='" + sender + '\'' +
+                ", receiver='" + receiver + '\'' +
+                ", isEncrypted=" + isEncrypted +
+                ", hashValue='" + hashValue + '\'' +
+                ", qrCode='" + qrCode + '\'' +
+                ", opened=" + opened +
+                '}';*/
+    }
 }

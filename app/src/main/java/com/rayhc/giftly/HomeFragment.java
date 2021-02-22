@@ -21,8 +21,8 @@ public class HomeFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         View root = layoutInflater.inflate(R.layout.fragment_home, container, false);
 
-        recievedGifts = getActivity().findViewById(R.id.inbox_gifts_recieved);
-        sentGifts = getActivity().findViewById(R.id.inbox_gifts_sent);
+        recievedGifts = root.findViewById(R.id.inbox_gifts_recieved);
+        sentGifts = root.findViewById(R.id.inbox_gifts_sent);
 
         giftsRecieved = new ArrayList<>();
         giftsSent = new ArrayList<>();
@@ -46,14 +46,17 @@ public class HomeFragment extends Fragment {
         giftsRecieved.add(gift5);
 
         giftsSent.add(gift1);
+        giftsSent.add(gift2);
+        giftsSent.add(gift3);
+        giftsSent.add(gift4);
+        giftsSent.add(gift5);
 
 
-
-        /*ArrayAdapter<Gift> receivedAdapter = new ArrayAdapter<>(getActivity(), R.layout.single_gift, giftsRecieved);
-        ArrayAdapter<Gift> sentAdapter = new ArrayAdapter<Gift>(getActivity(), R.layout.single_gift, giftsSent);
+        ArrayAdapter<Gift> receivedAdapter = new ArrayAdapter<>(getActivity(), R.layout.single_gift, giftsRecieved);
+        ArrayAdapter<Gift> sentAdapter = new ArrayAdapter<>(getActivity(), R.layout.single_gift, giftsSent);
 
         recievedGifts.setAdapter(receivedAdapter);
-        sentGifts.setAdapter(sentAdapter);*/
+        sentGifts.setAdapter(sentAdapter);
 
         return root;
     }
