@@ -17,4 +17,10 @@
         android:label="Create Gift"
         tools:layout="@layout/fragment_create_gift" />
 
+    <fragment
+        android:id="@+id/nav_friends_list"
+        android:name="com.rayhc.giftly.FriendsFragment"
+        android:label="Friends"
+        tools:layout="@layout/friends_list_fragment" />
+
 </navigation>
