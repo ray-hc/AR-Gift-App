@@ -85,7 +85,7 @@ public class FirebaseDemoActivity extends AppCompatActivity {
         checkPermission(this);
 
         mImageView = (ImageView) findViewById(R.id.image_view);
-        mImgUri = FileProvider.getUriForFile(this, "com.loganchang.giftly", new File(getExternalFilesDir(null), ImgFileName));
+        mImgUri = FileProvider.getUriForFile(this, "com.rayhc.giftly", new File(getExternalFilesDir(null), ImgFileName));
 
         // Initialize Firebase Auth and Database Reference
 //        mFirebaseAuth = FirebaseAuth.getInstance();
