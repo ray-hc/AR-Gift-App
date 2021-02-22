@@ -11,6 +11,9 @@
         <item
             android:id="@+id/nav_create_gift"
             android:title="Create Gift" />
+        <item
+            android:id="@+id/nav_friends_list"
+            android:title="Create Gift" />
     </group>
 </menu>
 
