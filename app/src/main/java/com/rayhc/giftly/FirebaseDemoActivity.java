@@ -101,9 +101,9 @@ public class FirebaseDemoActivity extends AppCompatActivity {
         //gift objects
         gift1 = new Gift();
         gift1.setId("1111");
-        gift1.setContentType(1);
-        gift1.setGiftType(1);
-        gift1.setFile(null);
+//        gift1.setContentType(1);
+//        gift1.setGiftType(1);
+//        gift1.setFile(null);
         gift1.setHashValue("hash value 1");
         gift1.setQrCode("qr code 1");
         gift1.setOpened(false);
@@ -114,9 +114,9 @@ public class FirebaseDemoActivity extends AppCompatActivity {
 
         Gift gift2 = new Gift();
         gift2.setId("1112");
-        gift2.setContentType(1);
-        gift2.setGiftType(1);
-        gift2.setFile(null);
+//        gift2.setContentType(1);
+//        gift2.setGiftType(1);
+//        gift2.setFile(null);
 //        gift2.setHashValue("hash value 1");
 //        gift2.setQrCode("qr code 1");
         gift2.setOpened(false);
