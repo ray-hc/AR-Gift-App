@@ -29,6 +29,8 @@ public class Gift {
     private String receiver;                            //user id of the gift's sender from firebase authentication
     private String message;
     private boolean isEncrypted;
+    private long timeCreated;
+    private long timeOpened;
     private String hashValue;
     private String qrCode;
     private boolean opened;                             //look at this value when opening the app + unopened gift page
@@ -45,13 +47,16 @@ public class Gift {
      * Value constructor
      */
     public Gift(String link, HashMap<String, String> contentType, HashMap<String, String> giftType,
-                String sender, String receiver, String message, boolean isEncrypted, String hashValue, String qrCode, boolean opened){
+                String sender, String receiver, String message, long timeOpened, long timeCreated,
+                boolean isEncrypted, String hashValue, String qrCode, boolean opened){
         this.link = link;
         this.contentType = contentType;
         this.giftType = giftType;
         this.sender = sender;
         this.receiver = receiver;
         this.message = message;
+        this.timeOpened = timeOpened;
+        this.timeCreated = timeCreated;
         this.isEncrypted = isEncrypted;
         this.hashValue = hashValue;
         this.qrCode = qrCode;
@@ -89,6 +94,10 @@ public class Gift {
     }
 
     public String getMessage() { return message; }
+
+    public long getTimeCreated() { return timeCreated; }
+
+    public long getTimeOpened() { return timeOpened; }
 
     public boolean isEncrypted() {
         return isEncrypted;
@@ -129,6 +138,10 @@ public class Gift {
     public void setReceiver(String receiver) {
         this.receiver = receiver;
     }
+
+    public void setTimeCreated(long timeCreated) { this.timeCreated = timeCreated; }
+
+    public void setTimeOpened(long timeOpened) { this.timeOpened = timeOpened; }
 
     public void setMessage(String message) { this.message = message; }
 
