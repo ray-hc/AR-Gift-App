@@ -1,25 +1,36 @@
-//TODO: change so it matches the rest of the project
 package com.rayhc.giftly;
 
-import android.net.Uri;
+import java.util.HashMap;
 
 /**
  * Gift objects to be stored in the database
  * These get configured to JSON objects in the database
+ *
+ * Will look like this in the DB:
+ * gifts:
+ * - *user id of recipient*
+ * - - *all of the gift data*
+ *
+ * Gifts will go through "validation" as follows:
+ * 1. the gift being opened was actually sent to the user (matching user id of recipient)
+ * 2. double checking the sender & recipient ID's match
  */
 public class Gift {
     //attributes
-    private String id;
-    private String link;    //nulled out if not sending a link
-    private Uri file;       //nulled out if not sending a file
-    private int contentType;    //i think it'll be something like "1" is a link, "2" is a multimedia file, etc.
-    private int giftType;       //follows the same principle as contentType
-    private String sender;
-    private String receiver;
+//    private String id;                                  //synonymous to pin
+    private String link;                                //nulled out if not sending a link
+    private HashMap<String, String> contentType;        /*i think it'll be something like "1" is a link,
+                                                        "2" is a multimedia file, etc.
+                                                        Need to be a map of strings (but will hold ints) for sending multiple
+                                                        "gifts" (many images, some images and some videos, etc.) in one gift object*/
+
+    private HashMap<String, String> giftType;           //follows the same principle as contentType
+    private String sender;                              //user id of the gift's sender from firebase authentication
+    private String receiver;                            //user id of the gift's sender from firebase authentication
     private boolean isEncrypted;
     private String hashValue;
     private String qrCode;
-    private boolean opened;
+    private boolean opened;                             //look at this value when opening the app + unopened gift page
 
     // comment by ray: :)
     // comment by uhuru (:
@@ -32,11 +43,9 @@ public class Gift {
     /**
      * Value constructor
      */
-    public Gift(String id, String link, Uri file, int contentType, int giftType, String sender, String receiver,
-                boolean isEncrypted, String hashValue, String qrCode, boolean opened){
-        this.id = id;
+    public Gift(String link, HashMap<String, String> contentType, HashMap<String, String> giftType,
+                String sender, String receiver, boolean isEncrypted, String hashValue, String qrCode, boolean opened){
         this.link = link;
-        this.file = file;
         this.contentType = contentType;
         this.giftType = giftType;
         this.sender = sender;
@@ -48,27 +57,24 @@ public class Gift {
     }
 
     //TODO: Probably need an intermediate constructor that doesn't take every parameter?
+    //RESOLVED: just use intermediate setters as the gift is being built up
 
     /**
      * Getters & Setters
      */
-    public String getId() {
-        return id;
-    }
+//    public String getId() {
+//        return id;
+//    }
 
     public String getLink() {
         return link;
     }
 
-    public Uri getFile() {
-        return file;
-    }
-
-    public int getContentType() {
+    public HashMap<String, String> getContentType() {
         return contentType;
     }
 
-    public int getGiftType() {
+    public HashMap<String, String> getGiftType() {
         return giftType;
     }
 
@@ -96,23 +102,19 @@ public class Gift {
         return hashValue;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+//    public void setId(String id) {
+//        this.id = id;
+//    }
 
     public void setLink(String link) {
         this.link = link;
     }
 
-    public void setFile(Uri file) {
-        this.file = file;
-    }
-
-    public void setContentType(int contentType) {
+    public void setContentType(HashMap<String, String> contentType) {
         this.contentType = contentType;
     }
 
-    public void setGiftType(int giftType) {
+    public void setGiftType(HashMap<String, String> giftType) {
         this.giftType = giftType;
     }
 
