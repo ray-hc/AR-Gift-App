@@ -25,24 +25,29 @@ public class CreateGiftFragment extends Fragment {
          linkButton.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
-                 Intent intent = new Intent();
-                 //start link activity
+                 Intent intent = new Intent(getActivity(), LinkActivity.class);
+                 startActivity(intent);
+                 //pass back string and save to string database (DB 1)
              }
          });
 
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                //start image activity
+                Intent intent = new Intent(getActivity(), ImageActivity.class);
+                //extras here
+                startActivity(intent);
+                //save to image/vid db (DB 2)
             }
         });
 
         videoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                //start video activity
+                Intent intent = new Intent(getActivity(), VideoActivity.class);
+                //extras here
+                startActivity(intent);
+                //save to image/vid db (DB 2)
             }
         });
 
