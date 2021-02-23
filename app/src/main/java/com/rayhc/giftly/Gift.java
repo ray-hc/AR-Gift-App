@@ -161,6 +161,11 @@ public class Gift {
         this.opened = opened;
     }
 
+    public String getHashString(){
+        return "timeCreated="+timeCreated+
+                ", sender="+sender;
+    }
+
     //for testing purposes
     @Override
     public String toString() {
