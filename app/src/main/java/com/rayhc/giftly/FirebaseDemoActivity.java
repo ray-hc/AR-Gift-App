@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,6 +43,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * A skinny demo of how our firebase database will work
@@ -72,10 +74,13 @@ public class FirebaseDemoActivity extends AppCompatActivity {
     private String mText;
     private Query mQuery;
     private ImageView mImageView;
+    private VideoView mVideoView;
     String mPin;
     private TextView mTextView;
 
     private Gift gift1;
+    private Gift gift2;
+    private HashMap<String, String> contentMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +90,7 @@ public class FirebaseDemoActivity extends AppCompatActivity {
         checkPermission(this);
 
         mImageView = (ImageView) findViewById(R.id.image_view);
+        mVideoView = (VideoView) findViewById(R.id.video_view);
         mImgUri = FileProvider.getUriForFile(this, "com.rayhc.giftly", new File(getExternalFilesDir(null), ImgFileName));
 
         // Initialize Firebase Auth and Database Reference
@@ -100,10 +106,8 @@ public class FirebaseDemoActivity extends AppCompatActivity {
 
         //gift objects
         gift1 = new Gift();
-        gift1.setId("1111");
-        gift1.setContentType(1);
-        gift1.setGiftType(1);
-        gift1.setFile(null);
+        gift1.setContentType(null);
+        gift1.setGiftType(null);
         gift1.setHashValue("hash value 1");
         gift1.setQrCode("qr code 1");
         gift1.setOpened(false);
@@ -112,26 +116,16 @@ public class FirebaseDemoActivity extends AppCompatActivity {
         gift1.setEncrypted(false);
         gift1.setLink("https://www.google.com/");
 
-        Gift gift2 = new Gift();
-        gift2.setId("1112");
-        gift2.setContentType(1);
-        gift2.setGiftType(1);
-        gift2.setFile(null);
+        gift2 = new Gift();
+        gift2.setContentType(null);
+        gift2.setGiftType(null);
 //        gift2.setHashValue("hash value 1");
 //        gift2.setQrCode("qr code 1");
         gift2.setOpened(false);
-//        gift2.setReceiver("B");
-//        gift2.setSender("A");
+        gift2.setReceiver("C");
+        gift2.setSender("B");
         gift2.setEncrypted(false);
         gift2.setLink("https://en.wikipedia.org/wiki/Main_Page");
-
-        Gift gift3 = new Gift();
-        gift3.setId("1113");
-        gift3.setLink("This is Gift 3 link");
-
-        Gift gift4 = new Gift();
-        gift4.setId("1114");
-        gift4.setLink("This is Gift 4 link");
 
         //text view
         mTextView = (TextView) findViewById(R.id.text);
@@ -143,23 +137,23 @@ public class FirebaseDemoActivity extends AppCompatActivity {
         //get buttons
         Button getButton1 = (Button) findViewById(R.id.get_button1);
         Button getButton2 = (Button) findViewById(R.id.get_button2);
-        Button getButton3 = (Button) findViewById(R.id.get_button3);
-        Button getButton4 = (Button) findViewById(R.id.get_button4);
 
         //save buttons
         Button saveButton1 = (Button) findViewById(R.id.save_button1);
         Button saveButton2 = (Button) findViewById(R.id.save_button2);
-        Button saveButton3 = (Button) findViewById(R.id.save_button3);
-        Button saveButton4 = (Button) findViewById(R.id.save_button4);
 
         //save button callbacks
         saveButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatabase.child("gifts").child(gift1.getId()).setValue(gift1);
+                HashMap<String, String> map = new HashMap<>();
+                map.put("ID 1", "image");
+                gift1.setContentType(map);
+                mDatabase.child("gifts").child(gift1.getReceiver()).setValue(gift1);
 //                mDatabase.child("gifts").setValue(gift1);
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, mImgUri);
+//                intent.putExtra(MediaStore.EXTRA_OUTPUT, mImgUri);
+                intent.setType("image/*");
 //                intent.putExtra("PIN_KEY", gift1.getId());
                 startActivityForResult(intent, REQUEST_CODE_PICK_FROM_GALLERY);
 
@@ -169,82 +163,17 @@ public class FirebaseDemoActivity extends AppCompatActivity {
         saveButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatabase.child("gifts").child((gift2.getId())).setValue(gift2);
+                HashMap<String, String> map = new HashMap<>();
+                map.put("ID 1", "video");
+                gift2.setContentType(map);
+                mDatabase.child("gifts").child((gift2.getReceiver())).setValue(gift2);
 //                mDatabase.child("gifts").setValue(gift1);
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                intent.putExtra(MediaStore.EXTRA_OUTPUT, mImgUri);
+                intent.setType("video/*");
+//                intent.putExtra("PIN_KEY", gift1.getId());
+                startActivityForResult(intent, REQUEST_CODE_PICK_FROM_GALLERY);
 
-            }
-        });
-
-
-        //get button callbacks
-
-        //gets the gift data for gift 1 from firebase
-        //puts the link at the top
-        getButton1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mQuery = mDatabase.child("gifts").orderByChild("id").equalTo(gift1.getId());
-                mQuery.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
-                        if (snapshot.exists()) {
-                            mText = (String) snapshot.child((gift1.getId()))
-                                    .child("link").getValue();
-                            Log.d("LPC", "snapshot: " + snapshot.getValue());
-                            if(mText != null) {
-                                mTextView.setText("Link: "+ Html.fromHtml(mText));
-                                mTextView.setMovementMethod(LinkMovementMethod.getInstance());                            }
-                            else {
-                                showErrorDialog();
-                            }
-                        } else {
-                            showErrorDialog();
-                            Log.d("LPC", "snapshot doesn't exist");
-                        }
-                    }
-
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-            }
-        });
-
-        //same click listener as the previous except corresponds to gift 2
-        getButton2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mQuery = mDatabase.child("gifts").orderByChild("id").equalTo(gift2.getId());
-                mQuery.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
-                        if (snapshot.exists()) {
-                            mText = (String) snapshot.child((gift2.getId()))
-                                    .child("link").getValue();
-                            Log.d("LPC", "snapshot: " + snapshot.getValue());
-                            if(mText != null) {
-                                mTextView.setText("Link: "+Html.fromHtml(mText));
-                                mTextView.setMovementMethod(LinkMovementMethod.getInstance());
-                            }
-                            else {
-                                showErrorDialog();
-                            }
-                        } else {
-                            showErrorDialog();
-                            Log.d("LPC", "snapshot doesn't exist");
-                        }
-                    }
-
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
             }
         });
 
@@ -258,7 +187,7 @@ public class FirebaseDemoActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //field value
                 mPin = pinEnter.getText().toString();
-                Log.d("LPC", "mPin: "+mPin);
+                Log.d("LPC", "mPin: " + mPin);
                 mQuery = mDatabase.child("gifts");
 
                 //listener for the newly added Gift's query based on the input pin
@@ -269,13 +198,17 @@ public class FirebaseDemoActivity extends AppCompatActivity {
                         //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
                         Log.d("LPC", "snapshot: " + snapshot.getValue());
                         if (snapshot.exists()) {
-                            mText = (String) snapshot.child(mPin)
-                                    .child("link").getValue();
-                            if(mText != null) {
-                                mTextView.setText("Link: "+Html.fromHtml(mText));
+                            Gift gift = snapshot.child(mPin).getValue(Gift.class);
+                            mText = gift.getLink();
+                            Log.d("LPC", "link from search bar press: "+mText);
+                            //set content map
+                            contentMap = gift.getContentType();
+                            Log.d("LPC", "content Map key value: "+contentMap.get("ID 1"));
+                            handleMedia(contentMap.get("ID 1"));
+                            if (mText != null) {
+                                mTextView.setText("Link: " + Html.fromHtml(mText));
                                 mTextView.setMovementMethod(LinkMovementMethod.getInstance());
-                            }
-                            else {
+                            } else {
                                 showErrorDialog();
                             }
                         } else {
@@ -290,38 +223,71 @@ public class FirebaseDemoActivity extends AppCompatActivity {
 
                     }
                 });
-
-                //get this gift's image and put it in the image view
-                // (only works with gift 1's pin of 1111 since that the only gift I set with an image)
-
-                String filePath = "gift/"+mPin+"/pictureGift.jpg";
-                Log.d("LPC", "file path: "+filePath);
-                StorageReference imgRef = storageRef.child(filePath);
-                File localFile = null;
-                try {
-                    localFile = File.createTempFile("tempImg", "jpg");
-                    Log.d("LPC", "local file was made ");
-                } catch (IOException e){
-                    e.printStackTrace();
-                }
-
-                File finalLocalFile = localFile;
-                imgRef.getFile(localFile).addOnCompleteListener(FirebaseDemoActivity.this, new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
-                        if(task.isSuccessful()){
-                            Log.d("LPC", "download successful");
-                            Bitmap bitmap = BitmapFactory.decodeFile(finalLocalFile.getAbsolutePath());
-                            mImageView.setImageBitmap(bitmap);
-                        } else {
-                            Log.d("LPC", "download failed");
-                        }
-                    }
-                });
-
             }
         });
 
+    }
+
+    public void handleMedia(String type){
+        //get this gift's image and put it in the image view
+        // (only works with gift 1's pin of 1111 since that the only gift I set with an image)
+        mImageView.setVisibility(View.GONE);
+        mVideoView.setVisibility(View.GONE);
+        if (type.equals("image")) {
+            String filePath = "gift/" + gift1.getSender()+"_to_"+gift1.getReceiver()+ "/pictureGift.jpg";
+            Log.d("LPC", "image file path: " + filePath);
+            StorageReference imgRef = storageRef.child(filePath);
+            File localFile = null;
+            try {
+                localFile = File.createTempFile("tempImg", "jpg");
+                Log.d("LPC", "local image file was made ");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            File finalLocalFile = localFile;
+            imgRef.getFile(localFile).addOnCompleteListener(FirebaseDemoActivity.this, new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        mImageView.setVisibility(View.VISIBLE);
+                        Log.d("LPC", "image download successful");
+                        Bitmap bitmap = BitmapFactory.decodeFile(finalLocalFile.getAbsolutePath());
+                        mImageView.setImageBitmap(bitmap);
+                    } else {
+                        Log.d("LPC", "image download failed");
+                    }
+                }
+            });
+
+        } else if(type.equals("video")){
+            String filePath = "gift/" + gift2.getSender()+"_to_"+gift2.getReceiver()+ "/videoGift.mp4";
+            Log.d("LPC", "video file path: " + filePath);
+            StorageReference imgRef = storageRef.child(filePath);
+            File localFile = null;
+            try {
+                localFile = File.createTempFile("tempImg", "mp4");
+                Log.d("LPC", "local video file was made ");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            File finalLocalFile = localFile;
+            imgRef.getFile(localFile).addOnCompleteListener(FirebaseDemoActivity.this, new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        mVideoView.setVisibility(View.VISIBLE);
+                        Log.d("LPC", "video download successful");
+                        Bitmap bitmap = BitmapFactory.decodeFile(finalLocalFile.getAbsolutePath());
+                        mVideoView.setVideoPath(finalLocalFile.getPath());
+                        mVideoView.start();
+                    } else {
+                        Log.d("LPC", "video download failed");
+                    }
+                }
+            });
+        }
     }
 
     /**
@@ -332,17 +298,30 @@ public class FirebaseDemoActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         //publish image to db
         if(resultCode == RESULT_OK && requestCode == REQUEST_CODE_PICK_FROM_GALLERY && data != null){
-            Log.d("LPC", "onActivityResult: here");
-            Uri selectedImg = data.getData();
-            String path = "gift/"+gift1.getId()+"/pictureGift.jpg";
-            StorageReference giftRef = storageRef.child(path);
-            UploadTask uploadTask = giftRef.putFile(selectedImg);
-            uploadTask.addOnCompleteListener(FirebaseDemoActivity.this, new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                    Log.d("LPC", "upload complete!");
-                }
-            });
+            Uri selectedData = data.getData();
+            if(selectedData.toString().contains("image")) {
+                Log.d("LPC", "onActivityResult: here");
+                String path = "gift/" + gift1.getSender()+"_to_"+gift1.getReceiver()+ "/pictureGift.jpg";
+                StorageReference giftRef = storageRef.child(path);
+                UploadTask uploadTask = giftRef.putFile(selectedData);
+                uploadTask.addOnCompleteListener(FirebaseDemoActivity.this, new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        Log.d("LPC", "image upload complete!");
+                    }
+                });
+            } else if(selectedData.toString().contains("video")) {
+                Log.d("LPC", "onActivityResult: here");
+                String path = "gift/" + gift2.getSender()+"_to_"+gift2.getReceiver()+ "/videoGift.mp4";
+                StorageReference giftRef = storageRef.child(path);
+                UploadTask uploadTask = giftRef.putFile(selectedData);
+                uploadTask.addOnCompleteListener(FirebaseDemoActivity.this, new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        Log.d("LPC", "video upload complete!");
+                    }
+                });
+            }
         }
     }
 
