@@ -27,6 +27,7 @@ public class Gift {
     private HashMap<String, String> giftType;           //follows the same principle as contentType
     private String sender;                              //user id of the gift's sender from firebase authentication
     private String receiver;                            //user id of the gift's sender from firebase authentication
+    private String message;
     private boolean isEncrypted;
     private String hashValue;
     private String qrCode;
@@ -44,12 +45,13 @@ public class Gift {
      * Value constructor
      */
     public Gift(String link, HashMap<String, String> contentType, HashMap<String, String> giftType,
-                String sender, String receiver, boolean isEncrypted, String hashValue, String qrCode, boolean opened){
+                String sender, String receiver, String message, boolean isEncrypted, String hashValue, String qrCode, boolean opened){
         this.link = link;
         this.contentType = contentType;
         this.giftType = giftType;
         this.sender = sender;
         this.receiver = receiver;
+        this.message = message;
         this.isEncrypted = isEncrypted;
         this.hashValue = hashValue;
         this.qrCode = qrCode;
@@ -85,6 +87,8 @@ public class Gift {
     public String getReceiver() {
         return receiver;
     }
+
+    public String getMessage() { return message; }
 
     public boolean isEncrypted() {
         return isEncrypted;
@@ -125,6 +129,8 @@ public class Gift {
     public void setReceiver(String receiver) {
         this.receiver = receiver;
     }
+
+    public void setMessage(String message) { this.message = message; }
 
     public void setEncrypted(boolean encrypted) {
         isEncrypted = encrypted;
