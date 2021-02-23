@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<TextView
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <!--Gift icon-->
+    <!--Gift icon
     <ImageView
         android:id="@+id/gift_icon"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    <!--Sender info-->
+        android:layout_height="wrap_content"/> -->
+    <!--Sender info
     <TextView
         android:text="Sent by Friend"
         android:id="@+id/sender_info"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    <!--Time Sent-->
+        android:layout_height="wrap_content"/> -->
+    <!--Time Sent
     <TextView
         android:text="00:00 hours"
         android:id="@+id/time_sent"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"/> -->
 
-</LinearLayout>
+</TextView>
