@@ -83,6 +83,21 @@ public class User {
         this.sentGifts.put("ID" + this.sentGifts.size(), uid);
     }
 
+    public void addSentFriends(String uid){
+        if(this.sentFriends == null) this.sentFriends = new HashMap<>();
+        this.sentFriends.put("ID" + this.sentFriends.size(), uid);
+    }
+
+    public void addReceivedGifts(String uid){
+        if(this.receivedGifts == null) this.receivedGifts = new HashMap<>();
+        this.receivedGifts.put("ID" + this.sentFriends.size(), uid);
+    }
+
+    public void addReceivedFriends(String uid){
+        if(this.receivedFriends == null) this.receivedFriends = new HashMap<>();
+        this.receivedFriends.put("ID" + this.receivedFriends.size(), uid);
+    }
+
     public String getUserId() {
         return userId;
     }
