@@ -11,14 +11,13 @@ import java.util.HashMap;
  * - *user id of recipient*
  * - - *all of the gift data*
  *
- * Gifts will go through 2 phases of "validation":
+ * Gifts will go through "validation" as follows:
  * 1. the gift being opened was actually sent to the user (matching user id of recipient)
- * 2. use the id/pin string of this gift and see if it matches the id/pin of gift from the sender's
- *    list of sent gifts
+ * 2. double checking the sender & recipient ID's match
  */
 public class Gift {
     //attributes
-    private String id;                                  //synonymous to pin
+//    private String id;                                  //synonymous to pin
     private String link;                                //nulled out if not sending a link
     private HashMap<String, String> contentType;        /*i think it'll be something like "1" is a link,
                                                         "2" is a multimedia file, etc.
@@ -44,9 +43,8 @@ public class Gift {
     /**
      * Value constructor
      */
-    public Gift(String id, String link, HashMap<String, String> contentType, HashMap<String, String> giftType,
+    public Gift(String link, HashMap<String, String> contentType, HashMap<String, String> giftType,
                 String sender, String receiver, boolean isEncrypted, String hashValue, String qrCode, boolean opened){
-        this.id = id;
         this.link = link;
         this.contentType = contentType;
         this.giftType = giftType;
@@ -64,9 +62,9 @@ public class Gift {
     /**
      * Getters & Setters
      */
-    public String getId() {
-        return id;
-    }
+//    public String getId() {
+//        return id;
+//    }
 
     public String getLink() {
         return link;
@@ -104,9 +102,9 @@ public class Gift {
         return hashValue;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+//    public void setId(String id) {
+//        this.id = id;
+//    }
 
     public void setLink(String link) {
         this.link = link;
