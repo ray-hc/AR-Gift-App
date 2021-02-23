@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Giftly">
-        <activity android:name=".LoadingSplashActivity"></activity>
+        <activity android:name=".UploadingSplashActivity"></activity>
         <activity android:name=".LoginActivity" />
         <activity
             android:name=".MainActivity"

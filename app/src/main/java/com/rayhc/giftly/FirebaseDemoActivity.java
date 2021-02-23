@@ -146,10 +146,16 @@ public class FirebaseDemoActivity extends AppCompatActivity {
         saveButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //last min gift data
                 HashMap<String, String> map = new HashMap<>();
                 map.put("ID 1", "image");
                 gift1.setContentType(map);
-                mDatabase.child("gifts").child(gift1.getReceiver()).setValue(gift1);
+                gift1.setTimeCreated(System.currentTimeMillis());
+
+                DBLoaderThread dbLoaderThread = new DBLoaderThread(gift1.getReceiver());
+                dbLoaderThread.start();
+
+//                mDatabase.child("gifts").child(gift1.getReceiver()).setValue(gift1);
 //                mDatabase.child("gifts").setValue(gift1);
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 //                intent.putExtra(MediaStore.EXTRA_OUTPUT, mImgUri);
@@ -163,10 +169,15 @@ public class FirebaseDemoActivity extends AppCompatActivity {
         saveButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //last min gift data
                 HashMap<String, String> map = new HashMap<>();
                 map.put("ID 1", "video");
                 gift2.setContentType(map);
-                mDatabase.child("gifts").child((gift2.getReceiver())).setValue(gift2);
+                gift2.setTimeCreated(System.currentTimeMillis());
+
+                DBLoaderThread dbLoaderThread = new DBLoaderThread(gift2.getReceiver());
+                dbLoaderThread.start();
+//                mDatabase.child("gifts").child((gift2.getReceiver())).setValue(gift2);
 //                mDatabase.child("gifts").setValue(gift1);
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 //                intent.putExtra(MediaStore.EXTRA_OUTPUT, mImgUri);
@@ -299,28 +310,49 @@ public class FirebaseDemoActivity extends AppCompatActivity {
         //publish image to db
         if(resultCode == RESULT_OK && requestCode == REQUEST_CODE_PICK_FROM_GALLERY && data != null){
             Uri selectedData = data.getData();
+            String sender, receiver;
             if(selectedData.toString().contains("image")) {
                 Log.d("LPC", "onActivityResult: here");
-                String path = "gift/" + gift1.getSender()+"_to_"+gift1.getReceiver()+ "/pictureGift.jpg";
-                StorageReference giftRef = storageRef.child(path);
-                UploadTask uploadTask = giftRef.putFile(selectedData);
-                uploadTask.addOnCompleteListener(FirebaseDemoActivity.this, new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                        Log.d("LPC", "image upload complete!");
-                    }
-                });
+                sender = gift1.getSender();
+                receiver = gift1.getReceiver();
+
+                Intent splashIntent = new Intent(this, UploadingSplashActivity.class);
+                splashIntent.putExtra("URI", selectedData);
+                splashIntent.putExtra("SENDER", sender);
+                splashIntent.putExtra("RECEIVER", receiver);
+                startActivity(splashIntent);
+
+
+//                String path = "gift/" + gift1.getSender()+"_to_"+gift1.getReceiver()+ "/pictureGift.jpg";
+//                StorageReference giftRef = storageRef.child(path);
+//                UploadTask uploadTask = giftRef.putFile(selectedData);
+//                uploadTask.addOnCompleteListener(FirebaseDemoActivity.this, new OnCompleteListener<UploadTask.TaskSnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+//                        Log.d("LPC", "image upload complete!");
+//                    }
+//                });
             } else if(selectedData.toString().contains("video")) {
                 Log.d("LPC", "onActivityResult: here");
-                String path = "gift/" + gift2.getSender()+"_to_"+gift2.getReceiver()+ "/videoGift.mp4";
-                StorageReference giftRef = storageRef.child(path);
-                UploadTask uploadTask = giftRef.putFile(selectedData);
-                uploadTask.addOnCompleteListener(FirebaseDemoActivity.this, new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                        Log.d("LPC", "video upload complete!");
-                    }
-                });
+                sender = gift2.getSender();
+                receiver = gift2.getReceiver();
+
+                Intent splashIntent = new Intent(this, UploadingSplashActivity.class);
+                splashIntent.putExtra("URI", selectedData);
+                splashIntent.putExtra("SENDER", sender);
+                splashIntent.putExtra("RECEIVER", receiver);
+                startActivity(splashIntent);
+
+//
+//                String path = "gift/" + gift2.getSender()+"_to_"+gift2.getReceiver()+ "/videoGift.mp4";
+//                StorageReference giftRef = storageRef.child(path);
+//                UploadTask uploadTask = giftRef.putFile(selectedData);
+//                uploadTask.addOnCompleteListener(FirebaseDemoActivity.this, new OnCompleteListener<UploadTask.TaskSnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+//                        Log.d("LPC", "video upload complete!");
+//                    }
+//                });
             }
         }
     }
@@ -351,5 +383,30 @@ public class FirebaseDemoActivity extends AppCompatActivity {
         if(ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(activity,Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, 0);
+    }
+
+    /**
+     * Loader thread for the realtime DB only (gift objects)
+     */
+    public class DBLoaderThread extends Thread{
+        private String id;
+        public DBLoaderThread(String id){
+            this.id = id;
+        }
+
+        @Override
+        public void run() {
+            if(id.equals("B")){
+//                HashMap<String, String> map = new HashMap<>();
+//                map.put("ID 1", "image");
+//                gift1.setContentType(map);
+                mDatabase.child("gifts").child(gift1.getReceiver()).setValue(gift1);
+            } else if (id.equals("C")){
+//                HashMap<String, String> map = new HashMap<>();
+//                map.put("ID 1", "video");
+//                gift2.setContentType(map);
+                mDatabase.child("gifts").child((gift2.getReceiver())).setValue(gift2);
+            }
+        }
     }
 }
