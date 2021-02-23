@@ -88,60 +88,6 @@
             android:text="Get Gift 2"/>
     </LinearLayout>
 
-    <!--PAIR 3-->
-    <LinearLayout
-        android:id="@+id/pair3_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/pair2_layout">
-
-        <Button
-            android:id="@+id/save_button3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="10dp"
-            android:text="Save Gift 3"/>
-
-
-        <Button
-            android:id="@+id/get_button3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="10dp"
-            android:text="Get Gift 3"/>
-    </LinearLayout>
-
-    <!--PAIR 4-->
-    <LinearLayout
-        android:id="@+id/pair4_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/pair3_layout">
-
-        <Button
-            android:id="@+id/save_button4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="10dp"
-            android:text="Save Gift 4"/>
-
-
-        <Button
-            android:id="@+id/get_button4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="10dp"
-            android:text="Get Gift 4"/>
-    </LinearLayout>
-
     <!--IMAGE VIEW-->
     <TextView
         android:id="@+id/image_view_label"
@@ -150,10 +96,26 @@
         android:layout_margin="10dp"
         android:layout_centerHorizontal="true"
         android:text="Image View:"
-        android:layout_below="@id/pair4_layout"/>
+        android:layout_below="@id/pair2_layout"/>
     <ImageView
         android:id="@+id/image_view"
         android:layout_below="@id/image_view_label"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="20dp"
+        android:layout_centerHorizontal="true"/>
+    <!--VIDEO VIEW-->
+    <TextView
+        android:id="@+id/video_view_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_centerHorizontal="true"
+        android:text="Video View:"
+        android:layout_below="@id/image_view"/>
+    <VideoView
+        android:id="@+id/video_view"
+        android:layout_below="@id/video_view_label"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_margin="20dp"
