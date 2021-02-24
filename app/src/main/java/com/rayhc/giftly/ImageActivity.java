@@ -38,20 +38,11 @@ public class ImageActivity extends AppCompatActivity {
         Intent startIntent = getIntent();
         gift = (Gift) startIntent.getSerializableExtra("GIFT");
         Log.d("LPC", "onCreate: saved gift: "+gift.toString());
-//        if(savedInstanceState != null){
-//            gift = (Gift)savedInstanceState.getSerializable("SAVED_GIFT");
-//        } else {
-//            Intent startIntent = getIntent();
-//            gift = (Gift) startIntent.getSerializableExtra("GIFT");
-//        }
-//        sender = startIntent.getStringExtra("SENDER");
-//        recipient = startIntent.getStringExtra("RECIPIENT");
-//        hashValue = startIntent.getStringExtra("HASH");
-//        contentType = (HashMap<String, String>) startIntent.getSerializableExtra("CONTENT_TYPE");
 
         //wire button and image view
         mChooseButton = (Button) findViewById(R.id.image_choose_button);
         mSaveButton = (Button) findViewById(R.id.image_save_button);
+        mSaveButton.setEnabled(false);
         mCancelButton = (Button) findViewById(R.id.image_cancel_button);
         mImageView = (ImageView) findViewById(R.id.chosen_image);
 
@@ -117,6 +108,7 @@ public class ImageActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         //if gallery pick was successful, save the URI and populate the image view
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_PICK_FROM_GALLERY && data != null) {
+            mSaveButton.setEnabled(true);
             Uri selectedData = data.getData();
             currentData = selectedData;
             mImageView.setImageURI(null);

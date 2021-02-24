@@ -135,7 +135,9 @@ public class UploadingSplashActivity extends AppCompatActivity {
                 gift.addContentType(Gift.ADD_IMAGE_GIFT_KEY);
             } else if (selectedData.toString().contains("video")) {
                 Log.d("LPC", "onActivityResult: here");
-                String path = "gift/" + sender + "_to_" + receiver + "/videoGift.mp4";
+                String fileName = "video_"+contentType.size();
+                String path = "gift/" + hashValue + "/"+fileName+".mp4";
+                Log.d("LPC", "cloud storage image file path : "+path);
                 StorageReference giftRef = storageRef.child(path);
                 UploadTask uploadTask = giftRef.putFile(selectedData);
                 uploadTask.addOnCompleteListener(UploadingSplashActivity.this, new OnCompleteListener<UploadTask.TaskSnapshot>() {
@@ -144,6 +146,8 @@ public class UploadingSplashActivity extends AppCompatActivity {
                         Log.d("LPC", "video upload complete!");
                     }
                 });
+                gift.addContentType(Gift.ADD_VIDEO_GIFT_KEY);
+                Log.d("LPC", "gift contentType: "+gift.getContentType().toString());
             }
             handler.post(runnable);
         }
