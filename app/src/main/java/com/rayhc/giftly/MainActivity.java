@@ -52,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
 //        startActivity(intent);
 
         //go to db demo for now
-        //Intent intent = new Intent(this, FirebaseDemoActivity.class);
-        //startActivity(intent);
+        Intent intent = new Intent(this, FirebaseDemoActivity.class);
+        startActivity(intent);
 
     }
 
