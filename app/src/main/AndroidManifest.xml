@@ -25,6 +25,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".FirebaseDemoActivity" />
+        <activity android:name=".LinkActivity"/>
+        <activity android:name=".ImageActivity"/>
+        <activity android:name=".VideoActivity"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"
