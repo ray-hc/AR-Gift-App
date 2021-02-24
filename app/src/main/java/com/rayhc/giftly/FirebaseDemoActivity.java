@@ -152,11 +152,11 @@ public class FirebaseDemoActivity extends AppCompatActivity {
                 HashMap<String, String> map = new HashMap<>();
                 map.put("ID 1", "image");
                 gift1.setContentType(map);
-                gift1.setTimeCreated(System.currentTimeMillis());
+                gift1.setTimeCreated(10);
                 //hash value
                 try {
                     MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-                    messageDigest.digest(gift1.getHashString().getBytes());
+//                    messageDigest.digest(gift1.getHashString().getBytes());
                     byte[] md5 = messageDigest.digest();
                     // Create Hex String
                     StringBuilder hexString = new StringBuilder();
@@ -166,7 +166,7 @@ public class FirebaseDemoActivity extends AppCompatActivity {
                             h = "0" + h;
                         hexString.append(h);
                     }
-                    gift1.setHashValue(hexString.toString());
+                    gift1.setHashValue(gift1.createHashValue());
                 } catch (NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 }
@@ -196,7 +196,7 @@ public class FirebaseDemoActivity extends AppCompatActivity {
                 //hash value
                 try {
                     MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-                    messageDigest.digest(gift2.getHashString().getBytes());
+//                    messageDigest.digest(gift2.getHashString().getBytes());
                     byte[] md5 = messageDigest.digest();
                     // Create Hex String
                     StringBuilder hexString = new StringBuilder();
@@ -221,6 +221,49 @@ public class FirebaseDemoActivity extends AppCompatActivity {
 //                intent.putExtra("PIN_KEY", gift1.getId());
                 startActivityForResult(intent, REQUEST_CODE_PICK_FROM_GALLERY);
 
+            }
+        });
+
+        getButton1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("LPC", "gift1 hash: "+gift1.getHashValue());
+                mQuery = mDatabase.child("gifts").child(gift1.getReceiver()).orderByChild("hashValue")
+                .equalTo(gift1.getHashValue());
+
+                //listener for the newly added Gift's query based on the input pin
+                //put its link at the top
+                mQuery.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
+                        Log.d("LPC", "snapshot: " + snapshot.getValue());
+                        if (snapshot.exists()) {
+                            Gift gift = snapshot.child(gift1.getHashValue()).getValue(Gift.class);
+                            mText = gift.getLink();
+                            Log.d("LPC", "link from search bar press: "+mText);
+                            //set content map
+                            contentMap = gift.getContentType();
+                            Log.d("LPC", "content Map key value: "+contentMap.get("ID 1"));
+                            handleMedia(contentMap.get("ID 1"));
+                            if (mText != null) {
+                                mTextView.setText("Link: " + Html.fromHtml(mText));
+                                mTextView.setMovementMethod(LinkMovementMethod.getInstance());
+                            } else {
+                                showErrorDialog();
+                            }
+                        } else {
+                            showErrorDialog();
+                            Log.d("LPC", "snapshot doesn't exist");
+                        }
+                    }
+
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
         });
 
@@ -281,7 +324,7 @@ public class FirebaseDemoActivity extends AppCompatActivity {
         mImageView.setVisibility(View.GONE);
         mVideoView.setVisibility(View.GONE);
         if (type.equals("image")) {
-            String filePath = "gift/" + gift1.getSender()+"_to_"+gift1.getReceiver()+ "/pictureGift.jpg";
+            String filePath = "gift/" + gift1.getHashValue()+ "/image_1.jpg";
             Log.d("LPC", "image file path: " + filePath);
             StorageReference imgRef = storageRef.child(filePath);
             File localFile = null;
@@ -354,6 +397,7 @@ public class FirebaseDemoActivity extends AppCompatActivity {
 
                 Intent splashIntent = new Intent(this, UploadingSplashActivity.class);
                 splashIntent.putExtra("URI", selectedData);
+                splashIntent.putExtra("GIFT", gift1);
                 splashIntent.putExtra("SENDER", sender);
                 splashIntent.putExtra("RECEIVER", receiver);
                 startActivity(splashIntent);
