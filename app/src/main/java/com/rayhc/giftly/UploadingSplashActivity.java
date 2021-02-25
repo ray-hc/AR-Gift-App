@@ -132,7 +132,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
                         Log.d("LPC", "image upload complete!");
                     }
                 });
-                gift.addContentType(Gift.ADD_IMAGE_GIFT_KEY);
+                gift.addContentType(fileName);
             } else if (selectedData.toString().contains("video")) {
                 Log.d("LPC", "onActivityResult: here");
                 String fileName = "video_"+contentType.size();
@@ -146,7 +146,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
                         Log.d("LPC", "video upload complete!");
                     }
                 });
-                gift.addContentType(Gift.ADD_VIDEO_GIFT_KEY);
+                gift.addContentType(fileName);
                 Log.d("LPC", "gift contentType: "+gift.getContentType().toString());
             }
             handler.post(runnable);
