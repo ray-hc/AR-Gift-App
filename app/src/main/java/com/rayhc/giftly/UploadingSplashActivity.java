@@ -2,6 +2,8 @@ package com.rayhc.giftly;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -9,12 +11,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import java.util.HashMap;
 
 /**
  * This is loading splash screen for when the multi-media data is being upload to the cloud
@@ -40,17 +45,26 @@ public class UploadingSplashActivity extends AppCompatActivity {
 
         //data from demo activity intent
         Intent startIntent = getIntent();
+        Gift gift = (Gift) startIntent.getSerializableExtra("GIFT");
         Uri selectedData = startIntent.getParcelableExtra("URI");
-        String sender = startIntent.getStringExtra("SENDER");
-        String receiver = startIntent.getStringExtra("RECEIVER");
+//        String sender = startIntent.getStringExtra("SENDER");
+//        String receiver = startIntent.getStringExtra("RECEIVER");
+//        String hashValue = startIntent.getStringExtra("HASH");
+//        HashMap<String, String> contentType = (HashMap<String, String>) startIntent.getSerializableExtra("CONTENT_TYPE");
 
         Log.d("LPC", "selectedData uri: " + selectedData.getPath());
 
-        Intent intent = new Intent(this, FirebaseDemoActivity.class);
-
-        StorageLoaderThread storageLoaderThread = new StorageLoaderThread(selectedData, sender,
-                receiver, intent);
+        //TODO: change the end destination of this intent to the create gift fragment (not sure how to yet)
+        Intent intent = new Intent(this, ImageActivity.class);
+        intent.putExtra("GIFT", gift);
+        StorageLoaderThread storageLoaderThread = new StorageLoaderThread(gift, selectedData, intent);
         storageLoaderThread.start();
+
+
+//        StorageLoaderThread storageLoaderThread = new StorageLoaderThread(selectedData, sender,
+//                receiver, hashValue, contentType, intent);
+//        StorageLoaderThread storageLoaderThread = new StorageLoaderThread(gift, selectedData, intent);
+//        storageLoaderThread.start();
     }
 
 
@@ -59,13 +73,31 @@ public class UploadingSplashActivity extends AppCompatActivity {
      */
     public class StorageLoaderThread extends Thread {
         private Uri selectedData;
-        private String sender, receiver;
+        private String sender, receiver, hashValue;
         private Intent intent;
+        private HashMap<String, String> contentType;
+        private Gift gift;
+        private FragmentManager fragmentManager = getSupportFragmentManager();
+        private final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        private final CreateGiftFragment createGiftFragment = new CreateGiftFragment();
 
-        public StorageLoaderThread(Uri selectedData, String sender, String receiver, Intent intent) {
+        public StorageLoaderThread(Uri selectedData, String sender, String receiver,
+                                   String hashValue, HashMap<String, String> contentType, Intent intent) {
             this.selectedData = selectedData;
             this.sender = sender;
             this.receiver = receiver;
+            this.hashValue = hashValue;
+            this.contentType = contentType;
+            this.intent = intent;
+        }
+
+        public StorageLoaderThread(Gift gift, Uri selectedData, Intent intent){
+            this.gift = gift;
+            sender = gift.getSender();
+            receiver = gift.getReceiver();
+            hashValue = gift.getHashValue();
+            contentType = gift.getContentType();
+            this.selectedData = selectedData;
             this.intent = intent;
         }
 
@@ -75,6 +107,12 @@ public class UploadingSplashActivity extends AppCompatActivity {
             public void run() {
                 //go back to the demo activity
                 startActivity(intent);
+                Log.d("LPC", "stored the image in cloud");
+                //go back to create gift fragment
+//                Bundle b = new Bundle();
+//                b.putSerializable("gift", gift);
+//                createGiftFragment.setArguments(b);
+//                fragmentTransaction.replace(R.id., createGiftFragment).commit();
             }
         };
 
@@ -83,7 +121,9 @@ public class UploadingSplashActivity extends AppCompatActivity {
             //should very solidly for now
             if (selectedData.toString().contains("image")) {
                 Log.d("LPC", "onActivityResult: here");
-                String path = "gift/" + sender + "_to_" + receiver + "/pictureGift.jpg";
+                String fileName = "image_"+contentType.size();
+                String path = "gift/" + hashValue + "/"+fileName+".jpg";
+                Log.d("LPC", "cloud storage image file path : "+path);
                 StorageReference giftRef = storageRef.child(path);
                 UploadTask uploadTask = giftRef.putFile(selectedData);
                 uploadTask.addOnCompleteListener(UploadingSplashActivity.this, new OnCompleteListener<UploadTask.TaskSnapshot>() {
@@ -92,9 +132,12 @@ public class UploadingSplashActivity extends AppCompatActivity {
                         Log.d("LPC", "image upload complete!");
                     }
                 });
+                gift.addContentType(Gift.ADD_IMAGE_GIFT_KEY);
             } else if (selectedData.toString().contains("video")) {
                 Log.d("LPC", "onActivityResult: here");
-                String path = "gift/" + sender + "_to_" + receiver + "/videoGift.mp4";
+                String fileName = "video_"+contentType.size();
+                String path = "gift/" + hashValue + "/"+fileName+".mp4";
+                Log.d("LPC", "cloud storage image file path : "+path);
                 StorageReference giftRef = storageRef.child(path);
                 UploadTask uploadTask = giftRef.putFile(selectedData);
                 uploadTask.addOnCompleteListener(UploadingSplashActivity.this, new OnCompleteListener<UploadTask.TaskSnapshot>() {
@@ -103,6 +146,8 @@ public class UploadingSplashActivity extends AppCompatActivity {
                         Log.d("LPC", "video upload complete!");
                     }
                 });
+                gift.addContentType(Gift.ADD_VIDEO_GIFT_KEY);
+                Log.d("LPC", "gift contentType: "+gift.getContentType().toString());
             }
             handler.post(runnable);
         }

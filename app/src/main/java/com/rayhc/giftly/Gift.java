@@ -1,5 +1,8 @@
 package com.rayhc.giftly;
 
+import java.io.Serializable;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 /**
@@ -15,7 +18,13 @@ import java.util.HashMap;
  * 1. the gift being opened was actually sent to the user (matching user id of recipient)
  * 2. double checking the sender & recipient ID's match
  */
-public class Gift {
+public class Gift implements Serializable {
+    //public keys
+    public static final int ADD_LINK_GIFT_KEY = 1;
+    public static final int ADD_IMAGE_GIFT_KEY = 2;
+    public static final int ADD_VIDEO_GIFT_KEY = 3;
+
+
     //attributes
 //    private String id;                                  //synonymous to pin
     private String link;                                //nulled out if not sending a link
@@ -41,14 +50,15 @@ public class Gift {
     /**
      * Default Constructor
      */
-    public Gift(){}
+    public Gift() {
+    }
 
     /**
      * Value constructor
      */
     public Gift(String link, HashMap<String, String> contentType, HashMap<String, String> giftType,
                 String sender, String receiver, String message, long timeOpened, long timeCreated,
-                boolean isEncrypted, String hashValue, String qrCode, boolean opened){
+                boolean isEncrypted, String hashValue, String qrCode, boolean opened) {
         this.link = link;
         this.contentType = contentType;
         this.giftType = giftType;
@@ -72,7 +82,6 @@ public class Gift {
 //    public String getId() {
 //        return id;
 //    }
-
     public String getLink() {
         return link;
     }
@@ -93,11 +102,17 @@ public class Gift {
         return receiver;
     }
 
-    public String getMessage() { return message; }
+    public String getMessage() {
+        return message;
+    }
 
-    public long getTimeCreated() { return timeCreated; }
+    public long getTimeCreated() {
+        return timeCreated;
+    }
 
-    public long getTimeOpened() { return timeOpened; }
+    public long getTimeOpened() {
+        return timeOpened;
+    }
 
     public boolean isEncrypted() {
         return isEncrypted;
@@ -139,11 +154,17 @@ public class Gift {
         this.receiver = receiver;
     }
 
-    public void setTimeCreated(long timeCreated) { this.timeCreated = timeCreated; }
+    public void setTimeCreated(long timeCreated) {
+        this.timeCreated = timeCreated;
+    }
 
-    public void setTimeOpened(long timeOpened) { this.timeOpened = timeOpened; }
+    public void setTimeOpened(long timeOpened) {
+        this.timeOpened = timeOpened;
+    }
 
-    public void setMessage(String message) { this.message = message; }
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
     public void setEncrypted(boolean encrypted) {
         isEncrypted = encrypted;
@@ -159,6 +180,41 @@ public class Gift {
 
     public void setOpened(boolean opened) {
         this.opened = opened;
+    }
+
+    public String createHashValue() {
+        String base = "timeCreated=" + timeCreated +
+                ", receiver=" + receiver +
+                ", sender=" + sender;
+        String res = "";
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+            messageDigest.digest(base.getBytes());
+            byte[] md5 = messageDigest.digest();
+            // Create Hex String
+            StringBuilder hexString = new StringBuilder();
+            for (byte aMessageDigest : md5) {
+                String h = Integer.toHexString(0xFF & aMessageDigest);
+                while (h.length() < 2)
+                    h = "0" + h;
+                hexString.append(h);
+            }
+            res = hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+
+    public void addContentType(int type){
+        int size = getContentType().size();
+        String newKey = "ID "+size;
+        String newValue = "";
+        if(type == ADD_LINK_GIFT_KEY) newValue = "link";
+        else if(type == ADD_IMAGE_GIFT_KEY) newValue = "image";
+        else if(type == ADD_VIDEO_GIFT_KEY) newValue = "video";
+        getContentType().put(newKey, newValue);
     }
 
     //for testing purposes
