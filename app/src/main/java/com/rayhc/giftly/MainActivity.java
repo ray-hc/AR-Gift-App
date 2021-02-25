@@ -58,17 +58,17 @@ public class MainActivity extends AppCompatActivity {
 //        startActivity(intent);
 
         //go to create gift
-        Gift gift = new Gift();
-        gift.setReceiver("Logan 2");
-        gift.setSender("Logan 1");
-        gift.setTimeCreated(100);
-        gift.setHashValue(gift.createHashValue());
-        gift.setContentType(new HashMap<>());
-//        Intent intent = new Intent(this, ImageActivity.class);
-//        Intent intent = new Intent(this, VideoActivity.class);
-        Intent intent = new Intent(this, LinkActivity.class);
-        intent.putExtra("GIFT", gift);
-        startActivity(intent);
+//        Gift gift = new Gift();
+//        gift.setReceiver("Logan 2");
+//        gift.setSender("Logan 1");
+//        gift.setTimeCreated(100);
+//        gift.setHashValue(gift.createHashValue());
+//        gift.setContentType(new HashMap<>());
+////        Intent intent = new Intent(this, ImageActivity.class);
+////        Intent intent = new Intent(this, VideoActivity.class);
+//        Intent intent = new Intent(this, LinkActivity.class);
+//        intent.putExtra("GIFT", gift);
+//        startActivity(intent);
 
     }
 

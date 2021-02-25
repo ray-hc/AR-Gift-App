@@ -24,6 +24,7 @@ public class CreateGiftFragment extends Fragment {
 
          linkButton.setOnClickListener(v12 -> {
              Intent intent = new Intent(getActivity(), LinkActivity.class);
+             intent.putExtra("GIFT", newGift);
              startActivity(intent);
              //pass back string and save to string database (DB 1)
          });
@@ -31,6 +32,7 @@ public class CreateGiftFragment extends Fragment {
         imageButton.setOnClickListener(v1 -> {
             Intent intent = new Intent(getActivity(), ImageActivity.class);
             //extras here
+            intent.putExtra("GIFT", newGift);
             startActivity(intent);
             //save to image/vid db (DB 2)
         });
@@ -38,6 +40,7 @@ public class CreateGiftFragment extends Fragment {
         videoButton.setOnClickListener(v13 -> {
             Intent intent = new Intent(getActivity(), VideoActivity.class);
             //extras here
+            intent.putExtra("GIFT", newGift);
             startActivity(intent);
             //save to image/vid db (DB 2)
         });
