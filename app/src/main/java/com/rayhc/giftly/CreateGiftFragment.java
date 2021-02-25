@@ -17,40 +17,32 @@ public class CreateGiftFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         View v =  layoutInflater.inflate(R.layout.fragment_create_gift, container, false);
         newGift = new Gift();
-        linkButton = getActivity().findViewById(R.id.link_button);
-        imageButton = getActivity().findViewById(R.id.image_button);
-        videoButton = getActivity().findViewById(R.id.video_button);
+        linkButton = v.findViewById(R.id.link_button);
+        imageButton = v.findViewById(R.id.image_button);
+        videoButton = v.findViewById(R.id.video_button);
          newGift.setTimeCreated(System.currentTimeMillis());
 
-         linkButton.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View v) {
-                 Intent intent = new Intent(getActivity(), LinkActivity.class);
-                 startActivity(intent);
-                 //pass back string and save to string database (DB 1)
-             }
+         linkButton.setOnClickListener(v12 -> {
+             Intent intent = new Intent(getActivity(), LinkActivity.class);
+             startActivity(intent);
+             //pass back string and save to string database (DB 1)
          });
 
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ImageActivity.class);
-                //extras here
-                startActivity(intent);
-                //save to image/vid db (DB 2)
-            }
+        imageButton.setOnClickListener(v1 -> {
+            Intent intent = new Intent(getActivity(), ImageActivity.class);
+            //extras here
+            startActivity(intent);
+            //save to image/vid db (DB 2)
         });
 
-        videoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), VideoActivity.class);
-                //extras here
-                startActivity(intent);
-                //save to image/vid db (DB 2)
-            }
+        videoButton.setOnClickListener(v13 -> {
+            Intent intent = new Intent(getActivity(), VideoActivity.class);
+            //extras here
+            startActivity(intent);
+            //save to image/vid db (DB 2)
         });
 
         return v;
     }
+
 }
