@@ -17,6 +17,8 @@ import java.util.HashMap;
  * Gifts will go through "validation" as follows:
  * 1. the gift being opened was actually sent to the user (matching user id of recipient)
  * 2. double checking the sender & recipient ID's match
+ *
+ * new edit
  */
 public class Gift implements Serializable {
     //public keys
