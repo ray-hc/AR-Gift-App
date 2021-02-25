@@ -27,7 +27,7 @@ public class Gift implements Serializable {
 
     //attributes
 //    private String id;                                  //synonymous to pin
-    private String link;                                //nulled out if not sending a link
+    private HashMap<String, String> links;                                //nulled out if not sending a link
     private HashMap<String, String> contentType;        /*i think it'll be something like "1" is a link,
                                                         "2" is a multimedia file, etc.
                                                         Need to be a map of strings (but will hold ints) for sending multiple
@@ -56,10 +56,10 @@ public class Gift implements Serializable {
     /**
      * Value constructor
      */
-    public Gift(String link, HashMap<String, String> contentType, HashMap<String, String> giftType,
+    public Gift(HashMap<String, String> links, HashMap<String, String> contentType, HashMap<String, String> giftType,
                 String sender, String receiver, String message, long timeOpened, long timeCreated,
                 boolean isEncrypted, String hashValue, String qrCode, boolean opened) {
-        this.link = link;
+        this.links = links;
         this.contentType = contentType;
         this.giftType = giftType;
         this.sender = sender;
@@ -76,15 +76,15 @@ public class Gift implements Serializable {
     //TODO: Probably need an intermediate constructor that doesn't take every parameter?
     //RESOLVED: just use intermediate setters as the gift is being built up
 
+
     /**
      * Getters & Setters
      */
 //    public String getId() {
 //        return id;
 //    }
-    public String getLink() {
-        return link;
-    }
+
+    public HashMap<String, String> getLinks() { return links; }
 
     public HashMap<String, String> getContentType() {
         return contentType;
@@ -134,13 +134,10 @@ public class Gift implements Serializable {
 //        this.id = id;
 //    }
 
-    public void setLink(String link) {
-        this.link = link;
-    }
 
-    public void setContentType(HashMap<String, String> contentType) {
-        this.contentType = contentType;
-    }
+    public void setLinks(HashMap<String, String> links) { this.links = links; }
+
+    public void setContentType(HashMap<String, String> contentType) { this.contentType = contentType; }
 
     public void setGiftType(HashMap<String, String> giftType) {
         this.giftType = giftType;
@@ -184,7 +181,6 @@ public class Gift implements Serializable {
 
     public String createHashValue() {
         String base = "timeCreated=" + timeCreated +
-                ", receiver=" + receiver +
                 ", sender=" + sender;
         String res = "";
         try {
@@ -206,15 +202,18 @@ public class Gift implements Serializable {
         return res;
     }
 
-
-    public void addContentType(int type){
+    public void addLink(String link){
         int size = getContentType().size();
         String newKey = "ID "+size;
+        getContentType().put(newKey, link);
+    }
+
+
+    public void addContentType(String fileName){
         String newValue = "";
-        if(type == ADD_LINK_GIFT_KEY) newValue = "link";
-        else if(type == ADD_IMAGE_GIFT_KEY) newValue = "image";
-        else if(type == ADD_VIDEO_GIFT_KEY) newValue = "video";
-        getContentType().put(newKey, newValue);
+        if(fileName.startsWith("image")) newValue = "image";
+        else if(fileName.startsWith("video")) newValue = "video";
+        getContentType().put(fileName, newValue);
     }
 
     //for testing purposes

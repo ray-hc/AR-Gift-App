@@ -1,27 +1,45 @@
 package com.rayhc.giftly;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 public class ImageActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_PICK_FROM_GALLERY = 2;
 
+    //storage ref
+    private FirebaseStorage mStorage;
+    private StorageReference storageRef;
+
     //widgets
     private ImageView mImageView;
     private Button mChooseButton, mSaveButton, mCancelButton;
+    private ProgressBar mProgressBar;
 
     //data from gift
     private Gift gift;
@@ -34,10 +52,15 @@ public class ImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image);
 
+        //firebase stuff
+        mStorage = FirebaseStorage.getInstance();
+        storageRef = mStorage.getReference();
+
         //get data from gift
         Intent startIntent = getIntent();
         gift = (Gift) startIntent.getSerializableExtra("GIFT");
         Log.d("LPC", "onCreate: saved gift: "+gift.toString());
+        Log.d("LPC", "image activity: gift contentType: "+gift.getContentType().toString());
 
         //wire button and image view
         mChooseButton = (Button) findViewById(R.id.image_choose_button);
@@ -45,6 +68,8 @@ public class ImageActivity extends AppCompatActivity {
         mSaveButton.setEnabled(false);
         mCancelButton = (Button) findViewById(R.id.image_cancel_button);
         mImageView = (ImageView) findViewById(R.id.chosen_image);
+        mProgressBar = (ProgressBar) findViewById(R.id.image_progress_bar);
+        mProgressBar.setVisibility(View.GONE);
 
         //wire button callbacks
         mChooseButton.setOnClickListener(new View.OnClickListener() {
@@ -65,7 +90,21 @@ public class ImageActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        //handle if from the review activity
+        if(startIntent.getBooleanExtra("FROM REVIEW", false)){
+            String label = startIntent.getStringExtra("FILE LABEL");
+            String filePath = gift.getContentType().get(label);
+            Log.d("LPC", "image activity file path: "+filePath);
+            mSaveButton.setEnabled(true);
+            mImageView.setVisibility(View.INVISIBLE);
+            mProgressBar.setVisibility(View.VISIBLE);
+            ImageReaderThread imageReaderThread = new ImageReaderThread(label);
+            imageReaderThread.start();
+//            updateView(label);
+        }
     }
+
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
@@ -120,5 +159,89 @@ public class ImageActivity extends AppCompatActivity {
             mImageView.setImageURI(null);
             mImageView.setImageURI(currentData);
         }
+    }
+
+    /**
+     * Thread to load in the image when reading from cloud
+     */
+    public class ImageReaderThread extends Thread{
+        private final String label;
+        private Bitmap bitmap;
+        public ImageReaderThread(String label){
+            this.label = label;
+        }
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                mProgressBar.setVisibility(View.GONE);
+                mImageView.setVisibility(View.VISIBLE);
+                mImageView.setImageBitmap(bitmap);
+            }
+        };
+
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        @Override
+        public void run() {
+            super.run();
+            String filePath = "gift/" + gift.getHashValue()+ "/"+label;
+            Log.d("LPC", "image file path: " + filePath);
+            StorageReference imgRef = storageRef.child(filePath);
+            File localFile = null;
+            try {
+                localFile = File.createTempFile("tempImg", "jpg");
+                Log.d("LPC", "local image file was made ");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            File finalLocalFile = localFile;
+            imgRef.getFile(localFile).addOnCompleteListener(ImageActivity.this, new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        mImageView.setVisibility(View.VISIBLE);
+                        Log.d("LPC", "image download successful");
+                        bitmap = BitmapFactory.decodeFile(finalLocalFile.getAbsolutePath());
+//                        mImageView.setImageBitmap(bitmap);
+                        handler.post(runnable);
+                    } else {
+                        Log.d("LPC", "image download failed");
+                    }
+                }
+            });
+        }
+    }
+
+
+
+
+    public void updateView(String label){
+        String filePath = "gift/" + gift.getHashValue()+ "/"+label;
+        Log.d("LPC", "image file path: " + filePath);
+        StorageReference imgRef = storageRef.child(filePath);
+        File localFile = null;
+        try {
+            localFile = File.createTempFile("tempImg", "jpg");
+            Log.d("LPC", "local image file was made ");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        File finalLocalFile = localFile;
+        imgRef.getFile(localFile).addOnCompleteListener(ImageActivity.this, new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
+                if (task.isSuccessful()) {
+                    mImageView.setVisibility(View.VISIBLE);
+                    Log.d("LPC", "image download successful");
+                    Bitmap bitmap = BitmapFactory.decodeFile(finalLocalFile.getAbsolutePath());
+                    mImageView.setImageBitmap(bitmap);
+                } else {
+                    Log.d("LPC", "image download failed");
+                }
+            }
+        });
     }
 }

@@ -62,7 +62,7 @@ public class LinkActivity extends AppCompatActivity {
         String link = mEditText.getText().toString();
         try {
             new URL(link);
-            gift.setLink(link);
+            gift.addLink(link);
             Log.d("LPC", "set gift link to: " + link);
         } catch (MalformedURLException e) {
             showErrorDialog();

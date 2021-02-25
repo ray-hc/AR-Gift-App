@@ -116,7 +116,8 @@ public class FirebaseDemoActivity extends AppCompatActivity {
         gift1.setReceiver("B");
         gift1.setSender("A");
         gift1.setEncrypted(false);
-        gift1.setLink("https://www.google.com/");
+        gift1.setLinks(new HashMap<>());
+        gift1.addLink("https://google.com");
 
         gift2 = new Gift();
         gift2.setContentType(null);
@@ -127,7 +128,8 @@ public class FirebaseDemoActivity extends AppCompatActivity {
         gift2.setReceiver("C");
         gift2.setSender("B");
         gift2.setEncrypted(false);
-        gift2.setLink("https://en.wikipedia.org/wiki/Main_Page");
+        gift1.setLinks(new HashMap<>());
+        gift1.addLink("https://wikipedia.com");
 
         //text view
         mTextView = (TextView) findViewById(R.id.text);
@@ -240,7 +242,7 @@ public class FirebaseDemoActivity extends AppCompatActivity {
                         Log.d("LPC", "snapshot: " + snapshot.getValue());
                         if (snapshot.exists()) {
                             Gift gift = snapshot.child(gift1.getHashValue()).getValue(Gift.class);
-                            mText = gift.getLink();
+                            mText = gift.getLinks().get("ID "+(gift.getLinks().size()-1));
                             Log.d("LPC", "link from search bar press: "+mText);
                             //set content map
                             contentMap = gift.getContentType();
@@ -289,7 +291,7 @@ public class FirebaseDemoActivity extends AppCompatActivity {
                         Log.d("LPC", "snapshot: " + snapshot.getValue());
                         if (snapshot.exists()) {
                             Gift gift = snapshot.child(mPin).getValue(Gift.class);
-                            mText = gift.getLink();
+                            mText = gift.getLinks().get("ID "+(gift.getLinks().size()-1));
                             Log.d("LPC", "link from search bar press: "+mText);
                             //set content map
                             contentMap = gift.getContentType();
