@@ -65,7 +65,8 @@ public class MainActivity extends AppCompatActivity {
         gift.setHashValue(gift.createHashValue());
         gift.setContentType(new HashMap<>());
 //        Intent intent = new Intent(this, ImageActivity.class);
-        Intent intent = new Intent(this, VideoActivity.class);
+//        Intent intent = new Intent(this, VideoActivity.class);
+        Intent intent = new Intent(this, LinkActivity.class);
         intent.putExtra("GIFT", gift);
         startActivity(intent);
 
