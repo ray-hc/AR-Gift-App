@@ -142,10 +142,6 @@ public class ImageActivity extends AppCompatActivity {
 
     }
 
-    public void onCancel() {
-
-    }
-
     //******ON ACTIVITY RESULT******//
 
     @Override

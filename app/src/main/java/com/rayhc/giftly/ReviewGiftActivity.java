@@ -59,11 +59,20 @@ public class ReviewGiftActivity extends AppCompatActivity {
 
                 Intent intent;
                 //go to an ImageReview if an image
-                intent = new Intent(getApplicationContext(), ImageActivity.class);
-                intent.putExtra("GIFT", gift);
-                intent.putExtra("FILE LABEL", label);
-                intent.putExtra("FROM REVIEW", true);
-                startActivity(intent);
+                if(label.startsWith("image")) {
+                    intent = new Intent(getApplicationContext(), ImageActivity.class);
+                    intent.putExtra("GIFT", gift);
+                    intent.putExtra("FILE LABEL", label);
+                    intent.putExtra("FROM REVIEW", true);
+                    startActivity(intent);
+                } else if(label.startsWith("video")){
+                    intent = new Intent(getApplicationContext(), VideoActivity.class);
+                    intent.putExtra("GIFT", gift);
+                    intent.putExtra("FILE LABEL", label);
+                    intent.putExtra("FROM REVIEW", true);
+                    startActivity(intent);
+                }
+
             }
         });
 
