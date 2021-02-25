@@ -184,7 +184,6 @@ public class Gift implements Serializable {
 
     public String createHashValue() {
         String base = "timeCreated=" + timeCreated +
-                ", receiver=" + receiver +
                 ", sender=" + sender;
         String res = "";
         try {
