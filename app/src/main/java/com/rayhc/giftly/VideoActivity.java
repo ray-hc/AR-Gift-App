@@ -17,13 +17,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
@@ -42,7 +46,7 @@ public class VideoActivity extends AppCompatActivity {
 
     //widgets
     private VideoView mVideoView;
-    private Button mChooseButton, mSaveButton, mCancelButton;
+    private Button mChooseButton, mSaveButton, mCancelButton, mDeleteButton;
     private MyMediaController mMediaController;
     private ProgressBar mProgressBar;
 
@@ -75,6 +79,8 @@ public class VideoActivity extends AppCompatActivity {
         mChooseButton = (Button) findViewById(R.id.video_choose_button);
         mSaveButton = (Button) findViewById(R.id.video_save_button);
         mSaveButton.setEnabled(false);
+        mDeleteButton = (Button) findViewById(R.id.video_delete_button);
+        mDeleteButton.setVisibility(View.GONE);
         mCancelButton = (Button) findViewById(R.id.video_cancel_button);
         mProgressBar = (ProgressBar) findViewById(R.id.video_progress_bar);
         mProgressBar.setVisibility(View.GONE);
@@ -104,6 +110,12 @@ public class VideoActivity extends AppCompatActivity {
                 finish();
             }
         });
+        mDeleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onDelete();
+            }
+        });
 
         //handle if from the review activity
         if(startIntent.getBooleanExtra("FROM REVIEW", false)){
@@ -111,6 +123,7 @@ public class VideoActivity extends AppCompatActivity {
 //            String filePath = gift.getContentType().get(label);
 //            Log.d("LPC", "video activity file path: "+filePath);
             mSaveButton.setEnabled(true);
+            mDeleteButton.setVisibility(View.VISIBLE);
             mVideoView.setVisibility(View.INVISIBLE);
             mProgressBar.setVisibility(View.VISIBLE);
             VideoReaderThread videoReaderThread = new VideoReaderThread(label);
@@ -147,8 +160,14 @@ public class VideoActivity extends AppCompatActivity {
 
     }
 
-    public void onCancel() {
-
+    /**
+     * Delete the chosen video from the db and remove it from the gifts contents
+     */
+    public void onDelete(){
+        Intent intent = new Intent(this, ReviewGiftActivity.class);
+        intent.putExtra("GIFT", gift);
+        VideoDeleterThread videoDeleterThread = new VideoDeleterThread(mFileLabel, intent);
+        videoDeleterThread.start();
     }
 
     //******ON ACTIVITY RESULT******//
@@ -244,5 +263,61 @@ public class VideoActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    /**
+     * Thread for deleting the image from the DB and removing it from the gift's contents
+     */
+    public class VideoDeleterThread extends Thread{
+        private String label;
+        private Intent intent;
+
+        public VideoDeleterThread(String label, Intent intent){
+            this.label = label;
+            this.intent = intent;
+        }
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                startActivity(intent);
+                Toast.makeText(getApplicationContext(), ""+label+" was deleted", Toast.LENGTH_SHORT)
+                        .show();
+            }
+        };
+
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        @Override
+        public void run() {
+            super.run();
+            String filePath = "gift/" + gift.getHashValue()+ "/"+label;
+            Log.d("LPC", "image file path: " + filePath);
+            StorageReference imgRef = storageRef.child(filePath);
+            imgRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    gift.getContentType().remove(label);
+                    handler.post(runnable);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    showErrorDialog();
+                }
+            });
+        }
+    }
+
+    /**
+     * Error pop-up
+     */
+    public void showErrorDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(VideoActivity.this);
+        builder.setMessage("There has been an error deleting your file. Please try again")
+                .setTitle("Error")
+                .setPositiveButton(android.R.string.ok, null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".ImageActivity">
 
+    <!--DELETE BUTTON (REVIEW MODE ONLY)-->
+    <Button
+        android:id="@+id/image_delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/chosen_image_label"
+        android:layout_margin="30dp"
+        android:text="DELETE"/>
+
     <!--IMAGE VIEW-->
     <TextView
         android:id="@+id/chosen_image_label"

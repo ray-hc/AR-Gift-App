@@ -14,12 +14,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
@@ -38,7 +42,7 @@ public class ImageActivity extends AppCompatActivity {
 
     //widgets
     private ImageView mImageView;
-    private Button mChooseButton, mSaveButton, mCancelButton;
+    private Button mChooseButton, mSaveButton, mCancelButton, mDeleteButton;
     private ProgressBar mProgressBar;
 
     //data from gift
@@ -72,6 +76,8 @@ public class ImageActivity extends AppCompatActivity {
         mChooseButton = (Button) findViewById(R.id.image_choose_button);
         mSaveButton = (Button) findViewById(R.id.image_save_button);
         mSaveButton.setEnabled(false);
+        mDeleteButton = (Button) findViewById(R.id.image_delete_button);
+        mDeleteButton.setVisibility(View.GONE);
         mCancelButton = (Button) findViewById(R.id.image_cancel_button);
         mImageView = (ImageView) findViewById(R.id.chosen_image);
         mProgressBar = (ProgressBar) findViewById(R.id.image_progress_bar);
@@ -96,16 +102,22 @@ public class ImageActivity extends AppCompatActivity {
                 finish();
             }
         });
+        mDeleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onDelete();
+            }
+        });
 
         //handle if from the review activity
         if(mFromReview){
-            String label = startIntent.getStringExtra("FILE LABEL");
 //            String filePath = gift.getContentType().get(label);
 //            Log.d("LPC", "image activity file path: "+filePath);
             mSaveButton.setEnabled(true);
+            mDeleteButton.setVisibility(View.VISIBLE);
             mImageView.setVisibility(View.INVISIBLE);
             mProgressBar.setVisibility(View.VISIBLE);
-            ImageReaderThread imageReaderThread = new ImageReaderThread(label);
+            ImageReaderThread imageReaderThread = new ImageReaderThread(mFileLabel);
             imageReaderThread.start();
 //            updateView(label);
         }
@@ -148,6 +160,16 @@ public class ImageActivity extends AppCompatActivity {
 //        splashIntent.putExtra("CONTENT_TYPE", contentType);
         startActivity(splashIntent);
 
+    }
+
+    /**
+     * Delete the chosen image from the db and remove it from the gifts contents
+     */
+    public void onDelete(){
+        Intent intent = new Intent(this, ReviewGiftActivity.class);
+        intent.putExtra("GIFT", gift);
+        ImageDeleterThread imageDeleterThread = new ImageDeleterThread(mFileLabel, intent);
+        imageDeleterThread.start();
     }
 
     //******ON ACTIVITY RESULT******//
@@ -216,6 +238,62 @@ public class ImageActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    /**
+     * Thread for deleting the image from the DB and removing it from the gift's contents
+     */
+    public class ImageDeleterThread extends Thread{
+        private String label;
+        private Intent intent;
+
+        public ImageDeleterThread(String label, Intent intent){
+            this.label = label;
+            this.intent = intent;
+        }
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                startActivity(intent);
+                Toast.makeText(getApplicationContext(), ""+label+" was deleted", Toast.LENGTH_SHORT)
+                .show();
+            }
+        };
+
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        @Override
+        public void run() {
+            super.run();
+            String filePath = "gift/" + gift.getHashValue()+ "/"+label;
+            Log.d("LPC", "image file path: " + filePath);
+            StorageReference imgRef = storageRef.child(filePath);
+            imgRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    gift.getContentType().remove(label);
+                    handler.post(runnable);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    showErrorDialog();
+                }
+            });
+        }
+    }
+
+    /**
+     * Error pop-up
+     */
+    public void showErrorDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(ImageActivity.this);
+        builder.setMessage("There has been an error deleting your file. Please try again")
+                .setTitle("Error")
+                .setPositiveButton(android.R.string.ok, null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 
