@@ -48,23 +48,28 @@ public class VideoActivity extends AppCompatActivity {
 
     //data from gift
     private Gift gift;
+    private Uri currentData;
     private String sender, recipient, hashValue;
     private HashMap<String, String> contentType;
 
-    private Uri currentData;
+    //from review
+    private boolean mFromReview;
+    private String mFileLabel;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
 
+        //firebase stuff
+        mStorage = FirebaseStorage.getInstance();
+        storageRef = mStorage.getReference();
+
         //get data from gift
         Intent startIntent = getIntent();
         gift = (Gift) startIntent.getSerializableExtra("GIFT");
         Log.d("LPC", "onCreate: saved gift: "+gift.toString());
-
-        //firebase stuff
-        mStorage = FirebaseStorage.getInstance();
-        storageRef = mStorage.getReference();
+        mFromReview = startIntent.getBooleanExtra("FROM REVIEW", false);
+        mFileLabel = startIntent.getStringExtra("FILE LABEL");
 
         //wire button and video view
         mChooseButton = (Button) findViewById(R.id.video_choose_button);
@@ -73,8 +78,8 @@ public class VideoActivity extends AppCompatActivity {
         mCancelButton = (Button) findViewById(R.id.video_cancel_button);
         mProgressBar = (ProgressBar) findViewById(R.id.video_progress_bar);
         mProgressBar.setVisibility(View.GONE);
-
         mVideoView = (VideoView) findViewById(R.id.chosen_video);
+
         //add a media controller
         mMediaController = new MyMediaController(this);
         mMediaController.setAnchorView(mVideoView);
@@ -103,8 +108,8 @@ public class VideoActivity extends AppCompatActivity {
         //handle if from the review activity
         if(startIntent.getBooleanExtra("FROM REVIEW", false)){
             String label = startIntent.getStringExtra("FILE LABEL");
-            String filePath = gift.getContentType().get(label);
-            Log.d("LPC", "video activity file path: "+filePath);
+//            String filePath = gift.getContentType().get(label);
+//            Log.d("LPC", "video activity file path: "+filePath);
             mSaveButton.setEnabled(true);
             mVideoView.setVisibility(View.INVISIBLE);
             mProgressBar.setVisibility(View.VISIBLE);
@@ -136,6 +141,8 @@ public class VideoActivity extends AppCompatActivity {
         Intent splashIntent = new Intent(this, UploadingSplashActivity.class);
         splashIntent.putExtra("GIFT", gift);
         splashIntent.putExtra("URI", currentData);
+        splashIntent.putExtra("FROM REVIEW", mFromReview);
+        splashIntent.putExtra("FILE LABEL", mFileLabel);
         startActivity(splashIntent);
 
     }

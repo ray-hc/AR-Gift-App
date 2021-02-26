@@ -26,7 +26,6 @@ public class ReviewGiftActivity extends AppCompatActivity {
     private Gift gift;
 
     private String [] data1 ={"Link 1", "Link 2", "Link 3", "Link 4", "Link 5"};
-    private String [] data2 ={"Kirit", "Miral", "Bhushan", "Jiten", "Ajay", "Kamlesh"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

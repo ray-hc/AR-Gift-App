@@ -46,6 +46,10 @@ public class ImageActivity extends AppCompatActivity {
     private String sender, recipient, hashValue;
     private HashMap<String, String> contentType;
 
+    //from review
+    private boolean mFromReview;
+    private String mFileLabel;
+
     private Uri currentData;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -61,6 +65,8 @@ public class ImageActivity extends AppCompatActivity {
         gift = (Gift) startIntent.getSerializableExtra("GIFT");
         Log.d("LPC", "onCreate: saved gift: "+gift.toString());
         Log.d("LPC", "image activity: gift contentType: "+gift.getContentType().toString());
+        mFromReview = startIntent.getBooleanExtra("FROM REVIEW", false);
+        mFileLabel = startIntent.getStringExtra("FILE LABEL");
 
         //wire button and image view
         mChooseButton = (Button) findViewById(R.id.image_choose_button);
@@ -92,10 +98,10 @@ public class ImageActivity extends AppCompatActivity {
         });
 
         //handle if from the review activity
-        if(startIntent.getBooleanExtra("FROM REVIEW", false)){
+        if(mFromReview){
             String label = startIntent.getStringExtra("FILE LABEL");
-            String filePath = gift.getContentType().get(label);
-            Log.d("LPC", "image activity file path: "+filePath);
+//            String filePath = gift.getContentType().get(label);
+//            Log.d("LPC", "image activity file path: "+filePath);
             mSaveButton.setEnabled(true);
             mImageView.setVisibility(View.INVISIBLE);
             mProgressBar.setVisibility(View.VISIBLE);
@@ -134,6 +140,8 @@ public class ImageActivity extends AppCompatActivity {
         Intent splashIntent = new Intent(this, UploadingSplashActivity.class);
         splashIntent.putExtra("GIFT", gift);
         splashIntent.putExtra("URI", currentData);
+        splashIntent.putExtra("FROM REVIEW", mFromReview);
+        splashIntent.putExtra("FILE LABEL", mFileLabel);
 //        splashIntent.putExtra("SENDER", sender);
 //        splashIntent.putExtra("RECIPIENT", recipient);
 //        splashIntent.putExtra("HASH", hashValue);
