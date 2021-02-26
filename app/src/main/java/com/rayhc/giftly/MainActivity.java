@@ -16,6 +16,8 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.HashMap;
+
 public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration myAppBarConfiguration;
     FloatingActionButton actionButton;
@@ -52,7 +54,30 @@ public class MainActivity extends AppCompatActivity {
 //        startActivity(intent);
 
         //go to db demo for now
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(this, FirebaseDemoActivity.class);
+//        startActivity(intent);
+
+        //go to create gift
+//        Gift gift = new Gift();
+//        gift.setReceiver("Logan 2");
+//        gift.setSender("Logan 1");
+//        gift.setTimeCreated(100);
+//        gift.setHashValue(gift.createHashValue());
+//        gift.setContentType(new HashMap<>());
+////        Intent intent = new Intent(this, ImageActivity.class);
+////        Intent intent = new Intent(this, VideoActivity.class);
+//        Intent intent = new Intent(this, LinkActivity.class);
+//        intent.putExtra("GIFT", gift);
+//        startActivity(intent);
+
+//        Intent intent = new Intent(this, LoginActivity.class);
+//        startActivity(intent);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        return NavigationUI.navigateUp(navController, myAppBarConfiguration)
+                || super.onSupportNavigateUp();
     }
 }

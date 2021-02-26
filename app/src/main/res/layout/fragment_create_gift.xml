@@ -43,4 +43,13 @@
 
     </LinearLayout>
 
+    <Button
+        android:id="@+id/review_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_below="@+id/picker_buttons_layout"
+        android:layout_centerHorizontal="true"
+        android:text="REVIEW/EDIT GIFT"/>
+
 </RelativeLayout>

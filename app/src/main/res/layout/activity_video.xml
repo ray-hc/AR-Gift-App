@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".VideoActivity">
+
+    <!--DELETE BUTTON (REVIEW MODE ONLY)-->
+    <Button
+        android:id="@+id/video_delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/chosen_video_label"
+        android:layout_margin="30dp"
+        android:text="DELETE"/>
+
+    <!--IMAGE VIEW-->
+    <TextView
+        android:id="@+id/chosen_video_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/chosen_video"
+        android:layout_margin="10dp"
+        android:layout_centerHorizontal="true"
+        android:text="Your Video:"
+        android:textSize="25sp"/>
+    <ProgressBar
+        android:id="@+id/video_progress_bar"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="10dp"
+        android:indeterminate="true"/>
+    <VideoView
+        android:id="@+id/chosen_video"
+        android:layout_centerVertical="true"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_margin="20dp"
+        android:layout_centerHorizontal="true" />
+    <Button
+        android:id="@+id/video_choose_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/chosen_video"
+        android:layout_centerHorizontal="true"
+        android:text="Choose Video"/>
+
+    <!--BUTTON GROUP-->
+    <LinearLayout
+        android:id="@+id/video_activity_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/video_choose_button"
+        android:layout_margin="20dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/video_cancel_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="false"
+            android:layout_weight="0.5"
+            android:layout_margin="10dp"
+            android:text="Cancel"
+            />
+
+        <Button
+            android:id="@+id/video_save_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_margin="10dp"
+            android:text="Save"
+            />
+    </LinearLayout>
+
+</RelativeLayout>
