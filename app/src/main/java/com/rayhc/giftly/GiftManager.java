@@ -42,9 +42,9 @@ public class GiftManager {
         @SuppressLint("GetInstance") Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         cipher.init(Cipher.ENCRYPT_MODE, generateKey(pin));
         byte[] messageEncrypted = cipher.doFinal(gift.getMessage().getBytes(StandardCharsets.UTF_8));
-        byte[] linkEncrypted = cipher.doFinal(gift.getLink().getBytes(StandardCharsets.UTF_8));
+//        byte[] linkEncrypted = cipher.doFinal(gift.getLink().getBytes(StandardCharsets.UTF_8));
         gift.setMessage(new String(messageEncrypted, StandardCharsets.UTF_8));
-        gift.setLink(new String(linkEncrypted, StandardCharsets.UTF_8));
+//        gift.setLink(new String(linkEncrypted, StandardCharsets.UTF_8));
         return gift;
     }
 
@@ -63,7 +63,7 @@ public class GiftManager {
         @SuppressLint("GetInstance") Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         cipher.init(Cipher.DECRYPT_MODE, generateKey(pin));
         gift.setMessage(new String(cipher.doFinal(gift.getMessage().getBytes()), StandardCharsets.UTF_8));
-        gift.setLink(new String(cipher.doFinal(gift.getLink().getBytes()), StandardCharsets.UTF_8));
+//        gift.setLink(new String(cipher.doFinal(gift.getLink().getBytes()), StandardCharsets.UTF_8));
         return gift;
     }
 }
