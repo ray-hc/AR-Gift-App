@@ -211,7 +211,7 @@ public class ImageActivity extends AppCompatActivity {
         @Override
         public void run() {
             super.run();
-            String filePath = "gift/" + gift.getHashValue()+ "/"+label;
+            String filePath = "gift/" + gift.getHashValue()+ "/"+label+".jpg";
             Log.d("LPC", "image file path: " + filePath);
             StorageReference imgRef = storageRef.child(filePath);
             File localFile = null;
@@ -266,7 +266,7 @@ public class ImageActivity extends AppCompatActivity {
         @Override
         public void run() {
             super.run();
-            String filePath = "gift/" + gift.getHashValue()+ "/"+label;
+            String filePath = "gift/" + gift.getHashValue()+ "/"+label+".jpg";
             Log.d("LPC", "image file path: " + filePath);
             StorageReference imgRef = storageRef.child(filePath);
             imgRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {

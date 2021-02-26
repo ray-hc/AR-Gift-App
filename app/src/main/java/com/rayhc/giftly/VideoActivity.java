@@ -235,7 +235,7 @@ public class VideoActivity extends AppCompatActivity {
         @Override
         public void run() {
             super.run();
-            String filePath = "gift/" + gift.getHashValue()+ "/"+label;
+            String filePath = "gift/" + gift.getHashValue()+ "/"+label+".mp4";
             Log.d("LPC", "video file path: " + filePath);
             StorageReference vidRef = storageRef.child(filePath);
             File localFile = null;
@@ -291,7 +291,7 @@ public class VideoActivity extends AppCompatActivity {
         @Override
         public void run() {
             super.run();
-            String filePath = "gift/" + gift.getHashValue()+ "/"+label;
+            String filePath = "gift/" + gift.getHashValue()+ "/"+label+".mp4";
             Log.d("LPC", "image file path: " + filePath);
             StorageReference imgRef = storageRef.child(filePath);
             imgRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {

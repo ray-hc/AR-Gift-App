@@ -20,7 +20,13 @@ public class CreateGiftFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (newGift == null) {
+        Bundle extras = getArguments();
+        if(extras != null && extras.getSerializable("GIFT") != null){
+            newGift = (Gift) extras.getSerializable("GIFT");
+            Log.d("LPC", "create frag: got gift from bundle");
+            Log.d("LPC", "create frag: gift from bundle content: "+newGift.getContentType().toString());
+        } else{
+            Log.d("LPC", "create gift frag: making new gift");
             newGift = new Gift();
             newGift.setReceiver("Logan 2");
             newGift.setSender("Logan 1");
@@ -33,6 +39,7 @@ public class CreateGiftFragment extends Fragment {
 
     public View onCreateView(LayoutInflater layoutInflater,
                              ViewGroup container, Bundle savedInstanceState) {
+//        Log.d("LPC", "container id: "+getResources().getResourceName(container.getId()));
         View v = layoutInflater.inflate(R.layout.fragment_create_gift, container, false);
         Log.d("LPC", "CreateGiftFragment: onCreateView: " + newGift.toString());
         linkButton = v.findViewById(R.id.link_button);

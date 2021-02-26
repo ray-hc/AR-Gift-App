@@ -121,7 +121,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
                             try {
                                 localFile = File.createTempFile("tempImg", "jpg");
                                 Log.d("LPC", "local image file was made ");
-                                gift.getContentType().put(itemName, localFile.getAbsolutePath());
+//                                gift.getContentType().put(itemName, localFile.getAbsolutePath());
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -129,7 +129,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
                             try {
                                 localFile = File.createTempFile("tempImg", "mp4");
                                 Log.d("LPC", "local video file was made ");
-                                gift.getContentType().put(itemName, localFile.getAbsolutePath());
+//                                gift.getContentType().put(itemName, localFile.getAbsolutePath());
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
