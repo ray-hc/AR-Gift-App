@@ -68,78 +68,14 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot){
                         if(snapshot.exists()){
-                            Log.d("iandebug", "fetched old one");
-                            DataSnapshot storedUser = snapshot.child(user.getUid());
-                            activityUser = storedUser.getValue(User.class);
-                            Log.d("iandebug", "" + activityUser.getSentGifts());
-                            activityUser.addSentGifts("some gift id");
-                            db.child("users").child(activityUser.getUserId()).setValue(activityUser);
-                            Log.d("iandebug", "old one: " + activityUser);
-                        }else {
-                            User tempUser = new User();
-
-                            if(user.getDisplayName() != null) tempUser.setName(user.getDisplayName());
-                            if(user.getEmail() != null) tempUser.setEmail(user.getEmail());
-                            if(user.getPhotoUrl() != null) tempUser.setPhotoUri(user.getPhotoUrl().toString());
-                            tempUser.setEmailVerified(user.isEmailVerified());
-                            tempUser.setUserId(user.getUid());
-
-                            tempUser.setReceivedGifts(new HashMap<>());
-                            tempUser.setSentGifts(new HashMap<>());
-                            tempUser.setReceivedFriends(new HashMap<>());
-                            tempUser.setSentFriends(new HashMap<>());
-                            tempUser.setFriends(new HashMap<>());
-
-                            db.child("users").child(tempUser.getUserId()).setValue(tempUser);
-                            activityUser = tempUser;
-
-                            Log.d("iandebug", "created new user");
+                            activityUser = UserManager.snapshotToUser(snapshot, user.getUid());
                         }
+                        else activityUser = UserManager.snapshotToEmptyUser(snapshot, user);
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
                     }
                 });
-
-                /*
-                //logan says this is poopoo
-                db.child("users").child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DataSnapshot> task) {
-                        if(!task.isSuccessful()){
-                            User tempUser = new User();
-
-                            tempUser.setName(user.getDisplayName());
-                            tempUser.setEmail(user.getEmail());
-                            tempUser.setPhotoUri(user.getPhotoUrl().toString());
-                            tempUser.setEmailVerified(user.isEmailVerified());
-                            tempUser.setUserId(user.getUid());
-
-                            tempUser.setReceivedGifts(new HashMap<>());
-                            tempUser.setSentGifts(new HashMap<>());
-                            tempUser.setReceivedFriends(new HashMap<>());
-                            tempUser.setSentFriends(new HashMap<>());
-                            tempUser.setFriends(new HashMap<>());
-
-                            db.child("users").child(tempUser.getUserId()).setValue(tempUser);
-                            activityUser = tempUser;
-
-                            Log.d("iandebug", "created new user");
-                        } else {
-                            Log.d("iandebug", "fetched old one");
-                            activityUser = task.getResult().getValue(User.class);
-                            if(activityUser != null) {
-                                activityUser.addSentGifts("some gift id");
-                                db.child("users").child(activityUser.getUserId()).setValue(activityUser);
-                            }
-                            Log.d("iandebug", "old one: " + activityUser);
-                        }
-                    }
-                });
-                */
-
             } else {
                 Log.d("iandebug", "User Login Failed");
             }

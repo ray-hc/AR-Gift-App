@@ -56,5 +56,4 @@ dependencies {
     // firebase authentication dependency
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.firebaseui:firebase-ui-auth:6.4.0'
-
 }

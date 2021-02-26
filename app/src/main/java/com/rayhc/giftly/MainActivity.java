@@ -70,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
 //        intent.putExtra("GIFT", gift);
 //        startActivity(intent);
 
+//        Intent intent = new Intent(this, LoginActivity.class);
+//        startActivity(intent);
     }
 
     @Override
