@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 //        startActivity(intent);
 
         //go to db demo for now
-        Intent intent = new Intent(this, LoginActivity.class);
+        Intent intent = new Intent(this, DemoLoginActivity.class);
         startActivity(intent);
     }
 }

@@ -46,7 +46,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
 
         Log.d("LPC", "selectedData uri: " + selectedData.getPath());
 
-        Intent intent = new Intent(this, FirebaseDemoActivity.class);
+        Intent intent = new Intent(this, DemoFirebaseActivity.class);
 
         StorageLoaderThread storageLoaderThread = new StorageLoaderThread(selectedData, sender,
                 receiver, intent);

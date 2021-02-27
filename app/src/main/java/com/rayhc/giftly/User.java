@@ -78,24 +78,49 @@ public class User {
         this.emailVerified = emailVerified;
     }
 
+    public void addFriends(String uid){
+        if(this.friends == null) this.friends = new HashMap<>();
+        this.friends.put(uid, uid);
+    }
+
     public void addSentGifts(String uid){
         if(this.sentGifts == null) this.sentGifts = new HashMap<>();
-        this.sentGifts.put("ID" + this.sentGifts.size(), uid);
+        this.sentGifts.put(uid, uid);
     }
 
     public void addSentFriends(String uid){
         if(this.sentFriends == null) this.sentFriends = new HashMap<>();
-        this.sentFriends.put("ID" + this.sentFriends.size(), uid);
+        this.sentFriends.put(uid, uid);
     }
 
     public void addReceivedGifts(String uid){
         if(this.receivedGifts == null) this.receivedGifts = new HashMap<>();
-        this.receivedGifts.put("ID" + this.sentFriends.size(), uid);
+        this.receivedGifts.put(uid, uid);
     }
 
     public void addReceivedFriends(String uid){
         if(this.receivedFriends == null) this.receivedFriends = new HashMap<>();
-        this.receivedFriends.put("ID" + this.receivedFriends.size(), uid);
+        this.receivedFriends.put(uid, uid);
+    }
+
+    public void removeSentGifts(String uid){
+        if(this.sentGifts == null) return;
+        this.sentGifts.remove(uid);
+    }
+
+    public void removeSentFriends(String uid){
+        if(this.sentFriends == null) return;
+        this.sentFriends.remove(uid);
+    }
+
+    public void removeReceivedGifts(String uid){
+        if(this.receivedGifts == null) return;
+        this.receivedGifts.remove(uid);
+    }
+
+    public void removeReceivedFriends(String uid){
+        if(this.receivedFriends== null) return;
+        this.receivedFriends.remove(uid);
     }
 
     public String getUserId() {

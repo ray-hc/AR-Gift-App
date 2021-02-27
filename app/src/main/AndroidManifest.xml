@@ -12,8 +12,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Giftly">
-        <activity android:name=".UploadingSplashActivity"></activity>
-        <activity android:name=".LoginActivity" />
+        <activity android:name="com.unity3d.player.UnityPlayerActivity" android:theme="@style/UnityThemeSelector" android:screenOrientation="fullSensor" android:launchMode="singleTask" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" android:hardwareAccelerated="false">
+            <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
+            <meta-data android:name="android.notch_support" android:value="true" />
+        </activity>
+        <activity android:name=".DemoStartUnityActivity"></activity>
+        <activity android:name=".UploadingSplashActivity" />
+        <activity android:name=".DemoLoginActivity" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -24,7 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".FirebaseDemoActivity" />
+        <activity android:name=".DemoFirebaseActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
