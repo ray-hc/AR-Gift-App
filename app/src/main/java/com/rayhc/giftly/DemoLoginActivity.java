@@ -72,7 +72,8 @@ public class DemoLoginActivity extends AppCompatActivity {
                             activityUser = UserManager.snapshotToUser(snapshot, user.getUid());
                         }
                         else activityUser = UserManager.snapshotToEmptyUser(snapshot, user);
-
+                        UserManager.sendFriendRequest(activityUser, "2k3clwOpKXRqPBQwdVowh2hFu0g1"); // current user friends logan
+                        UserManager.acceptFriendRequest(activityUser, "2k3clwOpKXRqPBQwdVowh2hFu0g1");
                     }
 
                     @Override
