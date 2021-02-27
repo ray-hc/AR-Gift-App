@@ -30,6 +30,7 @@
         <activity android:name=".LinkActivity" />
         <activity android:name=".ImageActivity" />
         <activity android:name=".VideoActivity" />
+        <activity android:name=".FragmentContainerActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

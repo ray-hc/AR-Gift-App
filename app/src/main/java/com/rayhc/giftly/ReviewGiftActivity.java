@@ -25,6 +25,7 @@ public class ReviewGiftActivity extends AppCompatActivity {
     private ListView mLinkList, mMediaList;
     private Gift gift;
 
+    //TODO: change this placeholder
     private String [] data1 ={"Link 1", "Link 2", "Link 3", "Link 4", "Link 5"};
 
     @Override
@@ -37,34 +38,59 @@ public class ReviewGiftActivity extends AppCompatActivity {
         mMediaList = (ListView)findViewById(R.id.media_listView);
 
         //get gift object
-        Intent fromDownloadSpalsh = getIntent();
-        gift = (Gift) fromDownloadSpalsh.getSerializableExtra("GIFT");
+        Intent startIntent = getIntent();
+        gift = (Gift) startIntent.getSerializableExtra("GIFT");
 
-        Log.d("LPC", "from download splash - giftType : "+gift.getContentType().toString());
+        //populate the listview for media
+        Log.d("LPC", "from download splash - contentType : "+gift.getContentType().toString());
         ArrayList<String> mediaFileNames = new ArrayList<>();
         mediaFileNames.addAll(gift.getContentType().keySet());
 
+        //populate the listview for links
+        Log.d("LPC", "from download splash - contentType : "+gift.getLinks().toString());
+        ArrayList<String> linkNames = new ArrayList<>();
+        linkNames.addAll(gift.getLinks().keySet());
 
-        mLinkList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data1));
+
+        mLinkList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, linkNames));
         mMediaList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mediaFileNames));
+
+        mLinkList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String label = (String) parent.getItemAtPosition(position);
+                Log.d("LPC", "media list view position click label: "+ label);
+//                String dataPath = gift.getContentType().get(label);
+//                Log.d("LPC", "media list view position click file: "+ dataPath);
+
+                Intent intent;
+                intent = new Intent(getApplicationContext(), LinkActivity.class);
+                intent.putExtra("GIFT", gift);
+                intent.putExtra("FILE LABEL", label);
+                intent.putExtra("FROM REVIEW", true);
+                startActivity(intent);
+            }
+        });
 
         mMediaList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String label = (String) parent.getItemAtPosition(position);
                 Log.d("LPC", "media list view position click label: "+ label);
-                String dataPath = gift.getContentType().get(label);
-                Log.d("LPC", "media list view position click file: "+ dataPath);
+//                String dataPath = gift.getContentType().get(label);
+//                Log.d("LPC", "media list view position click file: "+ dataPath);
 
                 Intent intent;
-                //go to an ImageReview if an image
+                //go to ImageActivity if an image
                 if(label.startsWith("image")) {
                     intent = new Intent(getApplicationContext(), ImageActivity.class);
                     intent.putExtra("GIFT", gift);
                     intent.putExtra("FILE LABEL", label);
                     intent.putExtra("FROM REVIEW", true);
                     startActivity(intent);
-                } else if(label.startsWith("video")){
+                }
+                //go to VideoActivity if a video
+                else if(label.startsWith("video")){
                     intent = new Intent(getApplicationContext(), VideoActivity.class);
                     intent.putExtra("GIFT", gift);
                     intent.putExtra("FILE LABEL", label);
@@ -104,13 +130,4 @@ public class ReviewGiftActivity extends AppCompatActivity {
         }
     }
 
-//    /**
-//     * Media listview adapter
-//     */
-//    public class MediaListAdapter extends ArrayAdapter<HashMap<String, String>>{
-//
-//        public MediaListAdapter(@NonNull Context context, int resource, @NonNull List<HashMap<String, String>> objects) {
-//            super(context, resource, objects);
-//        }
-//    }
 }

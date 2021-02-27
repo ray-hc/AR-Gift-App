@@ -206,8 +206,8 @@ public class Gift implements Serializable {
 
     public void addLink(String link){
         int size = getContentType().size();
-        String newKey = "ID "+size;
-        getContentType().put(newKey, link);
+        String newKey = "link_ "+System.currentTimeMillis();
+        getLinks().put(newKey, link);
     }
 
 

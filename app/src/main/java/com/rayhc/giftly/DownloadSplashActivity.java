@@ -29,7 +29,7 @@ import java.util.HashMap;
 /**
  * This is loading splash screen for when the multi-media data is being download from the cloud
  *
- * When a user "reviews" or opens a gift, this will show as all of the multimedia for that gift is read in the cloud
+ * When a user opens a gift, this will show as all of the multimedia for that gift is read in the cloud
  *
  * At the end, user will be directed to the ReviewGiftActivity
  */
@@ -37,6 +37,8 @@ public class DownloadSplashActivity extends AppCompatActivity {
 
     private StorageReference storageRef;
     private FirebaseStorage mStorage;
+
+    private Gift mGift;
 
 
     @Override
@@ -51,15 +53,9 @@ public class DownloadSplashActivity extends AppCompatActivity {
         //data from demo activity intent
         Intent startIntent = getIntent();
         Gift gift = (Gift) startIntent.getSerializableExtra("GIFT");
-//        Uri selectedData = startIntent.getParcelableExtra("URI");
-////        String sender = startIntent.getStringExtra("SENDER");
-////        String receiver = startIntent.getStringExtra("RECEIVER");
-////        String hashValue = startIntent.getStringExtra("HASH");
-////        HashMap<String, String> contentType = (HashMap<String, String>) startIntent.getSerializableExtra("CONTENT_TYPE");
 
 //        Log.d("LPC", "selectedData uri: " + selectedData.getPath());
 
-        //TODO: change the end destination of this intent to the create gift fragment (not sure how to yet)
         Intent intent = new Intent(this, ReviewGiftActivity.class);
         intent.putExtra("GIFT", gift);
         StorageLoaderThread storageLoaderThread = new StorageLoaderThread(gift, intent);
@@ -80,11 +76,11 @@ public class DownloadSplashActivity extends AppCompatActivity {
         private Uri selectedData;
         private Intent intent;
         private HashMap<String, String> contentType;
-        private Gift gift;
+        private Gift newGift;
 
 
         public StorageLoaderThread(Gift gift, Intent intent){
-            this.gift = gift;
+            newGift = gift;
             contentType = gift.getContentType();
             this.intent = intent;
         }
@@ -94,8 +90,8 @@ public class DownloadSplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 //go to the list activity
-                Log.d("LPC", "gift giftType after reading cloud: "+gift.getContentType().toString());
-                intent.putExtra("GIFT", gift);
+                Log.d("LPC", "gift giftType after reading cloud: "+newGift.getContentType().toString());
+                intent.putExtra("GIFT", newGift);
                 startActivity(intent);
 //                Log.d("LPC", "stored the image in cloud");
                 //go back to create gift fragment
@@ -108,7 +104,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            String filePath = "gift/" + gift.getHashValue();
+            String filePath = "gift/" + newGift.getHashValue();
             StorageReference giftRef = storageRef.child(filePath);
             giftRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
                 @Override
@@ -121,7 +117,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
                             try {
                                 localFile = File.createTempFile("tempImg", "jpg");
                                 Log.d("LPC", "local image file was made ");
-                                gift.getContentType().put(itemName, localFile.getAbsolutePath());
+//                                gift.getContentType().put(itemName, localFile.getAbsolutePath());
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -129,7 +125,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
                             try {
                                 localFile = File.createTempFile("tempImg", "mp4");
                                 Log.d("LPC", "local video file was made ");
-                                gift.getContentType().put(itemName, localFile.getAbsolutePath());
+//                                gift.getContentType().put(itemName, localFile.getAbsolutePath());
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

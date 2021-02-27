@@ -40,21 +40,18 @@ import java.util.HashMap;
 public class VideoActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_PICK_FROM_GALLERY = 2;
 
-    //storage ref
-    private FirebaseStorage mStorage;
-    private StorageReference storageRef;
+//    //storage ref
+//    private FirebaseStorage mStorage;
+//    private StorageReference storageRef;
 
     //widgets
     private VideoView mVideoView;
     private Button mChooseButton, mSaveButton, mCancelButton, mDeleteButton;
     private MyMediaController mMediaController;
-    private ProgressBar mProgressBar;
 
     //data from gift
-    private Gift gift;
+    private Gift mGift;
     private Uri currentData;
-    private String sender, recipient, hashValue;
-    private HashMap<String, String> contentType;
 
     //from review
     private boolean mFromReview;
@@ -65,13 +62,13 @@ public class VideoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video);
 
         //firebase stuff
-        mStorage = FirebaseStorage.getInstance();
-        storageRef = mStorage.getReference();
+//        mStorage = FirebaseStorage.getInstance();
+//        storageRef = mStorage.getReference();
 
         //get data from gift
         Intent startIntent = getIntent();
-        gift = (Gift) startIntent.getSerializableExtra("GIFT");
-        Log.d("LPC", "onCreate: saved gift: "+gift.toString());
+        mGift = (Gift) startIntent.getSerializableExtra("GIFT");
+        Log.d("LPC", "onCreate: saved gift: "+mGift.toString());
         mFromReview = startIntent.getBooleanExtra("FROM REVIEW", false);
         mFileLabel = startIntent.getStringExtra("FILE LABEL");
 
@@ -82,8 +79,6 @@ public class VideoActivity extends AppCompatActivity {
         mDeleteButton = (Button) findViewById(R.id.video_delete_button);
         mDeleteButton.setVisibility(View.GONE);
         mCancelButton = (Button) findViewById(R.id.video_cancel_button);
-        mProgressBar = (ProgressBar) findViewById(R.id.video_progress_bar);
-        mProgressBar.setVisibility(View.GONE);
         mVideoView = (VideoView) findViewById(R.id.chosen_video);
 
         //add a media controller
@@ -124,50 +119,53 @@ public class VideoActivity extends AppCompatActivity {
 //            Log.d("LPC", "video activity file path: "+filePath);
             mSaveButton.setEnabled(true);
             mDeleteButton.setVisibility(View.VISIBLE);
-            mVideoView.setVisibility(View.INVISIBLE);
-            mProgressBar.setVisibility(View.VISIBLE);
-            VideoReaderThread videoReaderThread = new VideoReaderThread(label);
-            videoReaderThread.start();
-//            updateView(label);
+            mVideoView.setVideoURI(null);
+            Log.d("LPC", "review uri: "+Uri.parse(mGift.getContentType().get(mFileLabel)));
+            mVideoView.setVideoURI(Uri.parse(mGift.getContentType().get(mFileLabel)));
+            mVideoView.start();
         }
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable("SAVED_GIFT", gift);
+        outState.putSerializable("SAVED_GIFT", mGift);
     }
 
     //*******BUTTON CALLBACKS*******//
     public void onChoose() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                intent.putExtra(MediaStore.EXTRA_OUTPUT, mImgUri);
         intent.setType("video/*");
-//                intent.putExtra("PIN_KEY", gift1.getId());
         startActivityForResult(intent, REQUEST_CODE_PICK_FROM_GALLERY);
     }
 
     /**
-     * Go to the uploading splash page, which will put the video in cloud storage too
+     * Update the content type of the gift with a video and its URI
      */
     public void onSave() {
-        Intent splashIntent = new Intent(this, UploadingSplashActivity.class);
-        splashIntent.putExtra("GIFT", gift);
-        splashIntent.putExtra("URI", currentData);
-        splashIntent.putExtra("FROM REVIEW", mFromReview);
-        splashIntent.putExtra("FILE LABEL", mFileLabel);
-        startActivity(splashIntent);
-
+        String key;
+        if(mFileLabel == null) {
+            //TODO: possibly change to a readable time format
+            key = "video_" + System.currentTimeMillis();
+        } else {
+            //TODO: instead create a new key with curr time and delete the old entry
+            key = mFileLabel;
+        }
+        mGift.getContentType().put(key, "content://media/" + currentData.getPath());
+        Log.d("LPC", "just video image: "+mGift.getContentType().get(key));
+        Intent intent = new Intent(this, FragmentContainerActivity.class);
+        intent.putExtra("GIFT", mGift);
+        startActivity(intent);
     }
 
     /**
-     * Delete the chosen video from the db and remove it from the gifts contents
+     * Remove the chosen video from the gifts contents
      */
     public void onDelete(){
-        Intent intent = new Intent(this, ReviewGiftActivity.class);
-        intent.putExtra("GIFT", gift);
-        VideoDeleterThread videoDeleterThread = new VideoDeleterThread(mFileLabel, intent);
-        videoDeleterThread.start();
+        Intent intent = new Intent(this, FragmentContainerActivity.class);
+        mGift.getContentType().remove(mFileLabel);
+        intent.putExtra("GIFT", mGift);
+        startActivity(intent);
     }
 
     //******ON ACTIVITY RESULT******//
@@ -183,7 +181,6 @@ public class VideoActivity extends AppCompatActivity {
             Log.d("LPC", "onActivityResult: current video path for vv: "+currentData.getPath());
             mVideoView.setVideoURI(currentData);
             mVideoView.start();
-//            mVideoView.setImageURI(currentData);
         }
     }
 
@@ -208,116 +205,5 @@ public class VideoActivity extends AppCompatActivity {
             super.show(0);
         }
 
-    }
-
-    /**
-     * Thread to load in the video when reading from cloud
-     */
-    public class VideoReaderThread extends Thread{
-        private final String label;
-        private Bitmap bitmap;
-        public VideoReaderThread(String label){
-            this.label = label;
-        }
-
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                mProgressBar.setVisibility(View.GONE);
-                mVideoView.setVisibility(View.VISIBLE);
-                mVideoView.start();
-//                mImageView.setImageBitmap(bitmap);
-            }
-        };
-
-        Handler handler = new Handler(Looper.getMainLooper());
-
-        @Override
-        public void run() {
-            super.run();
-            String filePath = "gift/" + gift.getHashValue()+ "/"+label;
-            Log.d("LPC", "video file path: " + filePath);
-            StorageReference vidRef = storageRef.child(filePath);
-            File localFile = null;
-            try {
-                localFile = File.createTempFile("tempVid", "mp4");
-                Log.d("LPC", "local video file was made ");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            File finalLocalFile = localFile;
-            vidRef.getFile(localFile).addOnCompleteListener(VideoActivity.this, new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        mVideoView.setVisibility(View.VISIBLE);
-                        Log.d("LPC", "video download successful");
-//                        bitmap = BitmapFactory.decodeFile(finalLocalFile.getAbsolutePath());
-//                        mImageView.setImageBitmap(bitmap);
-                        mVideoView.setVideoPath(finalLocalFile.getPath());
-                        handler.post(runnable);
-                    } else {
-                        Log.d("LPC", "video download failed");
-                    }
-                }
-            });
-        }
-    }
-
-    /**
-     * Thread for deleting the image from the DB and removing it from the gift's contents
-     */
-    public class VideoDeleterThread extends Thread{
-        private String label;
-        private Intent intent;
-
-        public VideoDeleterThread(String label, Intent intent){
-            this.label = label;
-            this.intent = intent;
-        }
-
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                startActivity(intent);
-                Toast.makeText(getApplicationContext(), ""+label+" was deleted", Toast.LENGTH_SHORT)
-                        .show();
-            }
-        };
-
-        Handler handler = new Handler(Looper.getMainLooper());
-
-        @Override
-        public void run() {
-            super.run();
-            String filePath = "gift/" + gift.getHashValue()+ "/"+label;
-            Log.d("LPC", "image file path: " + filePath);
-            StorageReference imgRef = storageRef.child(filePath);
-            imgRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    gift.getContentType().remove(label);
-                    handler.post(runnable);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    showErrorDialog();
-                }
-            });
-        }
-    }
-
-    /**
-     * Error pop-up
-     */
-    public void showErrorDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(VideoActivity.this);
-        builder.setMessage("There has been an error deleting your file. Please try again")
-                .setTitle("Error")
-                .setPositiveButton(android.R.string.ok, null);
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
 }

@@ -2,6 +2,7 @@ package com.rayhc.giftly;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentContainer;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -62,10 +63,21 @@ public class UploadingSplashActivity extends AppCompatActivity {
         Log.d("LPC", "selectedData uri: " + selectedData.getPath());
 
         //TODO: change the end destination of this intent to the create gift fragment (not sure how to yet)
-        Intent intent = new Intent(this, ImageActivity.class);
+        Intent intent = new Intent(this, FragmentContainerActivity.class);
         intent.putExtra("GIFT", mGift);
         StorageLoaderThread storageLoaderThread = new StorageLoaderThread(selectedData, intent);
         storageLoaderThread.start();
+
+//        FragmentManager fm = getSupportFragmentManager();
+//        CreateGiftFragment createGiftFragment = new CreateGiftFragment();
+//        Bundle bundle = new Bundle();
+//        bundle.putSerializable("GIFT", mGift);
+//        createGiftFragment.setArguments(bundle);
+//        FragmentTransaction ft = fm.beginTransaction();
+//        //TODO: add an id parameter below?
+//        ft.replace(R.id.frame_container, createGiftFragment);
+//        ft.commit();
+
 
 
 //        StorageLoaderThread storageLoaderThread = new StorageLoaderThread(selectedData, sender,
@@ -136,7 +148,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
                 }
                 else {
                     fileName = mFileLabel;
-                    path = "gift/"+hashValue+"/"+fileName;
+                    path = "gift/"+hashValue+"/"+fileName+".jpg";
                 }
                 Log.d("LPC", "cloud storage image file path : "+path);
                 StorageReference giftRef = storageRef.child(path);
@@ -156,7 +168,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
                 }
                 else {
                     fileName = mFileLabel;
-                    path = "gift/"+hashValue+"/"+fileName;
+                    path = "gift/"+hashValue+"/"+fileName+".mp4";
                 }
                 Log.d("LPC", "cloud storage video file path : "+path);
                 StorageReference giftRef = storageRef.child(path);
