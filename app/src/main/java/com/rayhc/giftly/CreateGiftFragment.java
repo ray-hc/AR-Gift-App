@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment;
 import java.util.HashMap;
 
 public class CreateGiftFragment extends Fragment {
-    private Button linkButton, imageButton, videoButton, reviewButton;
+    private Button linkButton, imageButton, videoButton, reviewButton, sendButton;
     private Gift newGift;
 
     @Override
@@ -51,6 +51,7 @@ public class CreateGiftFragment extends Fragment {
         imageButton = v.findViewById(R.id.image_button);
         videoButton = v.findViewById(R.id.video_button);
         reviewButton = v.findViewById(R.id.review_button);
+        sendButton = v.findViewById(R.id.send_button);
         newGift.setTimeCreated(System.currentTimeMillis());
 
 
@@ -75,6 +76,12 @@ public class CreateGiftFragment extends Fragment {
 
         reviewButton.setOnClickListener(v14 -> {
             Intent intent = new Intent(getActivity(), ReviewGiftActivity.class);
+            intent.putExtra("GIFT", newGift);
+            startActivity(intent);
+        });
+
+        sendButton.setOnClickListener(v14 ->{
+            Intent intent = new Intent(getActivity(), UploadingSplashActivity.class);
             intent.putExtra("GIFT", newGift);
             startActivity(intent);
         });

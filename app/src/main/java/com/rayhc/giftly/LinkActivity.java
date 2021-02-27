@@ -97,7 +97,7 @@ public class LinkActivity extends AppCompatActivity {
         String key;
         if(mFileLabel == null) {
             //TODO: possibly change to a readable time format
-            key = "video_" + System.currentTimeMillis();
+            key = "link_" + System.currentTimeMillis();
         } else {
             //TODO: instead create a new key with curr time and delete the old entry
             key = mFileLabel;

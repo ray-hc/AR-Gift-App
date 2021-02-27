@@ -52,4 +52,13 @@
         android:layout_centerHorizontal="true"
         android:text="REVIEW/EDIT GIFT"/>
 
+    <Button
+        android:id="@+id/send_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:layout_below="@+id/review_button"
+        android:layout_centerHorizontal="true"
+        android:text="SEND GIFT"/>
+
 </RelativeLayout>
