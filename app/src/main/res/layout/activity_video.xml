@@ -26,14 +26,6 @@
         android:layout_centerHorizontal="true"
         android:text="Your Video:"
         android:textSize="25sp"/>
-    <ProgressBar
-        android:id="@+id/video_progress_bar"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_margin="10dp"
-        android:indeterminate="true"/>
     <VideoView
         android:id="@+id/chosen_video"
         android:layout_centerVertical="true"
