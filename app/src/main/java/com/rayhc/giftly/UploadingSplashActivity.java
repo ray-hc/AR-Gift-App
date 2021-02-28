@@ -55,12 +55,12 @@ public class UploadingSplashActivity extends AppCompatActivity {
 
         //data from create gift fragment
         Intent startIntent = getIntent();
-        mGift = (Gift) startIntent.getSerializableExtra("GIFT");
+        mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
 
 
         //start a thread to upload media to cloud
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("GIFT", mGift);
+        intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
         StorageLoaderThread storageLoaderThread = new StorageLoaderThread(mGift, intent);
         storageLoaderThread.start();
 

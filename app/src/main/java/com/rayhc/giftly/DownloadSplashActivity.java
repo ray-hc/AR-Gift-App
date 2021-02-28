@@ -52,12 +52,12 @@ public class DownloadSplashActivity extends AppCompatActivity {
 
         //data from demo activity intent
         Intent startIntent = getIntent();
-        Gift gift = (Gift) startIntent.getSerializableExtra("GIFT");
+        Gift gift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
 
 //        Log.d("LPC", "selectedData uri: " + selectedData.getPath());
 
         Intent intent = new Intent(this, ReviewGiftActivity.class);
-        intent.putExtra("GIFT", gift);
+        intent.putExtra(Globals.CURR_GIFT_KEY, gift);
         StorageLoaderThread storageLoaderThread = new StorageLoaderThread(gift, intent);
         storageLoaderThread.start();
 
@@ -91,7 +91,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
             public void run() {
                 //go to the list activity
                 Log.d("LPC", "gift giftType after reading cloud: "+newGift.getContentType().toString());
-                intent.putExtra("GIFT", newGift);
+                intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
                 startActivity(intent);
 //                Log.d("LPC", "stored the image in cloud");
                 //go back to create gift fragment

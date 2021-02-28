@@ -35,6 +35,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 
 public class VideoActivity extends AppCompatActivity {
@@ -67,10 +68,10 @@ public class VideoActivity extends AppCompatActivity {
 
         //get data from gift
         Intent startIntent = getIntent();
-        mGift = (Gift) startIntent.getSerializableExtra("GIFT");
+        mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
         Log.d("LPC", "onCreate: saved gift: "+mGift.toString());
-        mFromReview = startIntent.getBooleanExtra("FROM REVIEW", false);
-        mFileLabel = startIntent.getStringExtra("FILE LABEL");
+        mFromReview = startIntent.getBooleanExtra(Globals.FROM_REVIEW_KEY, false);
+        mFileLabel = startIntent.getStringExtra(Globals.FILE_LABEL_KEY);
 
         //wire button and video view
         mChooseButton = (Button) findViewById(R.id.video_choose_button);
@@ -113,10 +114,7 @@ public class VideoActivity extends AppCompatActivity {
         });
 
         //handle if from the review activity
-        if(startIntent.getBooleanExtra("FROM REVIEW", false)){
-            String label = startIntent.getStringExtra("FILE LABEL");
-//            String filePath = gift.getContentType().get(label);
-//            Log.d("LPC", "video activity file path: "+filePath);
+        if(startIntent.getBooleanExtra(Globals.FROM_REVIEW_KEY, false)){
             mSaveButton.setEnabled(true);
             mDeleteButton.setVisibility(View.VISIBLE);
             mVideoView.setVideoURI(null);
@@ -143,18 +141,13 @@ public class VideoActivity extends AppCompatActivity {
      * Update the content type of the gift with a video and its URI
      */
     public void onSave() {
-        String key;
-        if(mFileLabel == null) {
-            //TODO: possibly change to a readable time format
-            key = "video_" + System.currentTimeMillis();
-        } else {
-            //TODO: instead create a new key with curr time and delete the old entry
-            key = mFileLabel;
-        }
+        String key = "video_" + Globals.sdf.format(new Date(System.currentTimeMillis()));
         mGift.getContentType().put(key, "content://media/" + currentData.getPath());
+        //delete the old file if its a replacement
+        if(mFileLabel != null) mGift.getContentType().remove(mFileLabel);
         Log.d("LPC", "just video image: "+mGift.getContentType().get(key));
         Intent intent = new Intent(this, FragmentContainerActivity.class);
-        intent.putExtra("GIFT", mGift);
+        intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
         startActivity(intent);
     }
 
@@ -164,7 +157,7 @@ public class VideoActivity extends AppCompatActivity {
     public void onDelete(){
         Intent intent = new Intent(this, FragmentContainerActivity.class);
         mGift.getContentType().remove(mFileLabel);
-        intent.putExtra("GIFT", mGift);
+        intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
         startActivity(intent);
     }
 

@@ -22,8 +22,8 @@ public class CreateGiftFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle extras = getArguments();
         //get possible gift data
-        if(extras != null && extras.getSerializable("GIFT") != null){
-            newGift = (Gift) extras.getSerializable("GIFT");
+        if(extras != null && extras.getSerializable(Globals.CURR_GIFT_KEY) != null){
+            newGift = (Gift) extras.getSerializable(Globals.CURR_GIFT_KEY);
             Log.d("LPC", "create frag: got gift from bundle");
             Log.d("LPC", "create frag: gift from bundle content: "+newGift.getContentType().toString());
         }
@@ -52,37 +52,39 @@ public class CreateGiftFragment extends Fragment {
         videoButton = v.findViewById(R.id.video_button);
         reviewButton = v.findViewById(R.id.review_button);
         sendButton = v.findViewById(R.id.send_button);
+        if(newGift.getContentType().size() == 0 && newGift.getLinks().size() == 0)
+            sendButton.setEnabled(false);
         newGift.setTimeCreated(System.currentTimeMillis());
 
 
         //click listeners for adding contents to the gift
         linkButton.setOnClickListener(v12 -> {
             Intent intent = new Intent(getActivity(), LinkActivity.class);
-            intent.putExtra("GIFT", newGift);
+            intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             startActivity(intent);
         });
 
         imageButton.setOnClickListener(v1 -> {
             Intent intent = new Intent(getActivity(), ImageActivity.class);
-            intent.putExtra("GIFT", newGift);
+            intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             startActivity(intent);
         });
 
         videoButton.setOnClickListener(v13 -> {
             Intent intent = new Intent(getActivity(), VideoActivity.class);
-            intent.putExtra("GIFT", newGift);
+            intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             startActivity(intent);
         });
 
         reviewButton.setOnClickListener(v14 -> {
             Intent intent = new Intent(getActivity(), ReviewGiftActivity.class);
-            intent.putExtra("GIFT", newGift);
+            intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             startActivity(intent);
         });
 
         sendButton.setOnClickListener(v14 ->{
             Intent intent = new Intent(getActivity(), UploadingSplashActivity.class);
-            intent.putExtra("GIFT", newGift);
+            intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             startActivity(intent);
         });
 

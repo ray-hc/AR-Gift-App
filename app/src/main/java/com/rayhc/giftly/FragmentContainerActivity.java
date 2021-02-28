@@ -18,13 +18,13 @@ public class FragmentContainerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_fragment_container);
 
         Intent startIntent = getIntent();
-        mGift = (Gift) startIntent.getSerializableExtra("GIFT");
+        mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
         Log.d("LPC", "container activity got gift: "+mGift.toString());
 
 
         CreateGiftFragment createGiftFragment = new CreateGiftFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable("GIFT", mGift);
+        bundle.putSerializable(Globals.CURR_GIFT_KEY, mGift);
         createGiftFragment.setArguments(bundle);
 
         // Begin the transaction
