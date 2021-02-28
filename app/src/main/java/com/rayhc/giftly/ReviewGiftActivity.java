@@ -154,4 +154,13 @@ public class ReviewGiftActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(fromOpen){
+            Intent homeIntent = new Intent(this, MainActivity.class);
+            homeIntent.putExtra(Globals.CURR_GIFT_KEY, gift);
+            startActivity(homeIntent);
+        }
+    }
 }

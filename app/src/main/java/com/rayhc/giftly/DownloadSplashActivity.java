@@ -36,9 +36,9 @@ import java.io.IOException;
 import java.util.HashMap;
 
 /**
- * This is loading splash screen for when the multi-media data is being download from the cloud
+ * This is loading splash screen for when the gift data is being download from the cloud
  *
- * When a user opens a gift, this will show as all of the multimedia for that gift is read in the cloud
+ * When a user opens a gift, this will show as the gift is being read from the cloud
  *
  * At the end, user will be directed to the ReviewGiftActivity
  */
@@ -79,11 +79,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
         StorageLoaderThread storageLoaderThread = new StorageLoaderThread(intent);
         storageLoaderThread.start();
 
-
-//        StorageLoaderThread storageLoaderThread = new StorageLoaderThread(selectedData, sender,
-//                receiver, hashValue, contentType, intent);
-//        StorageLoaderThread storageLoaderThread = new StorageLoaderThread(gift, selectedData, intent);
-//        storageLoaderThread.start();
     }
 
 
@@ -92,12 +87,10 @@ public class DownloadSplashActivity extends AppCompatActivity {
      */
     public class StorageLoaderThread extends Thread {
         private Gift loadedGift;
-//        private String recipientID;
         private Query query;
         private Intent intent;
 
         public StorageLoaderThread(Intent intent){
-//            this.recipientID = recipientID;
             this.intent = intent;
         }
 
