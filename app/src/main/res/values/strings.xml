@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Giftly</string>
+
+    <string-array name="spinnerItems">
+        <item>Friend 1</item>
+        <item>Friend 2</item>
+        <item>Friend 3</item>
+        <item>Friend 4</item>
+    </string-array>
 </resources>

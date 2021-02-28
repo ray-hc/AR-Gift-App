@@ -180,7 +180,7 @@ public class VideoActivity extends AppCompatActivity {
     /**
      * Custom Media Controller so it doesn't disappear
      */
-    public class MyMediaController extends MediaController {
+    public static class MyMediaController extends MediaController {
         public MyMediaController(Context context, AttributeSet attrs) {
             super(context, attrs);
         }

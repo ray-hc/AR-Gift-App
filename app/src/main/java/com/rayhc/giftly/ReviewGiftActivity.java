@@ -24,6 +24,7 @@ public class ReviewGiftActivity extends AppCompatActivity {
 
     private ListView mLinkList, mMediaList;
     private Gift gift;
+    private boolean fromOpen;
 
     //TODO: change this placeholder
     private String [] data1 ={"Link 1", "Link 2", "Link 3", "Link 4", "Link 5"};
@@ -39,7 +40,12 @@ public class ReviewGiftActivity extends AppCompatActivity {
 
         //get gift object
         Intent startIntent = getIntent();
-        gift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
+        fromOpen = startIntent.getBooleanExtra("FROM OPEN", false);
+        if(fromOpen){
+            gift = (Gift) startIntent.getSerializableExtra("OPENED GIFT");
+        } else {
+            gift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
+        }
 
         //populate the listview for media
         Log.d("LPC", "from download splash - contentType : "+gift.getContentType().toString());
@@ -64,10 +70,16 @@ public class ReviewGiftActivity extends AppCompatActivity {
 //                Log.d("LPC", "media list view position click file: "+ dataPath);
 
                 Intent intent;
-                intent = new Intent(getApplicationContext(), LinkActivity.class);
-                intent.putExtra(Globals.CURR_GIFT_KEY, gift);
-                intent.putExtra(Globals.FILE_LABEL_KEY, label);
-                intent.putExtra(Globals.FROM_REVIEW_KEY, true);
+                if(fromOpen){
+                    intent = new Intent(getApplicationContext(), ViewContentsActivity.class);
+                    intent.putExtra(Globals.CURR_GIFT_KEY, gift);
+                    intent.putExtra(Globals.FILE_LABEL_KEY, label);
+                } else{
+                    intent = new Intent(getApplicationContext(), LinkActivity.class);
+                    intent.putExtra(Globals.CURR_GIFT_KEY, gift);
+                    intent.putExtra(Globals.FILE_LABEL_KEY, label);
+                    intent.putExtra(Globals.FROM_REVIEW_KEY, true);
+                }
                 startActivity(intent);
             }
         });
@@ -83,18 +95,30 @@ public class ReviewGiftActivity extends AppCompatActivity {
                 Intent intent;
                 //go to ImageActivity if an image
                 if(label.startsWith("image")) {
-                    intent = new Intent(getApplicationContext(), ImageActivity.class);
-                    intent.putExtra(Globals.CURR_GIFT_KEY, gift);
-                    intent.putExtra(Globals.FILE_LABEL_KEY, label);
-                    intent.putExtra(Globals.FROM_REVIEW_KEY, true);
+                    if(fromOpen){
+                        intent = new Intent(getApplicationContext(), ViewContentsActivity.class);
+                        intent.putExtra(Globals.CURR_GIFT_KEY, gift);
+                        intent.putExtra(Globals.FILE_LABEL_KEY, label);
+                    } else{
+                        intent = new Intent(getApplicationContext(), LinkActivity.class);
+                        intent.putExtra(Globals.CURR_GIFT_KEY, gift);
+                        intent.putExtra(Globals.FILE_LABEL_KEY, label);
+                        intent.putExtra(Globals.FROM_REVIEW_KEY, true);
+                    }
                     startActivity(intent);
                 }
                 //go to VideoActivity if a video
                 else if(label.startsWith("video")){
-                    intent = new Intent(getApplicationContext(), VideoActivity.class);
-                    intent.putExtra(Globals.CURR_GIFT_KEY, gift);
-                    intent.putExtra(Globals.FILE_LABEL_KEY, label);
-                    intent.putExtra(Globals.FROM_REVIEW_KEY, true);
+                    if(fromOpen){
+                        intent = new Intent(getApplicationContext(), ViewContentsActivity.class);
+                        intent.putExtra(Globals.CURR_GIFT_KEY, gift);
+                        intent.putExtra(Globals.FILE_LABEL_KEY, label);
+                    } else{
+                        intent = new Intent(getApplicationContext(), LinkActivity.class);
+                        intent.putExtra(Globals.CURR_GIFT_KEY, gift);
+                        intent.putExtra(Globals.FILE_LABEL_KEY, label);
+                        intent.putExtra(Globals.FROM_REVIEW_KEY, true);
+                    }
                     startActivity(intent);
                 }
 
@@ -130,4 +154,13 @@ public class ReviewGiftActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(fromOpen){
+            Intent homeIntent = new Intent(this, MainActivity.class);
+            homeIntent.putExtra(Globals.CURR_GIFT_KEY, gift);
+            startActivity(homeIntent);
+        }
+    }
 }

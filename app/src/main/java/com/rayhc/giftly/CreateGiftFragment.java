@@ -54,7 +54,7 @@ public class CreateGiftFragment extends Fragment {
         sendButton = v.findViewById(R.id.send_button);
         if(newGift.getContentType().size() == 0 && newGift.getLinks().size() == 0)
             sendButton.setEnabled(false);
-        newGift.setTimeCreated(System.currentTimeMillis());
+//        newGift.setTimeCreated(System.currentTimeMillis());
 
 
         //click listeners for adding contents to the gift
