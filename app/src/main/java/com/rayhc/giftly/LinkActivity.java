@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -34,10 +35,10 @@ public class LinkActivity extends AppCompatActivity {
 
         //get data from gift
         Intent startIntent = getIntent();
-        mGift = (Gift) startIntent.getSerializableExtra("GIFT");
+        mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
         Log.d("LPC", "onCreate: saved gift: " + mGift.toString());
-        mFromReview = startIntent.getBooleanExtra("FROM REVIEW", false);
-        mFileLabel = startIntent.getStringExtra("FILE LABEL");
+        mFromReview = startIntent.getBooleanExtra(Globals.FROM_REVIEW_KEY, false);
+        mFileLabel = startIntent.getStringExtra(Globals.FILE_LABEL_KEY);
 
         //wire button and edit text
         mSaveButton = (Button) findViewById(R.id.choose_link_save_button);
@@ -69,8 +70,8 @@ public class LinkActivity extends AppCompatActivity {
         });
 
         //handle if from the review activity
-        if(startIntent.getBooleanExtra("FROM REVIEW", false)){
-            String label = startIntent.getStringExtra("FILE LABEL");
+        if(startIntent.getBooleanExtra(Globals.FROM_REVIEW_KEY, false)){
+            String label = startIntent.getStringExtra(Globals.FILE_LABEL_KEY);
 //            String filePath = gift.getContentType().get(label);
 //            Log.d("LPC", "video activity file path: "+filePath);
             mSaveButton.setEnabled(true);
@@ -94,21 +95,16 @@ public class LinkActivity extends AppCompatActivity {
      * Or replace it if replacing
      */
     public void onSave() {
-        String key;
-        if(mFileLabel == null) {
-            //TODO: possibly change to a readable time format
-            key = "video_" + System.currentTimeMillis();
-        } else {
-            //TODO: instead create a new key with curr time and delete the old entry
-            key = mFileLabel;
-        }
+        String key = "link_" + Globals.sdf.format(new Date(System.currentTimeMillis()));
         String link = mEditText.getText().toString();
         try {
             new URL(link);
             mGift.getLinks().put(key, link);
+            //delete the old link if its a replacement
+            if(mFileLabel != null) mGift.getLinks().remove(mFileLabel);
             Log.d("LPC", "set gift link to: " + link);
             Intent intent = new Intent(this, FragmentContainerActivity.class);
-            intent.putExtra("GIFT", mGift);
+            intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
             startActivity(intent);
         } catch (MalformedURLException e) {
             showErrorDialog();
@@ -121,7 +117,7 @@ public class LinkActivity extends AppCompatActivity {
     public void onDelete(){
         Intent intent = new Intent(this, FragmentContainerActivity.class);
         mGift.getLinks().remove(mFileLabel);
-        intent.putExtra("GIFT", mGift);
+        intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
         startActivity(intent);
     }
 

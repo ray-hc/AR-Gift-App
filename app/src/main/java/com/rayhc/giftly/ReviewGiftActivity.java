@@ -39,7 +39,7 @@ public class ReviewGiftActivity extends AppCompatActivity {
 
         //get gift object
         Intent startIntent = getIntent();
-        gift = (Gift) startIntent.getSerializableExtra("GIFT");
+        gift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
 
         //populate the listview for media
         Log.d("LPC", "from download splash - contentType : "+gift.getContentType().toString());
@@ -65,9 +65,9 @@ public class ReviewGiftActivity extends AppCompatActivity {
 
                 Intent intent;
                 intent = new Intent(getApplicationContext(), LinkActivity.class);
-                intent.putExtra("GIFT", gift);
-                intent.putExtra("FILE LABEL", label);
-                intent.putExtra("FROM REVIEW", true);
+                intent.putExtra(Globals.CURR_GIFT_KEY, gift);
+                intent.putExtra(Globals.FILE_LABEL_KEY, label);
+                intent.putExtra(Globals.FROM_REVIEW_KEY, true);
                 startActivity(intent);
             }
         });
@@ -84,17 +84,17 @@ public class ReviewGiftActivity extends AppCompatActivity {
                 //go to ImageActivity if an image
                 if(label.startsWith("image")) {
                     intent = new Intent(getApplicationContext(), ImageActivity.class);
-                    intent.putExtra("GIFT", gift);
-                    intent.putExtra("FILE LABEL", label);
-                    intent.putExtra("FROM REVIEW", true);
+                    intent.putExtra(Globals.CURR_GIFT_KEY, gift);
+                    intent.putExtra(Globals.FILE_LABEL_KEY, label);
+                    intent.putExtra(Globals.FROM_REVIEW_KEY, true);
                     startActivity(intent);
                 }
                 //go to VideoActivity if a video
                 else if(label.startsWith("video")){
                     intent = new Intent(getApplicationContext(), VideoActivity.class);
-                    intent.putExtra("GIFT", gift);
-                    intent.putExtra("FILE LABEL", label);
-                    intent.putExtra("FROM REVIEW", true);
+                    intent.putExtra(Globals.CURR_GIFT_KEY, gift);
+                    intent.putExtra(Globals.FILE_LABEL_KEY, label);
+                    intent.putExtra(Globals.FROM_REVIEW_KEY, true);
                     startActivity(intent);
                 }
 

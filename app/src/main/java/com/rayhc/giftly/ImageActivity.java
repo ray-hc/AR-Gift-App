@@ -31,6 +31,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 
 public class ImageActivity extends AppCompatActivity {
@@ -63,11 +64,11 @@ public class ImageActivity extends AppCompatActivity {
 
         //get data from gift
         Intent startIntent = getIntent();
-        mGift = (Gift) startIntent.getSerializableExtra("GIFT");
+        mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
         Log.d("LPC", "onCreate: saved gift: "+mGift.toString());
         Log.d("LPC", "image activity: gift contentType: "+mGift.getContentType().toString());
-        mFromReview = startIntent.getBooleanExtra("FROM REVIEW", false);
-        mFileLabel = startIntent.getStringExtra("FILE LABEL");
+        mFromReview = startIntent.getBooleanExtra(Globals.FROM_REVIEW_KEY, false);
+        mFileLabel = startIntent.getStringExtra(Globals.FILE_LABEL_KEY);
 
         //wire button and image view
         mChooseButton = (Button) findViewById(R.id.image_choose_button);
@@ -138,18 +139,13 @@ public class ImageActivity extends AppCompatActivity {
      * Update the content type of the gift with an image and its URI
      */
     public void onSave() {
-        String key;
-        if(mFileLabel == null) {
-            //TODO: possibly change to a readable time format
-            key = "image_" + System.currentTimeMillis();
-        } else {
-            //TODO: instead create a new key with curr time and delete the old entry
-            key = mFileLabel;
-        }
+        String key = "image_" + Globals.sdf.format(new Date(System.currentTimeMillis()));
         mGift.getContentType().put(key, "content://media/" + currentData.getPath());
+        //delete the old file if its a replacement
+        if(mFileLabel != null) mGift.getContentType().remove(mFileLabel);
         Log.d("LPC", "just saved image: "+mGift.getContentType().get(key));
         Intent intent = new Intent(this, FragmentContainerActivity.class);
-        intent.putExtra("GIFT", mGift);
+        intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
         startActivity(intent);
 
     }
@@ -160,7 +156,7 @@ public class ImageActivity extends AppCompatActivity {
     public void onDelete(){
         Intent intent = new Intent(this, FragmentContainerActivity.class);
         mGift.getContentType().remove(mFileLabel);
-        intent.putExtra("GIFT", mGift);
+        intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
         startActivity(intent);
 
     }

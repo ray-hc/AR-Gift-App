@@ -239,25 +239,25 @@ public class FirebaseDemoActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
-                        Log.d("LPC", "snapshot: " + snapshot.getValue());
-                        if (snapshot.exists()) {
-                            Gift gift = snapshot.child(gift1.getHashValue()).getValue(Gift.class);
-                            mText = gift.getLinks().get("ID "+(gift.getLinks().size()-1));
-                            Log.d("LPC", "link from search bar press: "+mText);
-                            //set content map
-                            contentMap = gift.getContentType();
-                            Log.d("LPC", "content Map key value: "+contentMap.get("ID 1"));
-                            handleMedia(contentMap.get("ID 1"));
-                            if (mText != null) {
-                                mTextView.setText("Link: " + Html.fromHtml(mText));
-                                mTextView.setMovementMethod(LinkMovementMethod.getInstance());
-                            } else {
-                                showErrorDialog();
-                            }
-                        } else {
-                            showErrorDialog();
-                            Log.d("LPC", "snapshot doesn't exist");
-                        }
+//                        Log.d("LPC", "snapshot: " + snapshot.getValue());
+//                        if (snapshot.exists()) {
+//                            Gift gift = snapshot.child(gift1.getHashValue()).getValue(Gift.class);
+//                            mText = gift.getLinks().get("ID "+(gift.getLinks().size()-1));
+//                            Log.d("LPC", "link from search bar press: "+mText);
+//                            //set content map
+//                            contentMap = gift.getContentType();
+//                            Log.d("LPC", "content Map key value: "+contentMap.get("ID 1"));
+//                            handleMedia(contentMap.get("ID 1"));
+//                            if (mText != null) {
+//                                mTextView.setText("Link: " + Html.fromHtml(mText));
+//                                mTextView.setMovementMethod(LinkMovementMethod.getInstance());
+//                            } else {
+//                                showErrorDialog();
+//                            }
+//                        } else {
+//                            showErrorDialog();
+//                            Log.d("LPC", "snapshot doesn't exist");
+//                        }
                     }
 
 
@@ -288,25 +288,25 @@ public class FirebaseDemoActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
-                        Log.d("LPC", "snapshot: " + snapshot.getValue());
-                        if (snapshot.exists()) {
-                            Gift gift = snapshot.child(mPin).getValue(Gift.class);
-                            mText = gift.getLinks().get("ID "+(gift.getLinks().size()-1));
-                            Log.d("LPC", "link from search bar press: "+mText);
-                            //set content map
-                            contentMap = gift.getContentType();
-                            Log.d("LPC", "content Map key value: "+contentMap.get("ID 1"));
-                            handleMedia(contentMap.get("ID 1"));
-                            if (mText != null) {
-                                mTextView.setText("Link: " + Html.fromHtml(mText));
-                                mTextView.setMovementMethod(LinkMovementMethod.getInstance());
-                            } else {
-                                showErrorDialog();
-                            }
-                        } else {
-                            showErrorDialog();
-                            Log.d("LPC", "snapshot doesn't exist");
-                        }
+//                        Log.d("LPC", "snapshot: " + snapshot.getValue());
+//                        if (snapshot.exists()) {
+//                            Gift gift = snapshot.child(mPin).getValue(Gift.class);
+//                            mText = gift.getLinks().get("ID "+(gift.getLinks().size()-1));
+//                            Log.d("LPC", "link from search bar press: "+mText);
+//                            //set content map
+//                            contentMap = gift.getContentType();
+//                            Log.d("LPC", "content Map key value: "+contentMap.get("ID 1"));
+//                            handleMedia(contentMap.get("ID 1"));
+//                            if (mText != null) {
+//                                mTextView.setText("Link: " + Html.fromHtml(mText));
+//                                mTextView.setMovementMethod(LinkMovementMethod.getInstance());
+//                            } else {
+//                                showErrorDialog();
+//                            }
+//                        } else {
+//                            showErrorDialog();
+//                            Log.d("LPC", "snapshot doesn't exist");
+//                        }
                     }
 
 
@@ -397,12 +397,12 @@ public class FirebaseDemoActivity extends AppCompatActivity {
                 sender = gift1.getSender();
                 receiver = gift1.getReceiver();
 
-                Intent splashIntent = new Intent(this, UploadingSplashActivity.class);
-                splashIntent.putExtra("URI", selectedData);
-                splashIntent.putExtra("GIFT", gift1);
-                splashIntent.putExtra("SENDER", sender);
-                splashIntent.putExtra("RECEIVER", receiver);
-                startActivity(splashIntent);
+//                Intent splashIntent = new Intent(this, UploadingSplashActivity.class);
+//                splashIntent.putExtra("URI", selectedData);
+//                splashIntent.putExtra("GIFT", gift1);
+//                splashIntent.putExtra("SENDER", sender);
+//                splashIntent.putExtra("RECEIVER", receiver);
+//                startActivity(splashIntent);
 
 
 //                String path = "gift/" + gift1.getSender()+"_to_"+gift1.getReceiver()+ "/pictureGift.jpg";
@@ -419,11 +419,11 @@ public class FirebaseDemoActivity extends AppCompatActivity {
                 sender = gift2.getSender();
                 receiver = gift2.getReceiver();
 
-                Intent splashIntent = new Intent(this, UploadingSplashActivity.class);
-                splashIntent.putExtra("URI", selectedData);
-                splashIntent.putExtra("SENDER", sender);
-                splashIntent.putExtra("RECEIVER", receiver);
-                startActivity(splashIntent);
+//                Intent splashIntent = new Intent(this, UploadingSplashActivity.class);
+//                splashIntent.putExtra("URI", selectedData);
+//                splashIntent.putExtra("SENDER", sender);
+//                splashIntent.putExtra("RECEIVER", receiver);
+//                startActivity(splashIntent);
 
 //
 //                String path = "gift/" + gift2.getSender()+"_to_"+gift2.getReceiver()+ "/videoGift.mp4";
