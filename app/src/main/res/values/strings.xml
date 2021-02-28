@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Giftly</string>
+
+    <string name="send_gift_title">Make Someone\'s Day</string>
+    <string name="send_gift_subtitle">Send a gift now!</string>
+
+    <string name="sent_gifts_title">Sent</string>
+    <string name="received_gifts_title">Received</string>
+    <string name="to">To:</string>
+    <string name="from">From:</string>
 </resources>
