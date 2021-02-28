@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <item
-        android:id="@+id/menu_delete"
+        android:id="@+id/add_friend"
         android:orderInCategory="100"
-        android:title="Delete"
+        android:title="Add Friend"
         app:showAsAction="always" />
 
 </menu>
