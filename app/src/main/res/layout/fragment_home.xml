@@ -28,5 +28,10 @@
         android:clickable="true"
         android:focusable="true"
         android:layout_marginBottom="50dp" />
+    <Button
+        android:id="@+id/open_gift_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OPEN A GIFT"/>
 
 </LinearLayout>

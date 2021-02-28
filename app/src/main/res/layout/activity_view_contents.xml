@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ViewContentsActivity">
+
+<!--LABEL-->
+    <TextView
+        android:id="@+id/gift_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="YOUR GIFT:"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"/>
+
+<!--LINK VIEW-->
+    <TextView
+        android:id="@+id/link_gift"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="10dp"
+        android:autoLink="web"/>
+
+<!--PROGRESS BAR-->
+    <ProgressBar
+        android:id="@+id/contents_porgress_bar"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"/>
+    <!--IMAGE VIEW-->
+    <ImageView
+        android:id="@+id/image_gift"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="10dp"/>
+
+    <!--VIDEO VIEW-->
+    <VideoView
+        android:id="@+id/video_gift"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="10dp"/>
+</RelativeLayout>

@@ -1,6 +1,7 @@
 package com.rayhc.giftly;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -10,6 +11,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,6 +20,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
@@ -35,8 +44,11 @@ import java.util.HashMap;
  */
 public class DownloadSplashActivity extends AppCompatActivity {
 
+    private DatabaseReference mDatabase;
     private StorageReference storageRef;
     private FirebaseStorage mStorage;
+
+    private String recipientID, hashValue;
 
     private Gift mGift;
 
@@ -47,18 +59,24 @@ public class DownloadSplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_download_splash);
 
         //storage stuff
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         mStorage = FirebaseStorage.getInstance();
         storageRef = mStorage.getReference();
 
-        //data from demo activity intent
+        //recipient and hash
         Intent startIntent = getIntent();
-        Gift gift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
+        recipientID = startIntent.getStringExtra("RECIPIENT ID");
+        hashValue = startIntent.getStringExtra("HASH VALUE");
+
+        //data from demo activity intent
+//        Intent startIntent = getIntent();
+//        Gift gift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
 
 //        Log.d("LPC", "selectedData uri: " + selectedData.getPath());
 
         Intent intent = new Intent(this, ReviewGiftActivity.class);
-        intent.putExtra(Globals.CURR_GIFT_KEY, gift);
-        StorageLoaderThread storageLoaderThread = new StorageLoaderThread(gift, intent);
+//        intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
+        StorageLoaderThread storageLoaderThread = new StorageLoaderThread(intent);
         storageLoaderThread.start();
 
 
@@ -73,76 +91,72 @@ public class DownloadSplashActivity extends AppCompatActivity {
      * Thread to store multimedia to the cloud
      */
     public class StorageLoaderThread extends Thread {
-        private Uri selectedData;
+        private Gift loadedGift;
+//        private String recipientID;
+        private Query query;
         private Intent intent;
-        private HashMap<String, String> contentType;
-        private Gift newGift;
 
-
-        public StorageLoaderThread(Gift gift, Intent intent){
-            newGift = gift;
-            contentType = gift.getContentType();
+        public StorageLoaderThread(Intent intent){
+//            this.recipientID = recipientID;
             this.intent = intent;
         }
 
-        Handler handler = new Handler(Looper.getMainLooper());
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                //go to the list activity
-                Log.d("LPC", "gift giftType after reading cloud: "+newGift.getContentType().toString());
-                intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
                 startActivity(intent);
-//                Log.d("LPC", "stored the image in cloud");
-                //go back to create gift fragment
-//                Bundle b = new Bundle();
-//                b.putSerializable("gift", gift);
-//                createGiftFragment.setArguments(b);
-//                fragmentTransaction.replace(R.id., createGiftFragment).commit();
             }
         };
 
+        Handler handler = new Handler(Looper.getMainLooper());
+
         @Override
         public void run() {
-            String filePath = "gift/" + newGift.getHashValue();
-            StorageReference giftRef = storageRef.child(filePath);
-            giftRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
-                @Override
-                public void onSuccess(ListResult listResult) {
-                    for(StorageReference item : listResult.getItems()){
-                        String itemName = item.getName();
-                        Log.d("LPC", "item: "+item.getName());
-                        File localFile = null;
-                        if(itemName.endsWith(".jpg")){
-                            try {
-                                localFile = File.createTempFile("tempImg", "jpg");
-                                Log.d("LPC", "local image file was made ");
-//                                gift.getContentType().put(itemName, localFile.getAbsolutePath());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        } else if(itemName.endsWith(".mp4")){
-                            try {
-                                localFile = File.createTempFile("tempImg", "mp4");
-                                Log.d("LPC", "local video file was made ");
-//                                gift.getContentType().put(itemName, localFile.getAbsolutePath());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
+            super.run();
+            getGift();
+        }
 
-                    }
-                    handler.post(runnable);
-                }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-                //TODO: fill this in somehow
+
+        public void getGift(){
+            query = mDatabase.child("gifts").child(recipientID).orderByChild(hashValue);
+
+            //listener for the newly added Gift's query based on the input pin
+            //put its link at the top
+            query.addValueEventListener(new ValueEventListener() {
                 @Override
-                public void onFailure(@NonNull Exception e) {
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
+                        Log.d("LPC", "snapshot: " + snapshot.getValue());
+                        if (snapshot.exists()) {
+                            loadedGift = snapshot.child(hashValue).getValue(Gift.class);
+                            Log.d("LPC", "time loaded gift created "+loadedGift.getTimeCreated());
+                            intent.putExtra("OPENED GIFT", loadedGift);
+                            intent.putExtra("FROM OPEN", true);
+                            handler.post(runnable);
+                        } else {
+                            showErrorDialog();
+                            Log.d("LPC", "snapshot doesn't exist");
+                        }
+                }
+
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
                 }
             });
-//            handler.post(runnable);
         }
+    }
+
+    /**
+     * Error pop-up for bad queries
+     */
+    public void showErrorDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(DownloadSplashActivity.this);
+        builder.setMessage("There has been an error. Please try again")
+                .setTitle("Error")
+                .setPositiveButton(android.R.string.ok, null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

@@ -1,10 +1,12 @@
 package com.rayhc.giftly;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.fragment.app.Fragment;
@@ -16,6 +18,7 @@ public class HomeFragment extends Fragment {
     private ArrayList<Gift> giftsSent;
     private ListView recievedGifts;
     private ListView sentGifts;
+    private Button mOpenButton;
 
     public View onCreateView(LayoutInflater layoutInflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -23,6 +26,7 @@ public class HomeFragment extends Fragment {
 
         recievedGifts = root.findViewById(R.id.inbox_gifts_recieved);
         sentGifts = root.findViewById(R.id.inbox_gifts_sent);
+        mOpenButton = root.findViewById(R.id.open_gift_button);
 
         giftsRecieved = new ArrayList<>();
         giftsSent = new ArrayList<>();
@@ -57,6 +61,19 @@ public class HomeFragment extends Fragment {
 
         recievedGifts.setAdapter(receivedAdapter);
         sentGifts.setAdapter(sentAdapter);
+
+
+        mOpenButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String recipientID = "Logan 2";
+                String hashValue = "d41d8cd98f00b204e9800998ecf8427e";
+                Intent intent = new Intent(getContext(), DownloadSplashActivity.class);
+                intent.putExtra("RECIPIENT ID", recipientID);
+                intent.putExtra("HASH VALUE", hashValue);
+                startActivity(intent);
+            }
+        });
 
         return root;
     }
