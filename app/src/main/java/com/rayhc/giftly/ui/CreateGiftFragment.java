@@ -1,4 +1,4 @@
-package com.rayhc.giftly;
+package com.rayhc.giftly.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,15 @@ import android.widget.Button;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.rayhc.giftly.Gift;
+import com.rayhc.giftly.Globals;
+import com.rayhc.giftly.ImageActivity;
+import com.rayhc.giftly.LinkActivity;
+import com.rayhc.giftly.R;
+import com.rayhc.giftly.ReviewGiftActivity;
+import com.rayhc.giftly.UploadingSplashActivity;
+import com.rayhc.giftly.VideoActivity;
 
 import java.util.HashMap;
 

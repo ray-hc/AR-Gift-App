@@ -1,4 +1,4 @@
-package com.rayhc.giftly;
+package com.rayhc.giftly.ui;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,6 +10,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.fragment.app.ListFragment;
+
+import com.rayhc.giftly.R;
 
 import java.util.ArrayList;
 

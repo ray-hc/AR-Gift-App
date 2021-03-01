@@ -6,8 +6,9 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.rayhc.giftly.ui.CreateGiftFragment;
 
 public class FragmentContainerActivity extends AppCompatActivity {
     private Gift mGift;

@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.rayhc.giftly.HomeFragment"
+        android:name="com.rayhc.giftly.ui.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_create_gift"
-        android:name="com.rayhc.giftly.CreateGiftFragment"
+        android:name="com.rayhc.giftly.ui.CreateGiftFragment"
         android:label="Create Gift"
         tools:layout="@layout/fragment_create_gift" />
 
     <fragment
         android:id="@+id/nav_friends_list"
-        android:name="com.rayhc.giftly.FriendsFragment"
+        android:name="com.rayhc.giftly.ui.FriendsFragment"
         android:label="Friends"
         tools:layout="@layout/friends_list_fragment" />
 
