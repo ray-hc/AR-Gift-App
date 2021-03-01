@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,12 +45,7 @@ public class FriendsFragment extends ListFragment {
         Activity activity = this.getActivity();
 
         context = this.getActivity().getApplicationContext();
-
         getUserFromDB();
-
-        ThreadLoader tl = new ThreadLoader();
-        tl.start();
-
         return view;
     }
 
@@ -93,6 +89,9 @@ public class FriendsFragment extends ListFragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     activityUser = UserManager.snapshotToUser(snapshot, displayUserID);
+                    ThreadLoader tl = new ThreadLoader();
+                    tl.start();
+
                 }
             }
 

@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SharedPreferences.Editor editor = sharedPref.edit();
 
         editor.putString("userId", currentUser.getUid());
-        editor.commit();
+        editor.apply();
     }
 
     @Override
