@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.ListFragment;
+import androidx.preference.PreferenceManager;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -75,6 +77,32 @@ public class FriendsFragment extends ListFragment {
 
     }
 
+    public void addFriend(String addedFriend) {
+        UserManager.sendFriendRequest(activityUser, addedFriend);
+    }
+
+    public void getUserFromDB() {
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        String displayUserID = sharedPref.getString("userId",null);
+
+        Query query = db.child("users").orderByChild("userId").equalTo(displayUserID);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    activityUser = UserManager.snapshotToUser(snapshot, displayUserID);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     public class ThreadLoader extends Thread {
         MyListAdapter adapter;
         Runnable setAdapter = () -> setListAdapter(adapter);
@@ -91,30 +119,6 @@ public class FriendsFragment extends ListFragment {
             adapter = new MyListAdapter(getActivity(), R.layout.friend_entry, friends);
             getActivity().runOnUiThread(setAdapter);
         }
-    }
-
-    public void getUserFromDB() {
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        Query query = db.child("users").orderByChild("userId").equalTo(user.getUid());
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    activityUser = UserManager.snapshotToUser(snapshot, user.getUid());
-                } else activityUser = UserManager.snapshotToEmptyUser(snapshot, user);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
-    public static void setAddedFriend(String addedFriend) {
-
     }
 
     public class MyListAdapter extends ArrayAdapter<String> {

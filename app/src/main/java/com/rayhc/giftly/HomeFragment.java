@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 
-public class HomeFragment extends Fragment {
+public class    HomeFragment extends Fragment {
     private ArrayList<Gift> giftsRecieved;
     private ArrayList<Gift> giftsSent;
     private ListView recievedGifts;

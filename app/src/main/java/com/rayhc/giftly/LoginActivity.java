@@ -2,8 +2,10 @@ package com.rayhc.giftly;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.unity3d.player.UnityPlayerActivity;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -55,6 +58,16 @@ public class LoginActivity extends AppCompatActivity {
             tv.setText(this.activityUser.toString());
     }
 
+    private void onAuthSuccess(FirebaseUser currentUser) {
+
+        String userId = currentUser.getUid();
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putString("userId", currentUser.getUid());
+        editor.commit();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -71,7 +84,9 @@ public class LoginActivity extends AppCompatActivity {
                             activityUser = UserManager.snapshotToUser(snapshot, user.getUid());
                         }
                         else activityUser = UserManager.snapshotToEmptyUser(snapshot, user);
+                        onAuthSuccess(user);
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
                     }
@@ -79,6 +94,7 @@ public class LoginActivity extends AppCompatActivity {
             } else {
                 Log.d("iandebug", "User Login Failed");
             }
+
         }
     }
 

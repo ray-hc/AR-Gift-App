@@ -4,4 +4,6 @@
     <string name="cancel_button">Cancel</string>
     <string name="add_friend_dialog">Add Friend</string>
     <string name="normal_dialog_fragment">normal_dialog_fragment</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>

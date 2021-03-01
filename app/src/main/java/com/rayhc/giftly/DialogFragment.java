@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Switch;
 
+import androidx.fragment.app.FragmentManager;
+
 import java.util.Calendar;
 
 import kotlin.random.Random;
@@ -35,13 +37,16 @@ public class DialogFragment extends androidx.fragment.app.DialogFragment {
 
         EditText text = new EditText(locActivity);
 
+        FragmentManager fm = getChildFragmentManager();
+
         switch (id) {
             case R.id.add_friend:
                 // for adding friends
                 return new AlertDialog.Builder(getActivity()).setTitle(R.string.add_friend_dialog).setView(text).setPositiveButton(R.string.ok_button, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        FriendsFragment.setAddedFriend(text.getText().toString());
+                        FriendsFragment ff = (FriendsFragment) fm.findFragmentByTag("FriendsFragment");
+                        ff.addFriend(text.getText().toString());
                     }
                 }).setNegativeButton(R.string.cancel_button, new DialogInterface.OnClickListener() {
                     @Override
