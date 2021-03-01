@@ -76,7 +76,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, ReviewGiftActivity.class);
 //        intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
-        StorageLoaderThread storageLoaderThread = new StorageLoaderThread(intent);
+        GiftDownloaderThread storageLoaderThread = new GiftDownloaderThread(intent);
         storageLoaderThread.start();
 
     }
@@ -85,12 +85,12 @@ public class DownloadSplashActivity extends AppCompatActivity {
     /**
      * Thread to store multimedia to the cloud
      */
-    public class StorageLoaderThread extends Thread {
+    public class GiftDownloaderThread extends Thread {
         private Gift loadedGift;
         private Query query;
         private Intent intent;
 
-        public StorageLoaderThread(Intent intent){
+        public GiftDownloaderThread(Intent intent){
             this.intent = intent;
         }
 
@@ -111,7 +111,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
 
 
         public void getGift(){
-            query = mDatabase.child("gifts").child(recipientID).orderByChild(hashValue);
+            query = mDatabase.child("gifts").orderByChild(hashValue);
 
             //listener for the newly added Gift's query based on the input pin
             //put its link at the top

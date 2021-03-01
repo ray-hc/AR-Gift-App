@@ -26,9 +26,6 @@ public class ReviewGiftActivity extends AppCompatActivity {
     private Gift gift;
     private boolean fromOpen;
 
-    //TODO: change this placeholder
-    private String [] data1 ={"Link 1", "Link 2", "Link 3", "Link 4", "Link 5"};
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

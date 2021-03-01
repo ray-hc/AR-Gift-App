@@ -61,7 +61,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
         //start a thread to upload media to cloud
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
-        StorageLoaderThread storageLoaderThread = new StorageLoaderThread(mGift, intent);
+        GiftUploaderThread storageLoaderThread = new GiftUploaderThread(mGift, intent);
         storageLoaderThread.start();
 
     }
@@ -70,12 +70,12 @@ public class UploadingSplashActivity extends AppCompatActivity {
     /**
      * Thread to store multimedia to the cloud
      */
-    public class StorageLoaderThread extends Thread {
+    public class GiftUploaderThread extends Thread {
 
         private Gift saveGift;
         private Intent intent;
 
-        public StorageLoaderThread(Gift gift, Intent intent){
+        public GiftUploaderThread(Gift gift, Intent intent){
             saveGift = gift;
             this.intent = intent;
         }
@@ -96,8 +96,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
         public void run() {
             Log.d("LPC", "media thread start");
             //upload the strings first
-            mDatabase.child("gifts").child(saveGift.getReceiver())
-                    .child(saveGift.getHashValue()).setValue(saveGift);
+            mDatabase.child("gifts").child(saveGift.getHashValue()).setValue(saveGift);
             Log.d("LPC", "wrote gift to the rt DB");
 
 
