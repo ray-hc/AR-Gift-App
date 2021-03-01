@@ -100,7 +100,7 @@ public class ReviewGiftActivity extends AppCompatActivity {
                         intent.putExtra(Globals.CURR_GIFT_KEY, gift);
                         intent.putExtra(Globals.FILE_LABEL_KEY, label);
                     } else{
-                        intent = new Intent(getApplicationContext(), LinkActivity.class);
+                        intent = new Intent(getApplicationContext(), ImageActivity.class);
                         intent.putExtra(Globals.CURR_GIFT_KEY, gift);
                         intent.putExtra(Globals.FILE_LABEL_KEY, label);
                         intent.putExtra(Globals.FROM_REVIEW_KEY, true);
@@ -114,7 +114,7 @@ public class ReviewGiftActivity extends AppCompatActivity {
                         intent.putExtra(Globals.CURR_GIFT_KEY, gift);
                         intent.putExtra(Globals.FILE_LABEL_KEY, label);
                     } else{
-                        intent = new Intent(getApplicationContext(), LinkActivity.class);
+                        intent = new Intent(getApplicationContext(), VideoActivity.class);
                         intent.putExtra(Globals.CURR_GIFT_KEY, gift);
                         intent.putExtra(Globals.FILE_LABEL_KEY, label);
                         intent.putExtra(Globals.FROM_REVIEW_KEY, true);
