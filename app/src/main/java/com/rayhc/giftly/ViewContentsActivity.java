@@ -14,6 +14,8 @@ import android.media.Image;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -22,6 +24,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -112,77 +115,9 @@ public class ViewContentsActivity extends AppCompatActivity {
      * Shows the gifts contents
      */
     public void showGift(){
-        //handle links
-        if(mLabel.startsWith("link")){
-            mLinkView.setVisibility(View.VISIBLE);
-            mLinkView.setText(mOpenedGift.getLinks().get(mLabel));
-        }
-        //handle images
-        else if(mLabel.startsWith("image")){
-            mProgressBar.setVisibility(View.VISIBLE);
-            //read from cloud
-            String filePath = "gift/" + mOpenedGift.getHashValue()+ "/"+mLabel+".jpg";
-            Log.d("LPC", "image file path: " + filePath);
-            StorageReference imgRef = storageRef.child(filePath);
-            File localFile = null;
-            try {
-                localFile = File.createTempFile("tempImg", ".jpg");
-                Log.d("LPC", "local image file was made ");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //populate temp file and fill in view
-            File finalLocalFile = localFile;
-            imgRef.getFile(localFile).addOnCompleteListener(ViewContentsActivity.this, new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        imageFile = finalLocalFile;
-                        mProgressBar.setVisibility(View.GONE);
-                        mImageView.setVisibility(View.VISIBLE);
-                        Log.d("LPC", "image download successful");
-                        Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
-                        mImageView.setImageBitmap(bitmap);
-                        mSaveButton.setVisibility(View.VISIBLE);
-                    } else {
-                        Log.d("LPC", "image download failed");
-                    }
-                }
-            });
-        }
-        //handle videos
-        else if(mLabel.startsWith("video")){
-            mProgressBar.setVisibility(View.VISIBLE);
-            //read from cloud
-            String filePath = "gift/" + mOpenedGift.getHashValue()+ "/"+mLabel+".mp4";
-            Log.d("LPC", "video file path: " + filePath);
-            StorageReference imgRef = storageRef.child(filePath);
-            File localFile = null;
-            try {
-                localFile = File.createTempFile("tempVid", ".mp4");
-                Log.d("LPC", "local video file was made ");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //populate temp file and fill in view
-            File finalLocalFile = localFile;
-            imgRef.getFile(localFile).addOnCompleteListener(ViewContentsActivity.this, new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        videoFile = finalLocalFile;
-                        mProgressBar.setVisibility(View.GONE);
-                        mVideoView.setVisibility(View.VISIBLE);
-                        Log.d("LPC", "video download successful");
-                        mSaveButton.setVisibility(View.VISIBLE);
-                        mVideoView.setVideoPath(videoFile.getPath());
-                        mVideoView.start();
-                    } else {
-                        Log.d("LPC", "video download failed");
-                    }
-                }
-            });
-        }
+        mProgressBar.setVisibility(View.VISIBLE);
+        DownloadMediaThread downloadMediaThread = new DownloadMediaThread();
+        downloadMediaThread.start();
     }
 
 
@@ -190,49 +125,8 @@ public class ViewContentsActivity extends AppCompatActivity {
      * Save the image or video to the user's gallery
      */
     public void onSave(){
-        File file;
-        Uri newUri;
-        //fill in content values for images
-        if(mLabel.startsWith("image")) {
-            file = new File(imageFile.getPath());
-            ContentValues values = new ContentValues();
-            values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
-            newUri = this.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-            values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg");
-        }
-        //fill in content values for videos
-        else  {
-            file = new File(videoFile.getPath());
-            ContentValues values = new ContentValues();
-            values.put(MediaStore.Video.Media.DATE_TAKEN, System.currentTimeMillis());
-            newUri = this.getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
-            values.put(MediaStore.Video.Media.MIME_TYPE, "image/jpg");
-        }
-        Log.d("LPC", "will save this file: "+file.getPath());
-        //copy temp file to gallery file
-        FileInputStream inputStream = null;
-        FileOutputStream outputStream = null;
-        try{
-            inputStream = new FileInputStream(file);
-            outputStream =  (FileOutputStream) getContentResolver().openOutputStream(newUri);
-            byte[] buffer = new byte[1024];
-
-            int length;
-            while ((length = inputStream.read(buffer)) > 0){
-                outputStream.write(buffer, 0, length);
-            }
-            Log.d("LPC", "File copied successfully!!");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                inputStream.close();
-                outputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
+        GalleryWriterThread galleryWriterThread = new GalleryWriterThread(this.getContentResolver());
+        galleryWriterThread.run();
     }
 
     /**
@@ -245,5 +139,176 @@ public class ViewContentsActivity extends AppCompatActivity {
                 .setPositiveButton(android.R.string.ok, null);
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+
+    /**
+     * Thread to download media from cloud
+     */
+    public class DownloadMediaThread extends Thread{
+        private Bitmap bitmap;
+
+        public DownloadMediaThread(){
+        }
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                mProgressBar.setVisibility(View.GONE);
+                if(mLabel.startsWith("link")){
+                    mLinkView.setVisibility(View.VISIBLE);
+                } else if(mLabel.startsWith("image")){
+                    mImageView.setVisibility(View.VISIBLE);
+                    mImageView.setImageBitmap(bitmap);
+                    mSaveButton.setVisibility(View.VISIBLE);
+                } else if(mLabel.startsWith("video")){
+                    mProgressBar.setVisibility(View.GONE);
+                    mVideoView.setVisibility(View.VISIBLE);
+                    Log.d("LPC", "video download successful");
+                    mSaveButton.setVisibility(View.VISIBLE);
+                    mVideoView.start();
+                }
+            }
+        };
+
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        @Override
+        public void run() {
+            super.run();
+            if(mLabel.startsWith("link")){
+                mLinkView.setText(mOpenedGift.getLinks().get(mLabel));
+                handler.post(runnable);
+            }
+            //handle images
+            else if(mLabel.startsWith("image")){
+                //read from cloud
+                String filePath = "gift/" + mOpenedGift.getHashValue()+ "/"+mLabel+".jpg";
+                Log.d("LPC", "image file path: " + filePath);
+                StorageReference imgRef = storageRef.child(filePath);
+                File localFile = null;
+                try {
+                    localFile = File.createTempFile("tempImg", ".jpg");
+                    Log.d("LPC", "local image file was made ");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //populate temp file and fill in view
+                File finalLocalFile = localFile;
+                imgRef.getFile(localFile).addOnCompleteListener(ViewContentsActivity.this, new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            imageFile = finalLocalFile;
+                            Log.d("LPC", "image download successful");
+                            bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+                            handler.post(runnable);
+                        } else {
+                            Log.d("LPC", "image download failed");
+                        }
+                    }
+                });
+            }
+            //handle videos
+            else if(mLabel.startsWith("video")){
+                mProgressBar.setVisibility(View.VISIBLE);
+                //read from cloud
+                String filePath = "gift/" + mOpenedGift.getHashValue()+ "/"+mLabel+".mp4";
+                Log.d("LPC", "video file path: " + filePath);
+                StorageReference imgRef = storageRef.child(filePath);
+                File localFile = null;
+                try {
+                    localFile = File.createTempFile("tempVid", ".mp4");
+                    Log.d("LPC", "local video file was made ");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //populate temp file and fill in view
+                File finalLocalFile = localFile;
+                imgRef.getFile(localFile).addOnCompleteListener(ViewContentsActivity.this, new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            videoFile = finalLocalFile;
+                            Log.d("LPC", "video download successful");
+                            mVideoView.setVideoPath(videoFile.getPath());
+                            handler.post(runnable);
+                        } else {
+                            Log.d("LPC", "video download failed");
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    /**
+     * Thread to write the file to the gallery
+     */
+    public class GalleryWriterThread extends Thread {
+        private File file;
+        private Uri newUri;
+        private ContentResolver contentResolver;
+
+        public GalleryWriterThread(ContentResolver contentResolver){
+            this.contentResolver = contentResolver;
+        }
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), "File has been saved to gallery", Toast.LENGTH_SHORT)
+                        .show();
+            }
+        };
+
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        @Override
+        public void run() {
+            super.run();
+            //fill in content values for images
+            if(mLabel.startsWith("image")) {
+                file = new File(imageFile.getPath());
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
+                newUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg");
+            }
+            //fill in content values for videos
+            else  {
+                file = new File(videoFile.getPath());
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Video.Media.DATE_TAKEN, System.currentTimeMillis());
+                newUri = contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
+                values.put(MediaStore.Video.Media.MIME_TYPE, "image/jpg");
+            }
+            Log.d("LPC", "will save this file: "+file.getPath());
+            //copy temp file to gallery file
+            FileInputStream inputStream = null;
+            FileOutputStream outputStream = null;
+            try{
+                inputStream = new FileInputStream(file);
+                outputStream =  (FileOutputStream) getContentResolver().openOutputStream(newUri);
+                byte[] buffer = new byte[1024];
+
+                int length;
+                while ((length = inputStream.read(buffer)) > 0){
+                    outputStream.write(buffer, 0, length);
+                }
+                Log.d("LPC", "File copied successfully!!");
+                handler.post(runnable);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    inputStream.close();
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
     }
 }
