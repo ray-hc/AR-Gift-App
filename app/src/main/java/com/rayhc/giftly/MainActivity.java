@@ -41,14 +41,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, myAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        actionButton = findViewById(R.id.fab);
-        actionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Create a new present", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         //starts login page
 //        Intent intent = new Intent(this, LoginActivity.class);
 //        startActivity(intent);
