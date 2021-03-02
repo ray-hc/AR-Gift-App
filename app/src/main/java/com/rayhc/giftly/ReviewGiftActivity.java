@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,8 +26,10 @@ public class ReviewGiftActivity extends AppCompatActivity {
     private ListView mLinkList, mMediaList;
     private Gift gift;
 
-    //TODO: change this placeholder
-    private String [] data1 ={"Link 1", "Link 2", "Link 3", "Link 4", "Link 5"};
+    //TODO: differentiate if it is from editing or opening
+    private boolean fromOpen;
+    private TextView mMessageView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +40,20 @@ public class ReviewGiftActivity extends AppCompatActivity {
         mLinkList = (ListView)findViewById(R.id.link_listView);
         mMediaList = (ListView)findViewById(R.id.media_listView);
 
+        //wire message view and hide
+        mMessageView = (TextView) findViewById(R.id.message_view);
+        mMessageView.setVisibility(View.GONE);
+
         //get gift object
         Intent startIntent = getIntent();
         gift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
+
+        //TODO: put in the message, if it is a gift with a message
+        fromOpen = startIntent.getBooleanExtra("FROM OPEN", false);
+        if(fromOpen && gift.getMessage() != null) {
+            mMessageView.setVisibility(View.VISIBLE);
+            mMessageView.setText("Message: "+gift.getMessage());
+        }
 
         //populate the listview for media
         Log.d("LPC", "from download splash - contentType : "+gift.getContentType().toString());

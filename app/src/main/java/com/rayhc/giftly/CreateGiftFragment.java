@@ -6,11 +6,15 @@ import androidx.preference.PreferenceManager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -31,6 +35,7 @@ import java.util.HashMap;
 public class CreateGiftFragment extends Fragment {
     private TextView recipientLabel;
     private Button linkButton, imageButton, videoButton, reviewButton, sendButton, chooseFriendButton;
+    private EditText messageInput;
     private Gift newGift;
 
     //user id
@@ -100,6 +105,26 @@ public class CreateGiftFragment extends Fragment {
         chooseFriendButton = v.findViewById(R.id.choose_recipient_button);
         sendButton.setEnabled(newGift.getContentType().size() != 0 || newGift.getLinks().size() != 0);
 
+        //set up message input
+        messageInput = v.findViewById(R.id.message_input);
+        if(newGift.getMessage() != null) messageInput.setText(newGift.getMessage());
+        messageInput.setOnEditorActionListener(new TextView.OnEditorActionListener()
+        {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                String input;
+                if(actionId == EditorInfo.IME_ACTION_DONE) {
+                    input= v.getText().toString();
+                    newGift.setMessage(input);
+                    Log.d("LPC", "set gift message to: "+newGift.getMessage());
+                    InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    return true; // consume.
+                }
+                return false; // pass on to other listeners.
+            }
+        });
+
         //set up the recipient label
         recipientLabel = v.findViewById(R.id.recipient);
         if(recipientName != null) recipientLabel.setText("This Gift is to: "+recipientName);
@@ -140,6 +165,8 @@ public class CreateGiftFragment extends Fragment {
 
         sendButton.setOnClickListener(v14 ->{
             Intent intent = new Intent(getActivity(), UploadingSplashActivity.class);
+            //set the message of the gift
+            newGift.setMessage(messageInput.getText().toString());
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             intent.putExtra("FROM USER ID", mUserId);
             intent.putExtra("TO USER ID", recipientID);
