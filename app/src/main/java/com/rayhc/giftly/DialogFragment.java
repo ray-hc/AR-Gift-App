@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Switch;
 
@@ -37,7 +38,7 @@ public class DialogFragment extends androidx.fragment.app.DialogFragment {
 
         EditText text = new EditText(locActivity);
 
-        FragmentManager fm = getChildFragmentManager();
+        FragmentManager fm = getParentFragmentManager();
 
         switch (id) {
             case R.id.add_friend:
@@ -46,6 +47,7 @@ public class DialogFragment extends androidx.fragment.app.DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         FriendsFragment ff = (FriendsFragment) fm.findFragmentByTag("FriendsFragment");
+                        Log.d("kitani", "Sending friend request to: " + text.getText().toString());
                         ff.addFriend(text.getText().toString());
                     }
                 }).setNegativeButton(R.string.cancel_button, new DialogInterface.OnClickListener() {
