@@ -18,14 +18,19 @@ public class FragmentContainerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_fragment_container);
 
         Intent startIntent = getIntent();
-        mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
-        Log.d("LPC", "container activity got gift: "+mGift.toString());
-
-
         CreateGiftFragment createGiftFragment = new CreateGiftFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(Globals.CURR_GIFT_KEY, mGift);
+        if(startIntent.getBooleanExtra("FROM FRIEND CHOOSE", false)){
+            bundle.putString("FRIEND NAME", startIntent.getStringExtra("FRIEND NAME"));
+            bundle.putString("FRIEND ID", startIntent.getStringExtra("FRIEND ID"));
+        }
+        else{
+            mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
+            Log.d("LPC", "container activity got gift: "+mGift.toString());
+            bundle.putSerializable(Globals.CURR_GIFT_KEY, mGift);
+        }
         createGiftFragment.setArguments(bundle);
+
 
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
