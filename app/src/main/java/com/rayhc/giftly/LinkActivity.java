@@ -25,6 +25,8 @@ public class LinkActivity extends AppCompatActivity {
     //get gift
     private Gift mGift;
 
+    private String friendName, friendID;
+
     //from review
     private boolean mFromReview;
     private String mFileLabel;
@@ -39,6 +41,8 @@ public class LinkActivity extends AppCompatActivity {
         Log.d("LPC", "onCreate: saved gift: " + mGift.toString());
         mFromReview = startIntent.getBooleanExtra(Globals.FROM_REVIEW_KEY, false);
         mFileLabel = startIntent.getStringExtra(Globals.FILE_LABEL_KEY);
+        friendName = startIntent.getStringExtra("FRIEND NAME");
+        friendID = startIntent.getStringExtra("FRIEND ID");
 
         //wire button and edit text
         mSaveButton = (Button) findViewById(R.id.choose_link_save_button);
@@ -105,6 +109,8 @@ public class LinkActivity extends AppCompatActivity {
             Log.d("LPC", "set gift link to: " + link);
             Intent intent = new Intent(this, FragmentContainerActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
+            intent.putExtra("FRIEND NAME", friendName);
+            intent.putExtra("FRIEND ID", friendID);
             startActivity(intent);
         } catch (MalformedURLException e) {
             showErrorDialog();
@@ -118,6 +124,8 @@ public class LinkActivity extends AppCompatActivity {
         Intent intent = new Intent(this, FragmentContainerActivity.class);
         mGift.getLinks().remove(mFileLabel);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
+        intent.putExtra("FRIEND NAME", friendName);
+        intent.putExtra("FRIEND ID", friendID);
         startActivity(intent);
     }
 

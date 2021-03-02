@@ -20,15 +20,15 @@ public class FragmentContainerActivity extends AppCompatActivity {
         Intent startIntent = getIntent();
         CreateGiftFragment createGiftFragment = new CreateGiftFragment();
         Bundle bundle = new Bundle();
-        if(startIntent.getBooleanExtra("FROM FRIEND CHOOSE", false)){
-            bundle.putString("FRIEND NAME", startIntent.getStringExtra("FRIEND NAME"));
-            bundle.putString("FRIEND ID", startIntent.getStringExtra("FRIEND ID"));
-        }
-        else{
-            mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
-            Log.d("LPC", "container activity got gift: "+mGift.toString());
-            bundle.putSerializable(Globals.CURR_GIFT_KEY, mGift);
-        }
+
+        bundle.putString("FRIEND NAME", startIntent.getStringExtra("FRIEND NAME"));
+        bundle.putString("FRIEND ID", startIntent.getStringExtra("FRIEND ID"));
+
+
+        mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
+        Log.d("LPC", "container activity got gift: " + mGift.toString());
+        bundle.putSerializable(Globals.CURR_GIFT_KEY, mGift);
+
         createGiftFragment.setArguments(bundle);
 
 

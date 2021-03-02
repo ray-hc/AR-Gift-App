@@ -31,9 +31,6 @@ import java.util.HashMap;
 public class CreateGiftFragment extends Fragment {
     private TextView recipientLabel;
     private Button linkButton, imageButton, videoButton, reviewButton, sendButton, chooseFriendButton;
-    private ArrayList<String>  mFriendNames;
-    private ArrayList<String>  mFriendIDs;
-    private int numFriends;
     private Gift newGift;
 
     //user id
@@ -49,6 +46,7 @@ public class CreateGiftFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         //get userID from shared pref
         mSharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
         mUserId = mSharedPref.getString("userId",null);
@@ -111,24 +109,32 @@ public class CreateGiftFragment extends Fragment {
         linkButton.setOnClickListener(v12 -> {
             Intent intent = new Intent(getActivity(), LinkActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
+            intent.putExtra("FRIEND NAME", recipientName);
+            intent.putExtra("FRIEND ID", recipientID);
             startActivity(intent);
         });
 
         imageButton.setOnClickListener(v1 -> {
             Intent intent = new Intent(getActivity(), ImageActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
+            intent.putExtra("FRIEND NAME", recipientName);
+            intent.putExtra("FRIEND ID", recipientID);
             startActivity(intent);
         });
 
         videoButton.setOnClickListener(v13 -> {
             Intent intent = new Intent(getActivity(), VideoActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
+            intent.putExtra("FRIEND NAME", recipientName);
+            intent.putExtra("FRIEND ID", recipientID);
             startActivity(intent);
         });
 
         reviewButton.setOnClickListener(v14 -> {
             Intent intent = new Intent(getActivity(), ReviewGiftActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
+            intent.putExtra("FRIEND NAME", recipientName);
+            intent.putExtra("FRIEND ID", recipientID);
             startActivity(intent);
         });
 
@@ -142,6 +148,7 @@ public class CreateGiftFragment extends Fragment {
 
         chooseFriendButton.setOnClickListener(v15 ->{
             Intent intent = new Intent(getActivity(), DownloadSplashActivity.class);
+            intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             intent.putExtra("GET FRIENDS", true);
             intent.putExtra("USER ID", mUserId);
             startActivity(intent);
