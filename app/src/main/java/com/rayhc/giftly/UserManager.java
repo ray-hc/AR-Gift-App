@@ -43,8 +43,11 @@ public class UserManager {
         await(task);
         DataSnapshot ds = task.getResult();
         List<User> list = new ArrayList<>();
-        for(DataSnapshot child : ds.getChildren())
-            list.add(snapshotToUser(child, (String) child.child("userId").getValue()));
+        if(ds == null) return;
+        for(DataSnapshot child : ds.getChildren()) {
+            String uid = (String) child.child("userId").getValue();
+            list.add(snapshotToUser(ds, uid));
+        }
         return list;
     }
 

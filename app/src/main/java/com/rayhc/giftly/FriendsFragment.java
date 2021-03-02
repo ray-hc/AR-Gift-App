@@ -98,7 +98,10 @@ public class FriendsFragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    user = UserManager.searchUsersByEmail(addedFriendEmail).get(0);
+                    List<User> list = UserManager.searchUsersByEmail(addedFriendEmail);
+                    user = list.get(0);
+                    Log.d("iandebug", "" + list.size());
+                    Log.d("iandebug", "" + list.get(0).getUserId());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -107,7 +110,6 @@ public class FriendsFragment extends Fragment {
                     UserManager.sendFriendRequest(activityUser, user.getUserId());
                 }
                 else{
-                    Toast.makeText(getActivity(), "User not found", Toast.LENGTH_SHORT).show();
                 }
 
             }
