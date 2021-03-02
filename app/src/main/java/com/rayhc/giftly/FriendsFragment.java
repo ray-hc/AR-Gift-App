@@ -175,7 +175,6 @@ public class FriendsFragment extends Fragment {
                             }
                             Log.d("kitani", "Requests Added");
 
-
                             friendsListAdapter = new MyFriendsListAdapter(context, R.layout.friend_entry, friendsList);
                             requestsListAdapter = new MyRequestsListAdapter(context, R.layout.friend_request_entry, requestsList);
 
