@@ -98,19 +98,19 @@ public class UserManager {
     }
 
     public static void sendGift(User from, User to, Gift gift){
-        from.addSentGifts(to.getUserId());
-        to.addReceivedGifts(from.getUserId());
         gift.setReceiver(to.getUserId());
         gift.setSender(from.getUserId());
         if(gift.getTimeCreated() != 0) {
             gift.setTimeCreated(System.currentTimeMillis());
         }
+        from.addSentGifts(gift.createHashValue());
+        to.addReceivedGifts(gift.createHashValue());
         new Thread() {
             public void run(){
                 DatabaseReference db = FirebaseDatabase.getInstance().getReference();
                 db.child("users").child(from.getUserId()).setValue(from);
                 db.child("users").child(to.getUserId()).setValue(to);
-                db.child("gifts").child(gift.getReceiver()).child(String.valueOf(gift.getTimeCreated())).setValue(gift);
+                db.child("gifts").child(gift.createHashValue()).setValue(gift);
             }
         }.start();
     }

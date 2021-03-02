@@ -49,6 +49,8 @@ public class ImageActivity extends AppCompatActivity {
     private Gift mGift;
     private Uri currentData;
 
+    private String friendName, friendID;
+
     //from review
     private boolean mFromReview;
     private String mFileLabel;
@@ -69,6 +71,8 @@ public class ImageActivity extends AppCompatActivity {
         Log.d("LPC", "image activity: gift contentType: "+mGift.getContentType().toString());
         mFromReview = startIntent.getBooleanExtra(Globals.FROM_REVIEW_KEY, false);
         mFileLabel = startIntent.getStringExtra(Globals.FILE_LABEL_KEY);
+        friendName = startIntent.getStringExtra("FRIEND NAME");
+        friendID = startIntent.getStringExtra("FRIEND ID");
 
         //wire button and image view
         mChooseButton = (Button) findViewById(R.id.image_choose_button);
@@ -146,6 +150,8 @@ public class ImageActivity extends AppCompatActivity {
         Log.d("LPC", "just saved image: "+mGift.getContentType().get(key));
         Intent intent = new Intent(this, FragmentContainerActivity.class);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
+        intent.putExtra("FRIEND NAME", friendName);
+        intent.putExtra("FRIEND ID", friendID);
         startActivity(intent);
 
     }
@@ -157,6 +163,8 @@ public class ImageActivity extends AppCompatActivity {
         Intent intent = new Intent(this, FragmentContainerActivity.class);
         mGift.getContentType().remove(mFileLabel);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
+        intent.putExtra("FRIEND NAME", friendName);
+        intent.putExtra("FRIEND ID", friendID);
         startActivity(intent);
 
     }

@@ -68,11 +68,13 @@ public class DownloadSplashActivity extends AppCompatActivity {
 
         //recipient and hash
         Intent startIntent = getIntent();
+        mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
         if(startIntent.getBooleanExtra("GET FRIENDS", false)){
             userID = startIntent.getStringExtra("USER ID");
             friendMap = new HashMap<>();
 
             Intent intent = new Intent(this, ChooseFriendActivity.class);
+            intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
             GetFriendsThread getFriendsThread = new GetFriendsThread(intent);
             getFriendsThread.start();
 

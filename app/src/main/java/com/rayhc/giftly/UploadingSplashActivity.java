@@ -104,9 +104,9 @@ public class UploadingSplashActivity extends AppCompatActivity {
         public void run() {
             Log.d("LPC", "media thread start");
             //upload the strings first
-            mDatabase.child("gifts").child(saveGift.getReceiver())
-                    .child(saveGift.getHashValue()).setValue(saveGift);
-            Log.d("LPC", "wrote gift to the rt DB");
+            Log.d("LPC", "save gift hash: "+saveGift.getHashValue());
+//            mDatabase.child("gifts").child(saveGift.getHashValue()).setValue(saveGift);
+//            Log.d("LPC", "wrote gift to the rt DB");
 
             //send the gift
             sendGift(fromID, toID);

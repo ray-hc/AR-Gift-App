@@ -20,6 +20,8 @@ public class ChooseFriendActivity extends AppCompatActivity {
 
     private HashMap<String, String> friendMap;
 
+    private Gift mGift;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +29,7 @@ public class ChooseFriendActivity extends AppCompatActivity {
 
         Intent startIntent = getIntent();
         friendMap = (HashMap<String, String>) startIntent.getSerializableExtra("FRIEND MAP");
+        mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
 
         friendListView = (ListView) findViewById(R.id.friends_listView);
         //populate the listview for media
@@ -44,9 +47,17 @@ public class ChooseFriendActivity extends AppCompatActivity {
                 intent.putExtra("FRIEND ID", friendID);
                 intent.putExtra("FRIEND NAME", label);
                 intent.putExtra("FROM FRIEND CHOOSE", true);
+                intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
                 startActivity(intent);
             }
         });
+    }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(getApplicationContext(), FragmentContainerActivity.class);
+        intent.putExtra("BACK PRESSED", true);
+        startActivity(intent);
     }
 }
