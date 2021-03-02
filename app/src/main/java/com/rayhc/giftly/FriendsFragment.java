@@ -33,7 +33,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 public class FriendsFragment extends Fragment {
     private User activityUser;
@@ -89,33 +91,28 @@ public class FriendsFragment extends Fragment {
     }
 
     // To send a friend request
-    public void addFriend(String addedFriendID) {
-//        Thread thread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-//
-//                if (activityUser.getReceivedFriends() != null) {
-//                    for (String key : activityUser.getReceivedFriends().keySet()) {
-//                        String requestID = activityUser.getReceivedFriends().get(key);
-//                        Query query = db.child("users").orderByChild("userId").equalTo(requestID);
-//                        query.addListenerForSingleValueEvent(new ValueEventListener() {
-//                            @Override
-//                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                                String requestName = (String) snapshot.child(requestID).child("name").getValue();
-//
-//                                UserManager.sendFriendRequest(activityUser, addedFriend);
-//                            }
-//
-//                            @Override
-//                            public void onCancelled(@NonNull DatabaseError error) {
-//                            }
-//                        });
-//                    }
-//                }
-//            }
-//        });
-//        thread.start();
+    public void addFriend(String addedFriendEmail) {
+        Thread thread = new Thread(new Runnable() {
+            User user;
+
+            @Override
+            public void run() {
+                try {
+                    user = UserManager.searchUsersByEmail(addedFriendEmail).get(0);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if (user != null){
+                    UserManager.sendFriendRequest(activityUser, user.getUserId());
+                }
+                else{
+                    Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+        thread.start();
     }
 
     public void getUserFromDB() {
@@ -219,6 +216,15 @@ public class FriendsFragment extends Fragment {
             TextView friendName = (TextView) convertView.findViewById(R.id.friend);
             friendName.setText(friend);
 
+            Button remove = (Button) convertView.findViewById(R.id.remove_button);
+
+            remove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+
             return convertView;
         }
     }
@@ -243,7 +249,7 @@ public class FriendsFragment extends Fragment {
             TextView friendName = (TextView) convertView.findViewById(R.id.friend_request);
             friendName.setText(request);
 
-            Button add = (Button) convertView.findViewById(R.id.add_friend);
+            Button add = (Button) convertView.findViewById(R.id.add_button);
             Button decline = (Button) convertView.findViewById(R.id.decline_button);
 
             add.setOnClickListener(new View.OnClickListener() {

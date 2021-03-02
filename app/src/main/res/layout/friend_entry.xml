@@ -10,9 +10,10 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"/>
 
-    <ImageButton
+    <Button
         android:layout_width="10dp"
         android:layout_height="10dp"
-        android:src="@drawable/present"/>
+        android:id="@+id/remove_button"
+        android:text="Remove"/>
 
 </LinearLayout>
