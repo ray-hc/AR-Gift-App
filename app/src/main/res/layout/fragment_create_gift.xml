@@ -2,20 +2,28 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
-<!--RECIPIENT-->
+    <!--RECIPIENT-->
     <TextView
         android:id="@+id/recipient"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:layout_centerHorizontal="true"
-        android:text="PLACEHOLDER"/>
+        android:text="This Gift is to: "/>
+    <Button
+        android:id="@+id/choose_recipient_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="CHOOSE RECIPIENT"
+        android:layout_below="@+id/recipient"/>
     <LinearLayout
         android:id="@+id/picker_buttons_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@+id/recipient">
+        android:layout_margin="10dp"
+        android:layout_below="@+id/choose_recipient_button">
 
         <!--Link Button-->
         <Button

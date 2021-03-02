@@ -1,27 +1,65 @@
 package com.rayhc.giftly;
 
+import android.content.Context;
 import android.content.Intent;
+import androidx.preference.PreferenceManager;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class CreateGiftFragment extends Fragment {
-    private Button linkButton, imageButton, videoButton, reviewButton, sendButton;
+    private TextView recipientLabel;
+    private Button linkButton, imageButton, videoButton, reviewButton, sendButton, chooseFriendButton;
+    private ArrayList<String>  mFriendNames;
+    private ArrayList<String>  mFriendIDs;
+    private int numFriends;
     private Gift newGift;
+
+    //user id
+    SharedPreferences mSharedPref;
+    String mUserId;
+
+    //recipient stuff
+    String recipientName, recipientID;
+
+    //firebase stuff
+    private DatabaseReference mDatabase;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle extras = getArguments();
+        //get userID from shared pref
+        mSharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        mUserId = mSharedPref.getString("userId",null);
+        Log.d("LPC", "create gift - user id: "+mUserId);
+
+
+        //reference to DB
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
         //get possible gift data
+        Bundle extras = getArguments();
         if(extras != null && extras.getSerializable(Globals.CURR_GIFT_KEY) != null){
             newGift = (Gift) extras.getSerializable(Globals.CURR_GIFT_KEY);
             Log.d("LPC", "create frag: got gift from bundle");
@@ -39,6 +77,15 @@ public class CreateGiftFragment extends Fragment {
             newGift.setLinks(new HashMap<>());
             newGift.setGiftType(new HashMap<>());
         }
+
+        //get possible recipient user data
+        if(extras != null && extras.getString("FRIEND NAME") != null &&
+                extras.getString("FRIEND ID") != null){
+            recipientID =  extras.getString("FRIEND ID");
+            recipientName = extras.getString("FRIEND NAME");
+
+        }
+
     }
 
     public View onCreateView(LayoutInflater layoutInflater,
@@ -52,9 +99,12 @@ public class CreateGiftFragment extends Fragment {
         videoButton = v.findViewById(R.id.video_button);
         reviewButton = v.findViewById(R.id.review_button);
         sendButton = v.findViewById(R.id.send_button);
-        if(newGift.getContentType().size() == 0 && newGift.getLinks().size() == 0)
-            sendButton.setEnabled(false);
-        newGift.setTimeCreated(System.currentTimeMillis());
+        chooseFriendButton = v.findViewById(R.id.choose_recipient_button);
+        sendButton.setEnabled(newGift.getContentType().size() != 0 || newGift.getLinks().size() != 0);
+
+        //set up the recipient label
+        recipientLabel = v.findViewById(R.id.recipient);
+        if(recipientName != null) recipientLabel.setText("This Gift is to: "+recipientName);
 
 
         //click listeners for adding contents to the gift
@@ -85,6 +135,15 @@ public class CreateGiftFragment extends Fragment {
         sendButton.setOnClickListener(v14 ->{
             Intent intent = new Intent(getActivity(), UploadingSplashActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
+            intent.putExtra("FROM USER ID", mUserId);
+            intent.putExtra("TO USER ID", recipientID);
+            startActivity(intent);
+        });
+
+        chooseFriendButton.setOnClickListener(v15 ->{
+            Intent intent = new Intent(getActivity(), DownloadSplashActivity.class);
+            intent.putExtra("GET FRIENDS", true);
+            intent.putExtra("USER ID", mUserId);
             startActivity(intent);
         });
 
