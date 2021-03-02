@@ -107,7 +107,7 @@ public class FriendsFragment extends Fragment {
                     UserManager.sendFriendRequest(activityUser, user.getUserId());
                 }
                 else{
-                    Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "User not found", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -221,7 +221,7 @@ public class FriendsFragment extends Fragment {
             remove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    UserManager.removeFriend(activityUser, friend);
                 }
             });
 
@@ -269,7 +269,7 @@ public class FriendsFragment extends Fragment {
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             String requestName = (String) snapshot.child(requestID).child("name").getValue();
 
-                                            if (request == requestName){
+                                            if (request.equals(requestName)){
                                                 UserManager.acceptFriendRequest(activityUser, requestID);
                                             }
                                         }
@@ -303,7 +303,7 @@ public class FriendsFragment extends Fragment {
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             String requestName = (String) snapshot.child(requestID).child("name").getValue();
 
-                                            if (request == requestName){
+                                            if (request.equals(requestName)){
                                                 UserManager.declineFriendRequest(activityUser, requestID);
                                             }
                                         }

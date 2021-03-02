@@ -48,6 +48,29 @@ public class UserManager {
         return list;
     }
 
+    public static void removeFriend(User current, String toRemoveId){
+        current.removeFriends(toRemoveId);
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+        Query query = db.child("users").orderByChild("userId").equalTo(toRemoveId);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot){
+                User newUser = new User();
+                if(snapshot.exists()){
+                    newUser = UserManager.snapshotToUser(snapshot, toRemoveId);
+                }
+                newUser.removeFriends(current.getUserId());
+                db.child("users").child(current.getUserId()).setValue(current);
+                db.child("users").child(newUser.getUserId()).setValue(newUser);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     public static void acceptFriendRequest(User current, String toAcceptUid){
         if(current.getReceivedFriends() == null) return;
         if(!current.getReceivedFriends().containsKey(toAcceptUid)) return;

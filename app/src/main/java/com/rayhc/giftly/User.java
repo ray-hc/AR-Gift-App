@@ -84,6 +84,11 @@ public class User implements Serializable {
         this.friends.put(uid, uid);
     }
 
+    public void removeFriends(String uid){
+        if(this.friends == null) return;
+        this.friends.remove(uid);
+    }
+
     public void addSentGifts(String uid){
         if(this.sentGifts == null) this.sentGifts = new HashMap<>();
         this.sentGifts.put(uid, uid);
