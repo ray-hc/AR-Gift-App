@@ -175,17 +175,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("LPC", "onActivityResult: called");
         if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             DatabaseReference db = FirebaseDatabase.getInstance().getReference();
             if (resultCode == RESULT_OK) {
+                Log.d("LPC", "result ok");
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 Query query = db.child("users").orderByChild("userId").equalTo(user.getUid());
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot){
+                        Log.d("LPC", "does data snap exist?: "+snapshot.exists());
                         if(snapshot.exists()){
+                            Log.d("LPC", "snapshot exists");
                             activityUser = UserManager.snapshotToUser(snapshot, user.getUid());
+                            Log.d("LPC", "user exists");
                         }
                         else activityUser = UserManager.snapshotToEmptyUser(snapshot, user);
                         onAuthSuccess(user);
