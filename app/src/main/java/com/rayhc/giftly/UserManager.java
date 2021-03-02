@@ -43,7 +43,7 @@ public class UserManager {
         await(task);
         DataSnapshot ds = task.getResult();
         List<User> list = new ArrayList<>();
-        if(ds == null) return;
+        if(ds == null) return null;
         for(DataSnapshot child : ds.getChildren()) {
             String uid = (String) child.child("userId").getValue();
             list.add(snapshotToUser(ds, uid));
@@ -132,7 +132,10 @@ public class UserManager {
     public static User snapshotToEmptyUser(DataSnapshot snapshot, FirebaseUser user){
         User tempUser = new User();
         if(user.getDisplayName() != null) tempUser.setName(user.getDisplayName());
-        if(user.getEmail() != null) tempUser.setEmail(user.getEmail());
+        if(user.getEmail() != null){
+            tempUser.setEmail(user.getEmail());
+            if(user.getDisplayName() == null) tempUser.setName(user.getEmail());
+        }
         if(user.getPhotoUrl() != null) tempUser.setPhotoUri(user.getPhotoUrl().toString());
         tempUser.setEmailVerified(user.isEmailVerified());
         tempUser.setUserId(user.getUid());
