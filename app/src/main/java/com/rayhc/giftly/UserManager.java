@@ -1,7 +1,10 @@
 package com.rayhc.giftly;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -10,9 +13,41 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import static com.google.android.gms.tasks.Tasks.await;
 
 public class UserManager {
+    /**
+     * EXAMPLE USAGE
+     *             Thread thread = new Thread(() -> {
+     *                 try {
+     *                     UserManager.searchUsersByEmail("iank");
+     *                 } catch (Exception e) {
+     *                     e.printStackTrace();
+     *                 }
+     *             });
+     *             thread.start();
+     * @param email
+     * @return
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    public static List<User> searchUsersByEmail(String email) throws ExecutionException, InterruptedException {
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+        Query query = db.child("users").orderByChild("email").startAt(email).endAt(email+"\uf8ff");
+        Task<DataSnapshot> task = query.get();
+        await(task);
+        DataSnapshot ds = task.getResult();
+        List<User> list = new ArrayList<>();
+        for(DataSnapshot child : ds.getChildren())
+            list.add(snapshotToUser(child, (String) child.child("userId").getValue()));
+        return list;
+    }
+
     public static void acceptFriendRequest(User current, String toAcceptUid){
         if(current.getReceivedFriends() == null) return;
         if(!current.getReceivedFriends().containsKey(toAcceptUid)) return;
