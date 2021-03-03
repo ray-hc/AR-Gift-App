@@ -255,19 +255,21 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     Log.d("LPC", "put in an empty sent gift map: ");
                     GetReceivedGiftsThread getReceivedGiftsThread = new GetReceivedGiftsThread(intent);
                     getReceivedGiftsThread.start();
+                } else {
+                    if (giftMessages.size() > numSentGifts && giftRecipientNames.size() > numSentGifts)
+                        return;
+                    //make passable strings in form "To *name*: *message*"
+                    for (int i = 0; i < numSentGifts; i++) {
+                        String label = "To ";
+                        label += (giftRecipientNames.get(i) + ": " + giftMessages.get(i));
+                        //put in map label -> gift hash
+                        sentGiftMap.put(label, giftHashes.get(i));
+                    }
+                    intent.putExtra("SENT GIFT MAP", sentGiftMap);
+                    Log.d("LPC", "thread done - sent gift map: "+sentGiftMap.toString());
+                    GetReceivedGiftsThread getReceivedGiftsThread = new GetReceivedGiftsThread(intent);
+                    getReceivedGiftsThread.start();
                 }
-                if(giftMessages.size() > numSentGifts && giftRecipientNames.size() > numSentGifts)
-                    return;
-                //make passable strings in form "To *name*: *message*"
-                for (int i = 0; i < numSentGifts; i++) {
-                    String label = "To ";
-                    label += (giftRecipientNames.get(i)+": "+giftMessages.get(i));
-                    //put in map label -> gift hash
-                    sentGiftMap.put(label, giftHashes.get(i));
-                }
-                intent.putExtra("SENT GIFT MAP", sentGiftMap);
-                GetReceivedGiftsThread getReceivedGiftsThread = new GetReceivedGiftsThread(intent);
-                getReceivedGiftsThread.start();
             }
         };
 
@@ -292,6 +294,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
 //                        dummyMap.put("xa7JPQsISNQ8RWnCfwuZwJZml9s2", "xa7JPQsISNQ8RWnCfwuZwJZml9s2");
 //                        dummyMap.put("c3Vcn0FiA6XElC7PM5BbnFR5hEE2", "c3Vcn0FiA6XElC7PM5BbnFR5hEE2");
 //                        newUser.setFriends(dummyMap);
+                        Log.d("LPC", "sent gifts thread - is freinds null: "+(newUser.getFriends() == null));
                         if(newUser.getFriends() == null) {
                             isEmpty = true;
                             handler.post(runnable);
@@ -365,20 +368,19 @@ public class DownloadSplashActivity extends AppCompatActivity {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                if(isEmpty){
-                    intent.putExtra("RECEIVED GIFT MAP", receivedGiftsMap);
-                    startActivity(intent);
-                }
-                if(giftMessages.size() > numReceivedGifts && giftSenderNames.size() > numReceivedGifts)
-                    return;
-                //make passable strings in form "From *name*: *message*"
-                for (int i = 0; i < numReceivedGifts; i++) {
-                    String label = "From ";
-                    label += (giftSenderNames.get(i)+": "+giftMessages.get(i));
-                    //put in map label -> gift hash
-                    receivedGiftsMap.put(label, giftHashes.get(i));
+                if (!isEmpty) {
+                    if (giftMessages.size() > numReceivedGifts && giftSenderNames.size() > numReceivedGifts)
+                        return;
+                    //make passable strings in form "From *name*: *message*"
+                    for (int i = 0; i < numReceivedGifts; i++) {
+                        String label = "From ";
+                        label += (giftSenderNames.get(i) + ": " + giftMessages.get(i));
+                        //put in map label -> gift hash
+                        receivedGiftsMap.put(label, giftHashes.get(i));
+                    }
                 }
                 intent.putExtra("RECEIVED GIFT MAP", receivedGiftsMap);
+                Log.d("LPC", "thread done-received gift map: "+receivedGiftsMap.toString());
                 startActivity(intent);
             }
         };
