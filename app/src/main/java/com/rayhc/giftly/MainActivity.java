@@ -61,6 +61,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private int navId;
 
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,19 +96,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().findItem(navId).setChecked(true);
 
-        //starts login page
-        // Choose authentication providers
-        List<AuthUI.IdpConfig> providers = Arrays.asList(
-                new AuthUI.IdpConfig.EmailBuilder().build(),
-                new AuthUI.IdpConfig.PhoneBuilder().build(),
-                new AuthUI.IdpConfig.GoogleBuilder().build());
-        // Create and launch sign-in intent
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        .build(),
-                RC_SIGN_IN);
+        // Initialize Firebase Auth
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
+        //determine if this is first start
+        Intent startIntent = getIntent();
+        if(startIntent.getBooleanExtra("GOT GIFTS", false)){
+            HashMap<String, String> sentGiftsMap;
+            sentGiftsMap = (HashMap<String, String>)startIntent.getSerializableExtra("SENT GIFT MAP");
+            Log.d("LPC", "sent gifts map in main activity: "+sentGiftsMap.toString());
+        } else{
+            if(mFirebaseUser == null){
+                //starts login page
+                // Choose authentication providers
+                List<AuthUI.IdpConfig> providers = Arrays.asList(
+                        new AuthUI.IdpConfig.EmailBuilder().build(),
+                        new AuthUI.IdpConfig.PhoneBuilder().build(),
+                        new AuthUI.IdpConfig.GoogleBuilder().build());
+                // Create and launch sign-in intent
+                startActivityForResult(
+                        AuthUI.getInstance()
+                                .createSignInIntentBuilder()
+                                .setAvailableProviders(providers)
+                                .build(),
+                        RC_SIGN_IN);
+            } else{
+                //go to download splash
+                Intent intent = new Intent(this, DownloadSplashActivity.class);
+                intent.putExtra("USER ID", mFirebaseUser.getUid());
+                intent.putExtra("GET GIFTS", true);
+                startActivity(intent);
+            }
+        }
+
+
 
         navigateToFragment(navId);
 
@@ -171,6 +197,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         editor.putString("userId", currentUser.getUid());
         editor.apply();
+
+        //go to download splash
+        Intent intent = new Intent(this, DownloadSplashActivity.class);
+        intent.putExtra("USER ID", userId);
+        intent.putExtra("GET GIFTS", true);
+        startActivity(intent);
     }
 
     @Override

@@ -89,6 +89,11 @@ public class User implements Serializable {
         this.friends.remove(uid);
     }
 
+    public void addSentGifts(Gift gift){
+        if(this.sentGifts == null) this.sentGifts = new HashMap<>();
+        this.sentGifts.put(gift.getHashValue(), gift.getReceiver());
+    }
+
     public void addSentGifts(String uid){
         if(this.sentGifts == null) this.sentGifts = new HashMap<>();
         this.sentGifts.put(uid, uid);
@@ -97,6 +102,11 @@ public class User implements Serializable {
     public void addSentFriends(String uid){
         if(this.sentFriends == null) this.sentFriends = new HashMap<>();
         this.sentFriends.put(uid, uid);
+    }
+
+    public void addReceivedGifts(Gift gift){
+        if(this.receivedGifts == null) this.receivedGifts = new HashMap<>();
+        this.receivedGifts.put(gift.getHashValue(), gift.getSender());
     }
 
     public void addReceivedGifts(String uid){
