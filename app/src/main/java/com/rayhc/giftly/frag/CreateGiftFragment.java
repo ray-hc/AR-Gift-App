@@ -12,10 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -24,14 +22,14 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.rayhc.giftly.DownloadSplashActivity;
+import com.rayhc.giftly.util.Gift;
+import com.rayhc.giftly.util.Globals;
 import com.rayhc.giftly.ImageActivity;
 import com.rayhc.giftly.LinkActivity;
 import com.rayhc.giftly.R;
 import com.rayhc.giftly.ReviewGiftActivity;
 import com.rayhc.giftly.UploadingSplashActivity;
 import com.rayhc.giftly.VideoActivity;
-import com.rayhc.giftly.util.Gift;
-import com.rayhc.giftly.util.Globals;
 
 import java.util.HashMap;
 

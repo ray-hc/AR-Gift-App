@@ -21,7 +21,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.rayhc.giftly.util.User;
 import com.rayhc.giftly.util.UserManager;
-import com.unity3d.player.UnityPlayerActivity;
 
 import java.util.Arrays;
 import java.util.List;

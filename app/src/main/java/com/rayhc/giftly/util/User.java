@@ -1,10 +1,5 @@
 package com.rayhc.giftly.util;
 
-import android.net.Uri;
-import android.util.Log;
-
-import com.rayhc.giftly.util.Gift;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;

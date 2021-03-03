@@ -7,11 +7,9 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
-import android.widget.Switch;
 
 import androidx.fragment.app.FragmentManager;
 
-import com.rayhc.giftly.frag.FriendsFragment;
 import com.rayhc.giftly.R;
 
 public class DialogFragment extends androidx.fragment.app.DialogFragment {

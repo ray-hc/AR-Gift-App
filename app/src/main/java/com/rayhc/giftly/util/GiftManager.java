@@ -2,8 +2,6 @@ package com.rayhc.giftly.util;
 
 import android.annotation.SuppressLint;
 
-import com.rayhc.giftly.util.Gift;
-
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
