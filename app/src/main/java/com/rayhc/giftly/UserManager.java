@@ -167,8 +167,8 @@ public class UserManager {
         if(gift.getTimeCreated() != 0) {
             gift.setTimeCreated(System.currentTimeMillis());
         }
-        from.addSentGifts(gift.createHashValue());
-        to.addReceivedGifts(gift.createHashValue());
+        from.addSentGifts(gift);
+        to.addReceivedGifts(gift);
         new Thread() {
             public void run(){
                 DatabaseReference db = FirebaseDatabase.getInstance().getReference();
