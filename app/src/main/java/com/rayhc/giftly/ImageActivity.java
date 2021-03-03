@@ -148,8 +148,9 @@ public class ImageActivity extends AppCompatActivity {
         //delete the old file if its a replacement
         if(mFileLabel != null) mGift.getContentType().remove(mFileLabel);
         Log.d("LPC", "just saved image: "+mGift.getContentType().get(key));
-        Intent intent = new Intent(this, FragmentContainerActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
+        intent.putExtra("MAKING GIFT", true);
         intent.putExtra("FRIEND NAME", friendName);
         intent.putExtra("FRIEND ID", friendID);
         startActivity(intent);
@@ -160,9 +161,10 @@ public class ImageActivity extends AppCompatActivity {
      * Remove the chosen image from the gifts contents
      */
     public void onDelete(){
-        Intent intent = new Intent(this, FragmentContainerActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         mGift.getContentType().remove(mFileLabel);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
+        intent.putExtra("MAKING GIFT", true);
         intent.putExtra("FRIEND NAME", friendName);
         intent.putExtra("FRIEND ID", friendID);
         startActivity(intent);

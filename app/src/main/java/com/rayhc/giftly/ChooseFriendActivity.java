@@ -21,6 +21,7 @@ public class ChooseFriendActivity extends AppCompatActivity {
     private HashMap<String, String> friendMap;
 
     private Gift mGift;
+    private String friendName, friendID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,8 @@ public class ChooseFriendActivity extends AppCompatActivity {
         Intent startIntent = getIntent();
         friendMap = (HashMap<String, String>) startIntent.getSerializableExtra("FRIEND MAP");
         mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
+        friendName = startIntent.getStringExtra("FRIEND NAME");
+        friendID = startIntent.getStringExtra("FRIEND ID");
 
         friendListView = (ListView) findViewById(R.id.friends_listView);
         //populate the listview for media
@@ -42,8 +45,10 @@ public class ChooseFriendActivity extends AppCompatActivity {
                 String label = (String) parent.getItemAtPosition(position);
                 String friendID = friendMap.get(label);
 
+                //TODO: make sure this is passing the right data around
                 Intent intent;
-                intent = new Intent(getApplicationContext(), FragmentContainerActivity.class);
+                intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.putExtra("MAKING GIFT", true);
                 intent.putExtra("FRIEND ID", friendID);
                 intent.putExtra("FRIEND NAME", label);
                 intent.putExtra("FROM FRIEND CHOOSE", true);
@@ -56,8 +61,11 @@ public class ChooseFriendActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(getApplicationContext(), FragmentContainerActivity.class);
-        intent.putExtra("BACK PRESSED", true);
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.putExtra("MAKING GIFT", true);
+        intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
+        intent.putExtra("FRIEND NAME", friendName);
+        intent.putExtra("FRIEND ID", friendID);
         startActivity(intent);
     }
 }

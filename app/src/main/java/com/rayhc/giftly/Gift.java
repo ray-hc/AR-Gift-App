@@ -129,6 +129,7 @@ public class Gift implements Serializable {
     }
 
     public String getHashValue() {
+        if(hashValue == null) hashValue = createHashValue();
         return hashValue;
     }
 
