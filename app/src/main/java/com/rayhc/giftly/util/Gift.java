@@ -1,6 +1,9 @@
 package com.rayhc.giftly.util;
 
+import android.util.Log;
+
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -183,26 +186,23 @@ public class Gift implements Serializable {
     }
 
     public String createHashValue() {
-        String base = "timeCreated=" + timeCreated +
-                ", sender=" + sender;
-        String res = "";
+        Log.d("LPC", "createHashValue: time created & sender: "+timeCreated+", "+sender);
+        String base =  timeCreated +
+                " " + sender;
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-            messageDigest.digest(base.getBytes());
-            byte[] md5 = messageDigest.digest();
-            // Create Hex String
-            StringBuilder hexString = new StringBuilder();
-            for (byte aMessageDigest : md5) {
-                String h = Integer.toHexString(0xFF & aMessageDigest);
-                while (h.length() < 2)
-                    h = "0" + h;
-                hexString.append(h);
+            byte[] md5 = messageDigest.digest(base.getBytes());
+            BigInteger no = new BigInteger(1, md5);
+            // Convert message digest into hex value
+            String hashtext = no.toString(16);
+            while (hashtext.length() < 32) {
+                hashtext = "0" + hashtext;
             }
-            res = hexString.toString();
+            Log.d("LPC", "createHashValue: new hash = "+hashtext);
+            return hashtext;
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return res;
     }
 
     public void addLink(String link){

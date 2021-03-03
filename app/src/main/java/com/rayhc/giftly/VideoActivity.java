@@ -24,9 +24,6 @@ import java.util.Date;
 public class VideoActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_PICK_FROM_GALLERY = 2;
 
-//    //storage ref
-//    private FirebaseStorage mStorage;
-//    private StorageReference storageRef;
 
     //widgets
     private VideoView mVideoView;
@@ -173,7 +170,7 @@ public class VideoActivity extends AppCompatActivity {
     /**
      * Custom Media Controller so it doesn't disappear
      */
-    public class MyMediaController extends MediaController {
+    public static class MyMediaController extends MediaController {
         public MyMediaController(Context context, AttributeSet attrs) {
             super(context, attrs);
         }
