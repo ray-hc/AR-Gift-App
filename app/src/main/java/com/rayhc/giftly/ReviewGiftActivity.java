@@ -1,6 +1,5 @@
 package com.rayhc.giftly;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -16,10 +15,11 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.rayhc.giftly.util.Gift;
+import com.rayhc.giftly.util.Globals;
+import com.rayhc.giftly.util.ListUtils;
+
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
 
 public class ReviewGiftActivity extends AppCompatActivity {
 

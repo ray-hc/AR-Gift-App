@@ -1,4 +1,4 @@
-package com.rayhc.giftly;
+package com.rayhc.giftly.util;
 
 import java.text.SimpleDateFormat;
 

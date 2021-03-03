@@ -1,4 +1,4 @@
-package com.rayhc.giftly;
+package com.rayhc.giftly.frag;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,18 +18,14 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
+import com.rayhc.giftly.util.Gift;
+import com.rayhc.giftly.util.Globals;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class CreateGiftFragment extends Fragment {

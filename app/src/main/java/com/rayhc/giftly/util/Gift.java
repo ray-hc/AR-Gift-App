@@ -1,4 +1,4 @@
-package com.rayhc.giftly;
+package com.rayhc.giftly.util;
 
 import java.io.Serializable;
 import java.security.MessageDigest;

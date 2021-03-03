@@ -17,6 +17,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.rayhc.giftly.util.Gift;
+import com.rayhc.giftly.util.Globals;
+
 public class LinkActivity extends AppCompatActivity {
 
     private Button mSaveButton, mCancelButton, mDeleteButton;

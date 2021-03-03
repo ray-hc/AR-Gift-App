@@ -1,6 +1,5 @@
-package com.rayhc.giftly.ui;
+package com.rayhc.giftly.frag;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +9,7 @@ import android.widget.ListView;
 
 import androidx.fragment.app.Fragment;
 
-import com.rayhc.giftly.Gift;
+import com.rayhc.giftly.util.Gift;
 import com.rayhc.giftly.R;
 
 import java.util.ArrayList;
