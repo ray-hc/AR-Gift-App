@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * This is loading splash screen for when the gift data is being download from the cloud
@@ -69,6 +70,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
         //recipient and hash
         Intent startIntent = getIntent();
         mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
+        //if its getting friends
         if(startIntent.getBooleanExtra("GET FRIENDS", false)){
             userID = startIntent.getStringExtra("USER ID");
             friendMap = new HashMap<>();
@@ -78,7 +80,17 @@ public class DownloadSplashActivity extends AppCompatActivity {
             GetFriendsThread getFriendsThread = new GetFriendsThread(intent);
             getFriendsThread.start();
 
-        } else{
+        }
+        //if its getting sent & received gifts
+        else if(startIntent.getBooleanExtra("GET GIFTS", false)){
+            userID = startIntent.getStringExtra("USER ID");
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("GOT GIFTS", true);
+            GetSentGiftsThread sentGiftsThread = new GetSentGiftsThread(intent);
+            sentGiftsThread.start();
+        }
+        //if its getting a gift
+        else{
             recipientID = startIntent.getStringExtra("RECIPIENT ID");
             hashValue = startIntent.getStringExtra("HASH VALUE");
 
@@ -186,8 +198,9 @@ public class DownloadSplashActivity extends AppCompatActivity {
                         newUser = UserManager.snapshotToUser(snapshot, userID);
                         //DUMMY CODE
                         HashMap<String, String> dummyMap = new HashMap<>();
-                        dummyMap.put("xa7JPQsISNQ8RWnCfwuZwJZml9s2", "xa7JPQsISNQ8RWnCfwuZwJZml9s2");
-                        dummyMap.put("c3Vcn0FiA6XElC7PM5BbnFR5hEE2", "c3Vcn0FiA6XElC7PM5BbnFR5hEE2");
+                        //karim and ian
+                        dummyMap.put("pszb1aJGa1YZ5LZBascG7xfbMSI2", "pszb1aJGa1YZ5LZBascG7xfbMSI2");
+                        dummyMap.put("2XORnShjizLqK2UZwJb87Z8oi8L2", "2XORnShjizLqK2UZwJb87Z8oi8L2");
                         newUser.setFriends(dummyMap);
                         Log.d("LPC", "set my friends to :"+newUser.getFriends().toString());
                         //get the number of friends this user has
@@ -215,6 +228,235 @@ public class DownloadSplashActivity extends AppCompatActivity {
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) { }
             });
+        }
+    }
+
+    /**
+     * Get the users sent gifts
+     */
+    public class GetSentGiftsThread extends Thread{
+        private boolean isEmpty;
+        private Intent intent;
+        private int numSentGifts;
+        private ArrayList<String> giftRecipientNames = new ArrayList<>();
+        private ArrayList<String> giftMessages = new ArrayList<>();
+        private ArrayList<String> giftHashes = new ArrayList<>();
+        private HashMap<String, String> sentGiftMap = new HashMap<>();
+
+        public GetSentGiftsThread(Intent intent){
+            this.intent = intent;
+        }
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if(isEmpty){
+                    intent.putExtra("SENT GIFT MAP", sentGiftMap);
+                    Log.d("LPC", "put in an empty sent gift map: ");
+                    GetReceivedGiftsThread getReceivedGiftsThread = new GetReceivedGiftsThread(intent);
+                    getReceivedGiftsThread.start();
+                } else {
+                    if (giftMessages.size() > numSentGifts && giftRecipientNames.size() > numSentGifts)
+                        return;
+                    //make passable strings in form "To *name*: *message*"
+                    for (int i = 0; i < numSentGifts; i++) {
+                        String label = "To ";
+                        label += (giftRecipientNames.get(i) + ": " + giftMessages.get(i));
+                        //put in map label -> gift hash
+                        sentGiftMap.put(label, giftHashes.get(i));
+                    }
+                    intent.putExtra("SENT GIFT MAP", sentGiftMap);
+                    Log.d("LPC", "thread done - sent gift map: "+sentGiftMap.toString());
+                    GetReceivedGiftsThread getReceivedGiftsThread = new GetReceivedGiftsThread(intent);
+                    getReceivedGiftsThread.start();
+                }
+            }
+        };
+
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        @Override
+        public void run() {
+            super.run();
+            getSentGifts();
+        }
+
+        private void getSentGifts(){
+            Query query = mDatabase.child("users").orderByChild("userId").equalTo(userID);
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    User newUser = new User();
+                    if(snapshot.exists()){
+                        newUser = UserManager.snapshotToUser(snapshot, userID);
+//                        //DUMMY CODE
+//                        HashMap<String, String> dummyMap = new HashMap<>();
+//                        dummyMap.put("xa7JPQsISNQ8RWnCfwuZwJZml9s2", "xa7JPQsISNQ8RWnCfwuZwJZml9s2");
+//                        dummyMap.put("c3Vcn0FiA6XElC7PM5BbnFR5hEE2", "c3Vcn0FiA6XElC7PM5BbnFR5hEE2");
+//                        newUser.setFriends(dummyMap);
+                        Log.d("LPC", "sent gifts thread - is freinds null: "+(newUser.getFriends() == null));
+                        if(newUser.getFriends() == null) {
+                            isEmpty = true;
+                            handler.post(runnable);
+                        } else {
+                            //get the number of sent gifts this user has
+                            numSentGifts = newUser.getSentGifts().keySet().size();
+                            Log.d("LPC", "num sentGifts: " + numSentGifts);
+                            giftHashes = new ArrayList<>(newUser.getSentGifts().keySet());
+                            for (String key : newUser.getSentGifts().keySet()) {
+                                String otherUserID = newUser.getSentGifts().get(key);
+                                //get the other user's name
+                                Query userNameQuery = mDatabase.child("users").orderByChild("userId").equalTo(otherUserID);
+                                userNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        Log.d("LPC", "inner snapshot: " + snapshot.getValue());
+                                        String friendName = (String) snapshot.child(otherUserID).child("name").getValue();
+                                        giftRecipientNames.add(friendName);
+                                        getGiftMessages();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) { }
+            });
+        }
+        private void getGiftMessages(){
+            if(giftHashes.size()>numSentGifts) return;
+            //get the gift messages
+            for(String hash: giftHashes){
+                Query userNameQuery = mDatabase.child("gift").orderByChild("hashValue").equalTo(hash);
+                userNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Log.d("LPC", "inner snapshot: "+snapshot.getValue());
+                        String message = (String) snapshot.child(hashValue).child("message").getValue();
+                        giftMessages.add(message);
+                        handler.post(runnable);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) { }
+                });
+            }
+        }
+    }
+
+    /**
+     * Get the users received gifts
+     */
+    public class GetReceivedGiftsThread extends Thread{
+        private Intent intent;
+        private boolean isEmpty;
+        private int numReceivedGifts;
+        private ArrayList<String> giftSenderNames = new ArrayList<>();
+        private ArrayList<String> giftMessages = new ArrayList<>();
+        private ArrayList<String> giftHashes = new ArrayList<>();
+        private HashMap<String, String> receivedGiftsMap = new HashMap<>();
+
+        public GetReceivedGiftsThread(Intent intent){
+            this.intent = intent;
+        }
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (!isEmpty) {
+                    if (giftMessages.size() > numReceivedGifts && giftSenderNames.size() > numReceivedGifts)
+                        return;
+                    //make passable strings in form "From *name*: *message*"
+                    for (int i = 0; i < numReceivedGifts; i++) {
+                        String label = "From ";
+                        label += (giftSenderNames.get(i) + ": " + giftMessages.get(i));
+                        //put in map label -> gift hash
+                        receivedGiftsMap.put(label, giftHashes.get(i));
+                    }
+                }
+                intent.putExtra("RECEIVED GIFT MAP", receivedGiftsMap);
+                Log.d("LPC", "thread done-received gift map: "+receivedGiftsMap.toString());
+                startActivity(intent);
+            }
+        };
+
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        @Override
+        public void run() {
+            super.run();
+            getReceivedGifts();
+        }
+
+        private void getReceivedGifts(){
+            Query query = mDatabase.child("users").orderByChild("userId").equalTo(userID);
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    User newUser = new User();
+                    if(snapshot.exists()){
+                        newUser = UserManager.snapshotToUser(snapshot, userID);
+//                        //DUMMY CODE
+//                        HashMap<String, String> dummyMap = new HashMap<>();
+//                        dummyMap.put("xa7JPQsISNQ8RWnCfwuZwJZml9s2", "xa7JPQsISNQ8RWnCfwuZwJZml9s2");
+//                        dummyMap.put("c3Vcn0FiA6XElC7PM5BbnFR5hEE2", "c3Vcn0FiA6XElC7PM5BbnFR5hEE2");
+//                        newUser.setFriends(dummyMap);
+                        //get the number of received gifts this user has
+                        if(newUser.getReceivedFriends() == null) {
+                            isEmpty = true;
+                            handler.post(runnable);
+                        } else {
+                            numReceivedGifts = newUser.getReceivedGifts().keySet().size();
+                            Log.d("LPC", "num receivedGifts: " + numReceivedGifts);
+                            giftHashes = new ArrayList<>(newUser.getReceivedGifts().keySet());
+                            for (String key : newUser.getReceivedGifts().keySet()) {
+                                String otherUserID = newUser.getReceivedGifts().get(key);
+                                //get the other user's name
+                                Query userNameQuery = mDatabase.child("users").orderByChild("userId").equalTo(otherUserID);
+                                userNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        Log.d("LPC", "inner snapshot: " + snapshot.getValue());
+                                        String friendName = (String) snapshot.child(otherUserID).child("name").getValue();
+                                        giftSenderNames.add(friendName);
+                                        getGiftMessages();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) { }
+            });
+        }
+        public void getGiftMessages(){
+            if(giftHashes.size()>numReceivedGifts) return;
+            //get the gift messages
+            for(String hash: giftHashes){
+                Query userNameQuery = mDatabase.child("gift").orderByChild("hashValue").equalTo(hash);
+                userNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Log.d("LPC", "inner snapshot: "+snapshot.getValue());
+                        String message = (String) snapshot.child(hashValue).child("message").getValue();
+                        giftMessages.add(message);
+                        handler.post(runnable);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) { }
+                });
+            }
         }
     }
 
