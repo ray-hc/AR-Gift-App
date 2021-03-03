@@ -29,6 +29,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.rayhc.giftly.frag.CreateGiftFragment;
 import com.rayhc.giftly.frag.FriendsFragment;
+import com.rayhc.giftly.frag.HomeFragment;
 import com.rayhc.giftly.util.Gift;
 import com.rayhc.giftly.util.Globals;
 import com.rayhc.giftly.util.User;
