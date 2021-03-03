@@ -20,8 +20,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.rayhc.giftly.util.Gift;
 import com.rayhc.giftly.util.Globals;
-import com.rayhc.giftly.util.User;
 import com.rayhc.giftly.util.UserManager;
+import com.rayhc.giftly.util.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,12 +84,13 @@ public class DownloadSplashActivity extends AppCompatActivity {
         }
         //if its getting a gift
         else{
-            recipientID = startIntent.getStringExtra("RECIPIENT ID");
             hashValue = startIntent.getStringExtra("HASH VALUE");
 
             Intent intent = new Intent(this, ReviewGiftActivity.class);
-            GiftDownloaderThread storageLoaderThread = new GiftDownloaderThread(intent);
-            storageLoaderThread.start();
+            intent.putExtra("FROM OPEN", startIntent.getBooleanExtra("FROM OPEN", false));
+            intent.putExtra("HASH VALUE", startIntent.getStringExtra("HASH VALUE"));
+            GiftDownloaderThread giftDownloaderThread = new GiftDownloaderThread(intent);
+            giftDownloaderThread.start();
         }
 
 
@@ -111,6 +112,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
+                intent.putExtra(Globals.CURR_GIFT_KEY, loadedGift);
                 startActivity(intent);
             }
         };
@@ -205,7 +207,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
                             query.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    Log.d("LPC", "inner snapshot: "+snapshot.getValue());
                                     String friendName = (String) snapshot.child(friendID).child("name").getValue();
                                     friendMap.put(friendName, friendID);
                                     handler.post(runnable);
@@ -249,12 +250,16 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     GetReceivedGiftsThread getReceivedGiftsThread = new GetReceivedGiftsThread(intent);
                     getReceivedGiftsThread.start();
                 } else {
-                    if (giftMessages.size() > numSentGifts && giftRecipientNames.size() > numSentGifts)
+                    if (giftMessages.size() < numSentGifts || giftRecipientNames.size() < numSentGifts){
+                        Log.d("LPC", "sent gifts handler didnt run");
                         return;
-                    //make passable strings in form "To *name*: *message*"
+                    }
+                    //make passable strings in form "To: *name* - *message*"
+                    Log.d("LPC", "sent gift messages: "+giftMessages.toString());
                     for (int i = 0; i < numSentGifts; i++) {
-                        String label = "To ";
-                        label += (giftRecipientNames.get(i) + ": " + giftMessages.get(i));
+                        String label = "To: ";
+                        if(giftMessages.get(i) == null) label += giftRecipientNames.get(i);
+                        else label += (giftRecipientNames.get(i) + " - " + giftMessages.get(i));
                         //put in map label -> gift hash
                         sentGiftMap.put(label, giftHashes.get(i));
                     }
@@ -282,13 +287,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     User newUser = new User();
                     if(snapshot.exists()){
                         newUser = UserManager.snapshotToUser(snapshot, userID);
-//                        //DUMMY CODE
-//                        HashMap<String, String> dummyMap = new HashMap<>();
-//                        dummyMap.put("xa7JPQsISNQ8RWnCfwuZwJZml9s2", "xa7JPQsISNQ8RWnCfwuZwJZml9s2");
-//                        dummyMap.put("c3Vcn0FiA6XElC7PM5BbnFR5hEE2", "c3Vcn0FiA6XElC7PM5BbnFR5hEE2");
-//                        newUser.setFriends(dummyMap);
-                        Log.d("LPC", "sent gifts thread - is freinds null: "+(newUser.getFriends() == null));
-                        if(newUser.getFriends() == null) {
+                        if(newUser.getSentGifts() == null) {
                             isEmpty = true;
                             handler.post(runnable);
                         } else {
@@ -303,7 +302,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
                                 userNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        Log.d("LPC", "inner snapshot: " + snapshot.getValue());
                                         String friendName = (String) snapshot.child(otherUserID).child("name").getValue();
                                         giftRecipientNames.add(friendName);
                                         getGiftMessages();
@@ -323,15 +321,14 @@ public class DownloadSplashActivity extends AppCompatActivity {
             });
         }
         private void getGiftMessages(){
-            if(giftHashes.size()>numSentGifts) return;
+            if(giftRecipientNames.size()<numSentGifts) return;
             //get the gift messages
             for(String hash: giftHashes){
-                Query userNameQuery = mDatabase.child("gift").orderByChild("hashValue").equalTo(hash);
+                Query userNameQuery = mDatabase.child("gifts").orderByChild("hashValue").equalTo(hash);
                 userNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        Log.d("LPC", "inner snapshot: "+snapshot.getValue());
-                        String message = (String) snapshot.child(hashValue).child("message").getValue();
+                        String message = (String) snapshot.child(hash).child("message").getValue();
                         giftMessages.add(message);
                         handler.post(runnable);
                     }
@@ -362,12 +359,13 @@ public class DownloadSplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (!isEmpty) {
-                    if (giftMessages.size() > numReceivedGifts && giftSenderNames.size() > numReceivedGifts)
+                    if (giftMessages.size() < numReceivedGifts || giftSenderNames.size() < numReceivedGifts)
                         return;
                     //make passable strings in form "From *name*: *message*"
                     for (int i = 0; i < numReceivedGifts; i++) {
                         String label = "From ";
-                        label += (giftSenderNames.get(i) + ": " + giftMessages.get(i));
+                        if(giftMessages.get(i) == null) label += giftSenderNames.get(i);
+                        else label += (giftSenderNames.get(i) + " - " + giftMessages.get(i));
                         //put in map label -> gift hash
                         receivedGiftsMap.put(label, giftHashes.get(i));
                     }
@@ -394,13 +392,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     User newUser = new User();
                     if(snapshot.exists()){
                         newUser = UserManager.snapshotToUser(snapshot, userID);
-//                        //DUMMY CODE
-//                        HashMap<String, String> dummyMap = new HashMap<>();
-//                        dummyMap.put("xa7JPQsISNQ8RWnCfwuZwJZml9s2", "xa7JPQsISNQ8RWnCfwuZwJZml9s2");
-//                        dummyMap.put("c3Vcn0FiA6XElC7PM5BbnFR5hEE2", "c3Vcn0FiA6XElC7PM5BbnFR5hEE2");
-//                        newUser.setFriends(dummyMap);
-                        //get the number of received gifts this user has
-                        if(newUser.getReceivedFriends() == null) {
+                        if(newUser.getReceivedGifts() == null) {
                             isEmpty = true;
                             handler.post(runnable);
                         } else {
@@ -414,7 +406,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
                                 userNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        Log.d("LPC", "inner snapshot: " + snapshot.getValue());
                                         String friendName = (String) snapshot.child(otherUserID).child("name").getValue();
                                         giftSenderNames.add(friendName);
                                         getGiftMessages();
@@ -434,15 +425,14 @@ public class DownloadSplashActivity extends AppCompatActivity {
             });
         }
         public void getGiftMessages(){
-            if(giftHashes.size()>numReceivedGifts) return;
+            if(giftHashes.size()<numReceivedGifts) return;
             //get the gift messages
             for(String hash: giftHashes){
-                Query userNameQuery = mDatabase.child("gift").orderByChild("hashValue").equalTo(hash);
+                Query userNameQuery = mDatabase.child("gifts").orderByChild("hashValue").equalTo(hash);
                 userNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        Log.d("LPC", "inner snapshot: "+snapshot.getValue());
-                        String message = (String) snapshot.child(hashValue).child("message").getValue();
+                        String message = (String) snapshot.child(hash).child("message").getValue();
                         giftMessages.add(message);
                         handler.post(runnable);
                     }

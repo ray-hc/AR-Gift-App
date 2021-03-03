@@ -32,12 +32,13 @@ import com.rayhc.giftly.frag.FriendsFragment;
 import com.rayhc.giftly.frag.HomeFragment;
 import com.rayhc.giftly.util.Gift;
 import com.rayhc.giftly.util.Globals;
-import com.rayhc.giftly.util.User;
 import com.rayhc.giftly.util.UserManager;
+import com.rayhc.giftly.util.User;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final String NAV_ITEM_ID = "NAV_ITEM_ID";
@@ -97,13 +98,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
-        //determine if this is first start
+        //determine if we've gotten gifts yet
         Intent startIntent = getIntent();
         if(startIntent.getBooleanExtra("GOT GIFTS", false)){
-            HashMap<String, String> sentGiftsMap;
+            HashMap<String, String> sentGiftsMap, receivedGiftsMap;
             sentGiftsMap = (HashMap<String, String>)startIntent.getSerializableExtra("SENT GIFT MAP");
             Log.d("LPC", "sent gifts map in main activity: "+sentGiftsMap.toString());
-        } else if(startIntent.getBooleanExtra("MAKING GIFT", false)){
+            homeFragment = new HomeFragment();
+            Bundle bundle = new Bundle();
+
+            bundle.putSerializable("SENT GIFT MAP", startIntent.getSerializableExtra("SENT GIFT MAP"));
+            bundle.putSerializable("RECEIVED GIFT MAP", startIntent.getSerializableExtra("RECEIVED GIFT MAP"));
+
+            homeFragment.setArguments(bundle);
+            navId = R.id.nav_home;
+        }
+        //go to create gift fragment
+        else if(startIntent.getBooleanExtra("MAKING GIFT", false)){
             createGiftFragment = new CreateGiftFragment();
             Bundle bundle = new Bundle();
 
@@ -117,14 +128,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             createGiftFragment.setArguments(bundle);
 
-
-            // Begin the transaction
-//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//            // Replace the contents of the container with the new fragment
-//            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, createGiftFragment, "CreateGiftFragment").commit();
-//            // or ft.add(R.id.your_placeholder, new FooFragment());
-//            // Complete the changes added above
-//            ft.commit();
             navId = R.id.nav_create_gift;
         }
 
@@ -150,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 intent.putExtra("GET GIFTS", true);
                 startActivity(intent);
             }
+            navId = R.id.nav_home;
         }
 
 
@@ -194,14 +198,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         item.setChecked(true);
         navId = item.getItemId();
 
-        drawerLayout.closeDrawer(GravityCompat.START);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                navigateToFragment((item.getItemId()));
-            }
-        }, 250);
+        //needs to update the gift lists on home, if home selected
+        if(navId == R.id.nav_home){
+            Intent intent = new Intent(this, DownloadSplashActivity.class);
+            intent.putExtra("USER ID", mFirebaseUser.getUid());
+            intent.putExtra("GET GIFTS", true);
+            startActivity(intent);
+        } else {
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    navigateToFragment((item.getItemId()));
+                }
+            }, 250);
 
+        }
+
+        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
