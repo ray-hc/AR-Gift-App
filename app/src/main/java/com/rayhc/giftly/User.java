@@ -164,6 +164,7 @@ public class User implements Serializable {
     }
 
     public Map<String, String> getReceivedFriends() {
+        if(receivedFriends == null) return new HashMap<String, String>();
         return receivedFriends;
     }
 
@@ -180,6 +181,7 @@ public class User implements Serializable {
     }
 
     public Map<String, String> getFriends() {
+        if(friends == null) return new HashMap<String, String>();
         return friends;
     }
 
