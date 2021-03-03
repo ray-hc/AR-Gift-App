@@ -1,36 +1,68 @@
-package com.rayhc.giftly.ui;
+package com.rayhc.giftly;
 
+import android.content.Context;
 import android.content.Intent;
+import androidx.preference.PreferenceManager;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.rayhc.giftly.Gift;
-import com.rayhc.giftly.Globals;
-import com.rayhc.giftly.ImageActivity;
-import com.rayhc.giftly.LinkActivity;
-import com.rayhc.giftly.R;
-import com.rayhc.giftly.ReviewGiftActivity;
-import com.rayhc.giftly.UploadingSplashActivity;
-import com.rayhc.giftly.VideoActivity;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class CreateGiftFragment extends Fragment {
-    private Button linkButton, imageButton, videoButton, reviewButton, sendButton;
+    private TextView recipientLabel;
+    private Button linkButton, imageButton, videoButton, reviewButton, sendButton, chooseFriendButton;
+    private EditText messageInput;
     private Gift newGift;
+
+    //user id
+    SharedPreferences mSharedPref;
+    String mUserId;
+
+    //recipient stuff
+    String recipientName, recipientID;
+
+    //firebase stuff
+    private DatabaseReference mDatabase;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle extras = getArguments();
+        setRetainInstance(true);
+        //get userID from shared pref
+        mSharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        mUserId = mSharedPref.getString("userId",null);
+        Log.d("LPC", "create gift - user id: "+mUserId);
+
+
+        //reference to DB
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
         //get possible gift data
+        Bundle extras = getArguments();
         if(extras != null && extras.getSerializable(Globals.CURR_GIFT_KEY) != null){
             newGift = (Gift) extras.getSerializable(Globals.CURR_GIFT_KEY);
             Log.d("LPC", "create frag: got gift from bundle");
@@ -48,6 +80,15 @@ public class CreateGiftFragment extends Fragment {
             newGift.setLinks(new HashMap<>());
             newGift.setGiftType(new HashMap<>());
         }
+
+        //get possible recipient user data
+        if(extras != null && extras.getString("FRIEND NAME") != null &&
+                extras.getString("FRIEND ID") != null){
+            recipientID =  extras.getString("FRIEND ID");
+            recipientName = extras.getString("FRIEND NAME");
+
+        }
+
     }
 
     public View onCreateView(LayoutInflater layoutInflater,
@@ -61,39 +102,84 @@ public class CreateGiftFragment extends Fragment {
         videoButton = v.findViewById(R.id.video_button);
         reviewButton = v.findViewById(R.id.review_button);
         sendButton = v.findViewById(R.id.send_button);
-        if(newGift.getContentType().size() == 0 && newGift.getLinks().size() == 0)
-            sendButton.setEnabled(false);
-        newGift.setTimeCreated(System.currentTimeMillis());
+        chooseFriendButton = v.findViewById(R.id.choose_recipient_button);
+        sendButton.setEnabled(newGift.getContentType().size() != 0 || newGift.getLinks().size() != 0);
+
+        //set up message input
+        messageInput = v.findViewById(R.id.message_input);
+        if(newGift.getMessage() != null) messageInput.setText(newGift.getMessage());
+        messageInput.setOnEditorActionListener(new TextView.OnEditorActionListener()
+        {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                String input;
+                if(actionId == EditorInfo.IME_ACTION_DONE) {
+                    input= v.getText().toString();
+                    newGift.setMessage(input);
+                    Log.d("LPC", "set gift message to: "+newGift.getMessage());
+                    InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    return true; // consume.
+                }
+                return false; // pass on to other listeners.
+            }
+        });
+
+        //set up the recipient label
+        recipientLabel = v.findViewById(R.id.recipient);
+        if(recipientName != null) recipientLabel.setText("This Gift is to: "+recipientName);
 
 
         //click listeners for adding contents to the gift
         linkButton.setOnClickListener(v12 -> {
             Intent intent = new Intent(getActivity(), LinkActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
+            intent.putExtra("FRIEND NAME", recipientName);
+            intent.putExtra("FRIEND ID", recipientID);
             startActivity(intent);
         });
 
         imageButton.setOnClickListener(v1 -> {
             Intent intent = new Intent(getActivity(), ImageActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
+            intent.putExtra("FRIEND NAME", recipientName);
+            intent.putExtra("FRIEND ID", recipientID);
             startActivity(intent);
         });
 
         videoButton.setOnClickListener(v13 -> {
             Intent intent = new Intent(getActivity(), VideoActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
+            intent.putExtra("FRIEND NAME", recipientName);
+            intent.putExtra("FRIEND ID", recipientID);
             startActivity(intent);
         });
 
         reviewButton.setOnClickListener(v14 -> {
             Intent intent = new Intent(getActivity(), ReviewGiftActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
+            intent.putExtra("FRIEND NAME", recipientName);
+            intent.putExtra("FRIEND ID", recipientID);
             startActivity(intent);
         });
 
         sendButton.setOnClickListener(v14 ->{
             Intent intent = new Intent(getActivity(), UploadingSplashActivity.class);
+            //set the message of the gift
+            newGift.setMessage(messageInput.getText().toString());
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
+            intent.putExtra("FROM USER ID", mUserId);
+            intent.putExtra("TO USER ID", recipientID);
+            startActivity(intent);
+        });
+
+        chooseFriendButton.setOnClickListener(v15 ->{
+            Intent intent = new Intent(getActivity(), DownloadSplashActivity.class);
+            intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
+            intent.putExtra("GET FRIENDS", true);
+            intent.putExtra("USER ID", mUserId);
+            intent.putExtra("FRIEND NAME", recipientName);
+            intent.putExtra("FRIEND ID", recipientID);
             startActivity(intent);
         });
 

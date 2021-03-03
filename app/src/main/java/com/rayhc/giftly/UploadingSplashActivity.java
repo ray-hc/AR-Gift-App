@@ -13,13 +13,18 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -38,6 +43,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
     private boolean mFromReview;
     private String mFileLabel;
     private Gift mGift;
+    private String fromID, toID;
 
     private final ScheduledExecutorService scheduler =
             Executors.newScheduledThreadPool(1);
@@ -56,6 +62,8 @@ public class UploadingSplashActivity extends AppCompatActivity {
         //data from create gift fragment
         Intent startIntent = getIntent();
         mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
+        fromID = startIntent.getStringExtra("FROM USER ID");
+        toID = startIntent.getStringExtra("TO USER ID");
 
 
         //start a thread to upload media to cloud
@@ -96,9 +104,12 @@ public class UploadingSplashActivity extends AppCompatActivity {
         public void run() {
             Log.d("LPC", "media thread start");
             //upload the strings first
-            mDatabase.child("gifts").child(saveGift.getReceiver())
-                    .child(saveGift.getHashValue()).setValue(saveGift);
-            Log.d("LPC", "wrote gift to the rt DB");
+            Log.d("LPC", "save gift hash: "+saveGift.getHashValue());
+//            mDatabase.child("gifts").child(saveGift.getHashValue()).setValue(saveGift);
+//            Log.d("LPC", "wrote gift to the rt DB");
+
+            //send the gift
+            sendGift(fromID, toID);
 
 
             //now upload media
@@ -138,6 +149,46 @@ public class UploadingSplashActivity extends AppCompatActivity {
                     });
                 }
             }
+        }
+
+        /**
+         * First part of process to send gift
+         */
+        public void sendGift(String fromID, String toID){
+            Query query = mDatabase.child("users").orderByChild("userId").equalTo(fromID);
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    User fromUser = new User();
+                    if(snapshot.exists()){
+                        fromUser = UserManager.snapshotToUser(snapshot, fromID);
+                        addRecipient(toID, fromUser);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) { }
+            });
+        }
+
+        /**
+         * Second part of process to send gift
+         */
+        public void addRecipient(String toID, User fromUser){
+            Query query = mDatabase.child("users").orderByChild("userId").equalTo(toID);
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    User toUser = new User();
+                    if(snapshot.exists()){
+                        toUser = UserManager.snapshotToUser(snapshot, toID);
+                        UserManager.sendGift(fromUser, toUser, mGift);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) { }
+            });
         }
     }
 

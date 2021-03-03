@@ -54,6 +54,8 @@ public class VideoActivity extends AppCompatActivity {
     private Gift mGift;
     private Uri currentData;
 
+    private String friendName, friendID;
+
     //from review
     private boolean mFromReview;
     private String mFileLabel;
@@ -72,6 +74,8 @@ public class VideoActivity extends AppCompatActivity {
         Log.d("LPC", "onCreate: saved gift: "+mGift.toString());
         mFromReview = startIntent.getBooleanExtra(Globals.FROM_REVIEW_KEY, false);
         mFileLabel = startIntent.getStringExtra(Globals.FILE_LABEL_KEY);
+        friendName = startIntent.getStringExtra("FRIEND NAME");
+        friendID = startIntent.getStringExtra("FRIEND ID");
 
         //wire button and video view
         mChooseButton = (Button) findViewById(R.id.video_choose_button);
@@ -146,8 +150,11 @@ public class VideoActivity extends AppCompatActivity {
         //delete the old file if its a replacement
         if(mFileLabel != null) mGift.getContentType().remove(mFileLabel);
         Log.d("LPC", "just video image: "+mGift.getContentType().get(key));
-        Intent intent = new Intent(this, FragmentContainerActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("MAKING GIFT", true);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
+        intent.putExtra("FRIEND NAME", friendName);
+        intent.putExtra("FRIEND ID", friendID);
         startActivity(intent);
     }
 
@@ -155,9 +162,12 @@ public class VideoActivity extends AppCompatActivity {
      * Remove the chosen video from the gifts contents
      */
     public void onDelete(){
-        Intent intent = new Intent(this, FragmentContainerActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         mGift.getContentType().remove(mFileLabel);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
+        intent.putExtra("MAKING GIFT", true);
+        intent.putExtra("FRIEND NAME", friendName);
+        intent.putExtra("FRIEND ID", friendID);
         startActivity(intent);
     }
 
