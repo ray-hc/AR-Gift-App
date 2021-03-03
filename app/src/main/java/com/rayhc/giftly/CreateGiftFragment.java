@@ -178,6 +178,8 @@ public class CreateGiftFragment extends Fragment {
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             intent.putExtra("GET FRIENDS", true);
             intent.putExtra("USER ID", mUserId);
+            intent.putExtra("FRIEND NAME", recipientName);
+            intent.putExtra("FRIEND ID", recipientID);
             startActivity(intent);
         });
 

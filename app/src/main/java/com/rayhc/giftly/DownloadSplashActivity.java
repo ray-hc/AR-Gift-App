@@ -50,7 +50,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
     private StorageReference storageRef;
     private FirebaseStorage mStorage;
 
-    private String recipientID, hashValue, userID;
+    private String recipientName, recipientID, hashValue, userID;
     private HashMap<String, String> friendMap;
 
 
@@ -70,6 +70,8 @@ public class DownloadSplashActivity extends AppCompatActivity {
         //recipient and hash
         Intent startIntent = getIntent();
         mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
+        recipientName = startIntent.getStringExtra("FRIEND NAME");
+        recipientID = startIntent.getStringExtra("FRIEND ID");
         //if its getting friends
         if(startIntent.getBooleanExtra("GET FRIENDS", false)){
             userID = startIntent.getStringExtra("USER ID");
@@ -77,6 +79,8 @@ public class DownloadSplashActivity extends AppCompatActivity {
 
             Intent intent = new Intent(this, ChooseFriendActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
+            intent.putExtra("FRIEND NAME", recipientName);
+            intent.putExtra("FRIEND ID", recipientID);
             GetFriendsThread getFriendsThread = new GetFriendsThread(intent);
             getFriendsThread.start();
 

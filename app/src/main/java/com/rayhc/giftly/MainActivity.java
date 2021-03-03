@@ -17,6 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -64,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
 
+    private Gift mGift;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +109,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             HashMap<String, String> sentGiftsMap;
             sentGiftsMap = (HashMap<String, String>)startIntent.getSerializableExtra("SENT GIFT MAP");
             Log.d("LPC", "sent gifts map in main activity: "+sentGiftsMap.toString());
-        } else{
+        } else if(startIntent.getBooleanExtra("MAKING GIFT", false)){
+            createGiftFragment = new CreateGiftFragment();
+            Bundle bundle = new Bundle();
+
+            bundle.putString("FRIEND NAME", startIntent.getStringExtra("FRIEND NAME"));
+            bundle.putString("FRIEND ID", startIntent.getStringExtra("FRIEND ID"));
+
+
+            mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
+            Log.d("LPC", "container activity got gift: " + mGift.toString());
+            bundle.putSerializable(Globals.CURR_GIFT_KEY, mGift);
+
+            createGiftFragment.setArguments(bundle);
+
+
+            // Begin the transaction
+//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//            // Replace the contents of the container with the new fragment
+//            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, createGiftFragment, "CreateGiftFragment").commit();
+//            // or ft.add(R.id.your_placeholder, new FooFragment());
+//            // Complete the changes added above
+//            ft.commit();
+            navId = R.id.nav_create_gift;
+        }
+
+        else{
             if(mFirebaseUser == null){
                 //starts login page
                 // Choose authentication providers
