@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -118,7 +121,37 @@ public class FriendsFragment extends Fragment {
     }
 
     public void getUserFromDB() {
-        Thread thread = new Thread(() -> {
+        GetFriendsListThread thread = new GetFriendsListThread();
+        thread.start();
+    }
+
+    public class GetFriendsListThread extends Thread {
+        private int numFriends = -1;
+        private int numFriendRequests = -1;
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if((numFriends == -1 || friendsList.size()>numFriends) &&
+                        (numFriendRequests == -1 || requestsList.size()>numFriendRequests))
+                    return;
+
+                Log.d("kitani", "Requests Added");
+
+                friendsListAdapter = new MyFriendsListAdapter(context, R.layout.friend_entry, friendsList);
+                requestsListAdapter = new MyRequestsListAdapter(context, R.layout.friend_request_entry, requestsList);
+
+                friendsListView.setAdapter(friendsListAdapter);
+                requestsListView.setAdapter(requestsListAdapter);
+
+                Log.d("kitani", "Adapters Set");
+            }
+        };
+
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        @Override
+        public void run() {
             DatabaseReference db = FirebaseDatabase.getInstance().getReference();
 
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -138,6 +171,7 @@ public class FriendsFragment extends Fragment {
                         }
 
                         if(activityUser.getFriends() != null){
+                            numFriends = activityUser.getFriends().keySet().size();
                             for(String key: activityUser.getFriends().keySet()) {
                                 String friendID = activityUser.getFriends().get(key);
                                 Query query = db.child("users").orderByChild("userId").equalTo(friendID);
@@ -146,6 +180,7 @@ public class FriendsFragment extends Fragment {
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                                         String friendName = (String) snapshot.child(friendID).child("name").getValue();
                                         friendsList.add(friendName);
+                                        handler.post(runnable);
                                     }
 
                                     @Override
@@ -157,6 +192,7 @@ public class FriendsFragment extends Fragment {
                         Log.d("kitani", "Friends Added");
 
                         if (activityUser.getReceivedFriends() != null){
+                            numFriendRequests = activityUser.getReceivedFriends().keySet().size();
                             for(String key: activityUser.getReceivedFriends().keySet()) {
                                 String requestID = activityUser.getReceivedFriends().get(key);
                                 Query query = db.child("users").orderByChild("userId").equalTo(requestID);
@@ -164,7 +200,9 @@ public class FriendsFragment extends Fragment {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                                         String requestName = (String) snapshot.child(requestID).child("name").getValue();
+                                        Log.d("kitani", "Friend Request from: " + requestName);
                                         requestsList.add(requestName);
+                                        handler.post(runnable);
                                     }
 
                                     @Override
@@ -173,15 +211,6 @@ public class FriendsFragment extends Fragment {
                                 });
                             }
                         }
-                        Log.d("kitani", "Requests Added");
-
-                        friendsListAdapter = new MyFriendsListAdapter(context, R.layout.friend_entry, friendsList);
-                        requestsListAdapter = new MyRequestsListAdapter(context, R.layout.friend_request_entry, requestsList);
-
-                        friendsListView.setAdapter(friendsListAdapter);
-                        requestsListView.setAdapter(requestsListAdapter);
-
-                        Log.d("kitani", "Adapters Set");
                     }
                 }
 
@@ -189,8 +218,8 @@ public class FriendsFragment extends Fragment {
                 public void onCancelled(@NonNull DatabaseError error) {
                 }
             });
-        });
-        thread.start();
+        }
+
     }
 
     public class MyFriendsListAdapter extends ArrayAdapter<String> {
@@ -242,6 +271,7 @@ public class FriendsFragment extends Fragment {
                     }
                 });
                 thread.start();
+                getUserFromDB();
             });
 
             return convertView;
@@ -297,6 +327,7 @@ public class FriendsFragment extends Fragment {
                     }
                 });
                 thread.start();
+                getUserFromDB();
             });
 
             decline.setOnClickListener(v -> {
@@ -325,6 +356,7 @@ public class FriendsFragment extends Fragment {
                     }
                 });
                 thread.start();
+                getUserFromDB();
             });
 
             return convertView;

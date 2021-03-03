@@ -78,7 +78,8 @@ public class DownloadSplashActivity extends AppCompatActivity {
             GetFriendsThread getFriendsThread = new GetFriendsThread(intent);
             getFriendsThread.start();
 
-        } else{
+        }
+        else{
             recipientID = startIntent.getStringExtra("RECIPIENT ID");
             hashValue = startIntent.getStringExtra("HASH VALUE");
 
