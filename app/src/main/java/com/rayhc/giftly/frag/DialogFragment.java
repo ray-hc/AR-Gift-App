@@ -1,4 +1,4 @@
-package com.rayhc.giftly;
+package com.rayhc.giftly.frag;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -7,13 +7,10 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
-import android.widget.Switch;
 
 import androidx.fragment.app.FragmentManager;
 
-import java.util.Calendar;
-
-import kotlin.random.Random;
+import com.rayhc.giftly.R;
 
 public class DialogFragment extends androidx.fragment.app.DialogFragment {
     private static final String DIALOG_KEY = "DIALOG_KEY";

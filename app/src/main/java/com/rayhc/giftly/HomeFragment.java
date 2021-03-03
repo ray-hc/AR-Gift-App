@@ -9,6 +9,8 @@ import android.widget.ListView;
 
 import androidx.fragment.app.Fragment;
 
+import com.rayhc.giftly.util.Gift;
+
 import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {

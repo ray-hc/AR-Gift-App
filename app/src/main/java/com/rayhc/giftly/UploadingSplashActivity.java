@@ -22,9 +22,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.rayhc.giftly.util.Gift;
+import com.rayhc.giftly.util.Globals;
+import com.rayhc.giftly.util.User;
+import com.rayhc.giftly.util.UserManager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 

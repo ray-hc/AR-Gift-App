@@ -13,13 +13,13 @@
 
     <fragment
         android:id="@+id/nav_create_gift"
-        android:name="com.rayhc.giftly.CreateGiftFragment"
+        android:name="com.rayhc.giftly.frag.CreateGiftFragment"
         android:label="Create Gift"
         tools:layout="@layout/fragment_create_gift" />
 
     <fragment
         android:id="@+id/nav_friends_list"
-        android:name="com.rayhc.giftly.FriendsFragment"
+        android:name="com.rayhc.giftly.frag.FriendsFragment"
         android:label="Friends"
         tools:layout="@layout/friends_list_fragment" />
 
