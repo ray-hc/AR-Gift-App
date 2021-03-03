@@ -1,4 +1,4 @@
-package com.rayhc.giftly;
+package com.rayhc.giftly.frag;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.rayhc.giftly.R;
 import com.rayhc.giftly.frag.DialogFragment;
 import com.rayhc.giftly.util.ListUtils;
 import com.rayhc.giftly.util.User;

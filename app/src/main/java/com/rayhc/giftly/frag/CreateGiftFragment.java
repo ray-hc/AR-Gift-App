@@ -23,6 +23,13 @@ import androidx.fragment.app.Fragment;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.rayhc.giftly.DownloadSplashActivity;
+import com.rayhc.giftly.ImageActivity;
+import com.rayhc.giftly.LinkActivity;
+import com.rayhc.giftly.R;
+import com.rayhc.giftly.ReviewGiftActivity;
+import com.rayhc.giftly.UploadingSplashActivity;
+import com.rayhc.giftly.VideoActivity;
 import com.rayhc.giftly.util.Gift;
 import com.rayhc.giftly.util.Globals;
 

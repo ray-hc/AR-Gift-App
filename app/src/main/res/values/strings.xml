@@ -8,4 +8,13 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="send_gift_title">Make\nSomeone\'s Day</string>
+    <string name="send_gift_subtitle">Send a gift now!</string>
+
+    <string name="sent_gifts_title">Sent</string>
+    <string name="received_gifts_title">Received</string>
+    <string name="to">To:</string>
+    <string name="from">From:</string>
+
 </resources>

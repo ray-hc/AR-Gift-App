@@ -38,6 +38,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import com.rayhc.giftly.frag.*;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final String NAV_ITEM_ID = "NAV_ITEM_ID";
     private static final int RC_SIGN_IN = 123;
