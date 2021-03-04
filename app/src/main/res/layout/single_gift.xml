@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="2dp"
     android:orientation="horizontal">
 
-    <!--Gift icon
     <ImageView
         android:id="@+id/gift_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/> -->
-    <!--Sender info
+        style="@style/miniGift" />
     <TextView
-        android:text="Sent by Friend"
         android:id="@+id/sender_info"
+        android:text="John F"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/> -->
-    <!--Time Sent
-    <TextView
-        android:text="00:00 hours"
-        android:id="@+id/time_sent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/> -->
+        android:layout_height="wrap_content"/>
 
-</TextView>
+    <ImageButton
+        android:id="@+id/arrowButton"
+        style="@style/arrow" />
+
+</LinearLayout>

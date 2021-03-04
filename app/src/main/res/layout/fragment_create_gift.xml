@@ -1,29 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
     <!--RECIPIENT-->
-    <TextView
-        android:id="@+id/recipient"
-        android:layout_width="wrap_content"
+
+    <ImageView
+        android:id="@+id/giftImg"
+        android:layout_width="112dp"
+        android:layout_height="111dp"
+        android:scaleType="centerInside"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/giftbox_pink" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_centerHorizontal="true"
-        android:text="This Gift is to: "/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/giftImg"
+        style="@style/plainCard">
+
+        <TextView
+            android:id="@+id/recipient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10dp"
+            android:text="This Gift is to: "
+            tools:layout_editor_absoluteX="266dp"
+            tools:layout_editor_absoluteY="529dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
     <Button
         android:id="@+id/choose_recipient_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/recipient"
         android:layout_margin="10dp"
         android:text="CHOOSE RECIPIENT"
-        android:layout_below="@+id/recipient"/>
+        tools:layout_editor_absoluteX="9dp"
+        tools:layout_editor_absoluteY="316dp" />
+
     <LinearLayout
         android:id="@+id/picker_buttons_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_below="@+id/choose_recipient_button"
         android:layout_margin="10dp"
-        android:layout_below="@+id/choose_recipient_button">
+        android:orientation="horizontal"
+        tools:layout_editor_absoluteX="9dp"
+        tools:layout_editor_absoluteY="236dp">
 
         <!--Link Button-->
         <Button
@@ -31,54 +65,63 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="ADD LINK"/>
+            android:text="ADD LINK" />
         <!--Image Button-->
-        <Button
-            android:id="@+id/image_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="ADD IMAGE"/>
         <!--Video Button-->
-        <Button
-            android:id="@+id/video_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="ADD VIDEO"/>
-
 
 
     </LinearLayout>
+
+    <!--MESSAGE BOX-->
 
     <Button
         android:id="@+id/review_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
         android:layout_below="@+id/picker_buttons_layout"
         android:layout_centerHorizontal="true"
-        android:text="REVIEW/EDIT GIFT"/>
+        android:layout_margin="10dp"
+        android:text="REVIEW/EDIT GIFT"
+        tools:layout_editor_absoluteX="213dp"
+        tools:layout_editor_absoluteY="100dp" />
 
-<!--MESSAGE BOX-->
     <EditText
         android:id="@+id/message_input"
-        android:layout_below="@+id/review_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+        android:layout_below="@+id/review_button"
+        android:hint="Enter a message (optional): "
         android:inputType="text"
-        android:hint="Enter a message (optional): "/>
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="462dp" />
 
     <Button
         android:id="@+id/send_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
         android:layout_below="@+id/message_input"
         android:layout_centerHorizontal="true"
-        android:text="SEND GIFT"/>
+        android:layout_margin="10dp"
+        android:text="SEND GIFT"
+        tools:layout_editor_absoluteX="172dp"
+        tools:layout_editor_absoluteY="162dp" />
 
-</RelativeLayout>
+    <Button
+        android:id="@+id/video_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="ADD VIDEO"
+        tools:layout_editor_absoluteX="278dp"
+        tools:layout_editor_absoluteY="385dp" />
+
+    <Button
+        android:id="@+id/image_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="ADD IMAGE"
+        tools:layout_editor_absoluteX="165dp"
+        tools:layout_editor_absoluteY="566dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
