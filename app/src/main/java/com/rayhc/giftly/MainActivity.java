@@ -149,6 +149,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 .build(),
                         RC_SIGN_IN);
             } else{
+                if(startIntent.getBooleanExtra("SENT GIFT", false)){
+                    mGift = new Gift();
+                    Log.d("LPC", "onCreate: made a new gift");
+                }
                 //go to download splash
                 Intent intent = new Intent(this, DownloadSplashActivity.class);
                 intent.putExtra("USER ID", mFirebaseUser.getUid());
