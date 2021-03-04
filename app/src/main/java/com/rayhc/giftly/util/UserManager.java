@@ -161,27 +161,6 @@ public class UserManager {
         return storedUser.getValue(User.class);
     }
 
-    public static void sendGift(User from, User to, Gift gift){
-        gift.setReceiver(to.getUserId());
-//        gift.setSender(from.getUserId());
-//        if(gift.getTimeCreated() != 0) {
-//            gift.setTimeCreated(System.currentTimeMillis());
-//        }
-        Log.d("LPC", "sendGift: gift sender: "+gift.getSender());
-        Log.d("LPC", "sendGift: gift time create: "+gift.getTimeCreated());
-        from.addSentGifts(gift);
-        to.addReceivedGifts(gift);
-        new Thread() {
-            public void run(){
-                DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-                db.child("users").child(from.getUserId()).setValue(from);
-                db.child("users").child(to.getUserId()).setValue(to);
-                db.child("gifts").child(gift.getHashValue()).setValue(gift);
-
-            }
-        }.start();
-    }
-
 
     public static void sendFriendRequest(User from, String toFriendUid){
         from.addSentFriends(toFriendUid);
