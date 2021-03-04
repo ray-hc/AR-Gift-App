@@ -12,7 +12,8 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/friends_list"/>
+        android:id="@+id/friends_list"
+        android:layout_marginTop="10dp"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -22,6 +23,7 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/requests_list"/>
+        android:id="@+id/requests_list"
+        android:layout_marginTop="10dp"/>
 
 </LinearLayout>

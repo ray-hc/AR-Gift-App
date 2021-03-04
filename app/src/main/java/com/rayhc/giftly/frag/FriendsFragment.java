@@ -255,6 +255,7 @@ public class FriendsFragment extends Fragment {
 
                                     if (friend.equals(friendName1)){
                                         UserManager.removeFriend(activityUser, friendID);
+                                        getUserFromDB();
                                     }
                                 }
 
@@ -266,7 +267,6 @@ public class FriendsFragment extends Fragment {
                     }
                 });
                 thread.start();
-                getUserFromDB();
             });
 
             return convertView;
@@ -322,7 +322,6 @@ public class FriendsFragment extends Fragment {
                     }
                 });
                 thread.start();
-                getUserFromDB();
             });
 
             decline.setOnClickListener(v -> {
@@ -351,7 +350,6 @@ public class FriendsFragment extends Fragment {
                     }
                 });
                 thread.start();
-                getUserFromDB();
             });
 
             return convertView;
