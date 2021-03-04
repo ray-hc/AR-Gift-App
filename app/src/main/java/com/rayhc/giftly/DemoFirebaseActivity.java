@@ -107,7 +107,6 @@ public class DemoFirebaseActivity extends AppCompatActivity {
         //gift objects
         gift1 = new Gift();
         gift1.setContentType(null);
-        gift1.setGiftType(null);
         gift1.setHashValue("hash value 1");
         gift1.setQrCode("qr code 1");
         gift1.setOpened(false);
@@ -119,7 +118,6 @@ public class DemoFirebaseActivity extends AppCompatActivity {
 
         gift2 = new Gift();
         gift2.setContentType(null);
-        gift2.setGiftType(null);
 //        gift2.setHashValue("hash value 1");
 //        gift2.setQrCode("qr code 1");
         gift2.setOpened(false);

@@ -38,7 +38,7 @@ public class Gift implements Serializable {
                                                         Need to be a map of strings (but will hold ints) for sending multiple
                                                         "gifts" (many images, some images and some videos, etc.) in one gift object*/
 
-    private HashMap<String, String> giftType;           //follows the same principle as contentType
+    private int giftType;           //follows the same principle as contentType
     private String sender;                              //user id of the gift's sender from firebase authentication
     private String receiver;                            //user id of the gift's sender from firebase authentication
     private String message;
@@ -61,7 +61,7 @@ public class Gift implements Serializable {
     /**
      * Value constructor
      */
-    public Gift(HashMap<String, String> links, HashMap<String, String> contentType, HashMap<String, String> giftType,
+    public Gift(HashMap<String, String> links, HashMap<String, String> contentType, int giftType,
                 String sender, String receiver, String message, long timeOpened, long timeCreated,
                 boolean isEncrypted, String hashValue, String qrCode, boolean opened) {
         this.links = links;
@@ -95,7 +95,7 @@ public class Gift implements Serializable {
         return contentType;
     }
 
-    public HashMap<String, String> getGiftType() {
+    public int getGiftType() {
         return giftType;
     }
 
@@ -145,7 +145,7 @@ public class Gift implements Serializable {
 
     public void setContentType(HashMap<String, String> contentType) { this.contentType = contentType; }
 
-    public void setGiftType(HashMap<String, String> giftType) {
+    public void setGiftType(int giftType) {
         this.giftType = giftType;
     }
 
