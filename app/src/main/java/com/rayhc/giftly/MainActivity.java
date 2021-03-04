@@ -1,7 +1,12 @@
 package com.rayhc.giftly;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -97,6 +102,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
+        //check permissions
+        checkPermissions();
 
         //determine if we've gotten gifts yet
         Intent startIntent = getIntent();
@@ -262,6 +270,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.d("iandebug", "User Login Failed");
             }
 
+        }
+    }
+
+    /**
+     * Request user permission to write to external storage
+     */
+    public void checkPermissions() {
+        if (Build.VERSION.SDK_INT < 23)
+            return;
+        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+        }
+    }
+
+    /**
+     * Deal with denial of storage permissions (adapted from class code)
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
+        }else if (grantResults[0] == PackageManager.PERMISSION_DENIED ){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    //Show an explanation to the user *asynchronously*
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("This permission is important for the app.")
+                            .setTitle("Important permission required");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+                            }
+
+                        }
+                    });
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+                }else{
+                    //Never ask again and handle your app without permission.
+                }
+            }
         }
     }
 }
