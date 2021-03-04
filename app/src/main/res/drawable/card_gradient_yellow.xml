@@ -2,16 +2,16 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape>
-            <solid android:color="#FF61EF"/>
+            <solid android:color="#FFedf72d"/>
             <corners android:radius="13dp"/>
         </shape>
     </item>
     <item>
         <shape>
             <gradient
-                android:startColor="#885FFF"
+                android:startColor="#FFf59c5d"
                 android:endColor="#00FFFFFF"
-                android:angle="45"/>
+                android:angle="90"/>
             <corners android:radius="13dp"/>
         </shape>
     </item>

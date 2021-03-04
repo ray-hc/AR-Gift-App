@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,6 +10,8 @@
         android:id="@+id/giftImg"
         android:layout_width="112dp"
         android:layout_height="111dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="gift"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -18,12 +19,12 @@
         app:srcCompat="@drawable/giftbox_pink" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout2"
+        style="@style/plainCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/giftImg"
-        style="@style/plainCard">
+        app:layout_constraintTop_toBottomOf="@+id/giftImg">
 
         <TextView
             android:id="@+id/recipient"
@@ -32,68 +33,106 @@
             android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
             android:text="This Gift is to: "
-            tools:layout_editor_absoluteX="266dp"
-            tools:layout_editor_absoluteY="529dp" />
+            app:layout_constraintEnd_toStartOf="@+id/choose_recipient_button"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/choose_recipient_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/recipient"
+            android:layout_margin="10dp"
+            android:text="CHOOSE"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/recipient"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
-    <Button
-        android:id="@+id/choose_recipient_button"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout3"
+        style="@style/plainCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/recipient"
-        android:layout_margin="10dp"
-        android:text="CHOOSE RECIPIENT"
-        tools:layout_editor_absoluteX="9dp"
-        tools:layout_editor_absoluteY="316dp" />
+        android:layout_marginEnd="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
 
-    <LinearLayout
-        android:id="@+id/picker_buttons_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/choose_recipient_button"
-        android:layout_margin="10dp"
-        android:orientation="horizontal"
-        tools:layout_editor_absoluteX="9dp"
-        tools:layout_editor_absoluteY="236dp">
-
-        <!--Link Button-->
-        <Button
-            android:id="@+id/link_button"
+        <TextView
+            android:id="@+id/messageTitle"
+            style="@style/header2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="ADD LINK" />
-        <!--Image Button-->
-        <!--Video Button-->
+            android:text="Message:"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <EditText
+            android:id="@+id/message_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter a message (optional): "
+            android:inputType="text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/messageTitle" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!--MESSAGE BOX-->
+
+    <ImageButton
+        android:id="@+id/video_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/circle_button"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toStartOf="@+id/image_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
+        app:srcCompat="@android:drawable/ic_menu_slideshow" />
+
+    <ImageButton
+        android:id="@+id/image_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/circle_button"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toStartOf="@+id/link_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/video_button"
+        app:layout_constraintTop_toTopOf="@+id/video_button"
+        app:srcCompat="@android:drawable/ic_menu_gallery" />
+
+    <ImageButton
+        android:id="@+id/link_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/circle_button"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/image_button"
+        app:layout_constraintTop_toTopOf="@+id/video_button"
+        app:srcCompat="@android:drawable/ic_menu_gallery" />
 
     <Button
         android:id="@+id/review_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/picker_buttons_layout"
         android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
         android:text="REVIEW/EDIT GIFT"
-        tools:layout_editor_absoluteX="213dp"
-        tools:layout_editor_absoluteY="100dp" />
-
-    <EditText
-        android:id="@+id/message_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/review_button"
-        android:hint="Enter a message (optional): "
-        android:inputType="text"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="462dp" />
+        app:layout_constraintTop_toBottomOf="@+id/send_button"
+        tools:layout_editor_absoluteX="121dp" />
 
     <Button
         android:id="@+id/send_button"
@@ -102,26 +141,9 @@
         android:layout_below="@+id/message_input"
         android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
+        android:layout_marginTop="16dp"
         android:text="SEND GIFT"
-        tools:layout_editor_absoluteX="172dp"
-        tools:layout_editor_absoluteY="162dp" />
-
-    <Button
-        android:id="@+id/video_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="ADD VIDEO"
-        tools:layout_editor_absoluteX="278dp"
-        tools:layout_editor_absoluteY="385dp" />
-
-    <Button
-        android:id="@+id/image_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="ADD IMAGE"
-        tools:layout_editor_absoluteX="165dp"
-        tools:layout_editor_absoluteY="566dp" />
+        app:layout_constraintTop_toBottomOf="@+id/video_button"
+        tools:layout_editor_absoluteX="150dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

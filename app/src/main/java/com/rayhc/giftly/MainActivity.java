@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -31,6 +33,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.rayhc.giftly.frag.CreateGiftFragment;
 import com.rayhc.giftly.frag.FriendsFragment;
 import com.rayhc.giftly.frag.HomeFragment;
+import com.rayhc.giftly.frag.MenuFragment;
 import com.rayhc.giftly.util.Gift;
 import com.rayhc.giftly.util.Globals;
 import com.rayhc.giftly.util.UserManager;
@@ -84,13 +87,21 @@ public class MainActivity extends AppCompatActivity {
                             .setAvailableProviders(providers)
                             .build(),
                     RC_SIGN_IN);
-        }  else{
+        } else {
             //go to download splash
             Intent intent = new Intent(this, DownloadSplashActivity.class);
             intent.putExtra("USER ID", mFirebaseUser.getUid());
             intent.putExtra("GET GIFTS", true);
             startActivity(intent);
         }
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new HomeFragment(), "HomeFragment").commit();
+
+        menuFragment = new MenuFragment();
+        this.getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .replace(R.id.frame_layout_menu, menuFragment, "CreateGiftFragment")
+                .commit();
 
         /*
         //determine if we've gotten gifts yet
@@ -134,10 +145,21 @@ public class MainActivity extends AppCompatActivity {
          */
     }
 
+    MenuFragment menuFragment;
+
+    public void onMenuClick(View view) {
+        View menuView = findViewById(R.id.frame_layout_menu);
+        menuView.setEnabled(!menuView.isEnabled());
+        if (menuView.isEnabled()) { getSupportFragmentManager().beginTransaction().show(menuFragment).commit();
+        } else {
+            getSupportFragmentManager().beginTransaction().hide(menuFragment).commit();
+        }
+
+    }
+
     // creates fragment if chosen
     public void navigateToFragment(int navId) {
         if (navId == R.id.nav_home){
-            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new HomeFragment(), "HomeFragment").commit();
         }
         else if (navId == R.id.nav_create_gift){
             getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new CreateGiftFragment(), "CreateGiftFragment").commit();
