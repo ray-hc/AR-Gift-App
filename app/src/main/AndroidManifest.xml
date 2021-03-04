@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Giftly">
-        <activity android:name=".ChooseFriendActivity"></activity>
+        <activity android:name=".ViewContentsActivity"></activity>
+        <activity android:name=".ChooseFriendActivity" />
         <activity android:name=".DownloadSplashActivity" />
         <activity android:name=".ReviewGiftActivity" />
         <activity android:name=".UploadingSplashActivity" />
