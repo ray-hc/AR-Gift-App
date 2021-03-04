@@ -103,7 +103,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(startIntent.getBooleanExtra("GOT GIFTS", false)){
             HashMap<String, String> sentGiftsMap, receivedGiftsMap;
             sentGiftsMap = (HashMap<String, String>)startIntent.getSerializableExtra("SENT GIFT MAP");
+            receivedGiftsMap = (HashMap<String, String>)startIntent.getSerializableExtra("RECEIVED GIFT MAP");
             Log.d("LPC", "sent gifts map in main activity: "+sentGiftsMap.toString());
+            Log.d("LPC", "received gifts map in main activity: "+receivedGiftsMap.toString());
             homeFragment = new HomeFragment();
             Bundle bundle = new Bundle();
 
@@ -160,22 +162,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigateToFragment(navId);
 
-        //go to db demo for now
-//        Intent intent = new Intent(this, FirebaseDemoActivity.class);
-//        startActivity(intent);
-
-        //go to create gift
-//        Gift gift = new Gift();
-//        gift.setReceiver("Logan 2");
-//        gift.setSender("Logan 1");
-//        gift.setTimeCreated(100);
-//        gift.setHashValue(gift.createHashValue());
-//        gift.setContentType(new HashMap<>());
-////        Intent intent = new Intent(this, ImageActivity.class);
-////        Intent intent = new Intent(this, VideoActivity.class);
-//        Intent intent = new Intent(this, LinkActivity.class);
-//        intent.putExtra("GIFT", gift);
-//        startActivity(intent);
 
     }
 

@@ -28,6 +28,7 @@ import com.rayhc.giftly.util.User;
 import com.rayhc.giftly.util.UserManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -72,6 +73,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
         //start a thread to upload media to cloud
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
+        intent.putExtra("GOT GIFTS", true);
         StorageLoaderThread storageLoaderThread = new StorageLoaderThread(mGift, intent);
         storageLoaderThread.start();
 
@@ -94,8 +96,8 @@ public class UploadingSplashActivity extends AppCompatActivity {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getApplicationContext(), "Gift has been sent", Toast.LENGTH_SHORT).show();
-                startActivity(intent);
+                GetSentGiftsThread getSentGiftsThread = new GetSentGiftsThread(intent);
+                getSentGiftsThread.start();
             }
         };
 
@@ -120,40 +122,6 @@ public class UploadingSplashActivity extends AppCompatActivity {
             int index = 0;
             uploadFile(index, keys);
         }
-
-
-        public void uploadFile(int index, ArrayList<String> keys){
-            Log.d("LPC", "uploadFile: called");
-            String fileName;
-            String path;
-            Uri selectedData;
-            if(index == keys.size()) {
-                Log.d("LPC", "uploadFile: switched the flag to false");
-                handler.post(runnable);
-                return;
-            }
-            if(index<keys.size()) {
-                for (String key : saveGift.getContentType().keySet()) {
-                    selectedData = Uri.parse(saveGift.getContentType().get(key));
-                    fileName = key;
-                    if (selectedData.toString().contains("image"))
-                        path = "gift/" + saveGift.getHashValue() + "/" + fileName + ".jpg";
-                    else path = "gift/" + saveGift.getHashValue() + "/" + fileName + ".mp4";
-                    StorageReference giftRef = storageRef.child(path);
-                    UploadTask uploadTask = giftRef.putFile(selectedData);
-                    uploadTask.addOnCompleteListener(UploadingSplashActivity.this, new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                Log.d("LPC", "media upload complete!");
-                                uploadFile(index+1, keys);
-                            }
-                        }
-                    });
-                }
-            }
-        }
-
         /**
          * First part of process to send gift
          */
@@ -192,6 +160,258 @@ public class UploadingSplashActivity extends AppCompatActivity {
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) { }
             });
+        }
+
+
+        public void uploadFile(int index, ArrayList<String> keys){
+            Log.d("LPC", "uploadFile: called");
+            String fileName;
+            String path;
+            Uri selectedData;
+            if(index == keys.size()) {
+                Log.d("LPC", "uploadFile: switched the flag to false");
+                handler.post(runnable);
+                return;
+            }
+            if(index<keys.size()) {
+                for (String key : saveGift.getContentType().keySet()) {
+                    selectedData = Uri.parse(saveGift.getContentType().get(key));
+                    fileName = key;
+                    if (selectedData.toString().contains("image"))
+                        path = "gift/" + saveGift.getHashValue() + "/" + fileName + ".jpg";
+                    else path = "gift/" + saveGift.getHashValue() + "/" + fileName + ".mp4";
+                    StorageReference giftRef = storageRef.child(path);
+                    UploadTask uploadTask = giftRef.putFile(selectedData);
+                    uploadTask.addOnCompleteListener(UploadingSplashActivity.this, new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                Log.d("LPC", "media upload complete!");
+                                uploadFile(index+1, keys);
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    /**
+     * Get the users sent gifts
+     */
+    public class GetSentGiftsThread extends Thread{
+        private boolean isEmpty;
+        private Intent intent;
+        private int numSentGifts;
+        private ArrayList<String> giftRecipientNames = new ArrayList<>();
+        private ArrayList<String> giftMessages = new ArrayList<>();
+        private ArrayList<String> giftHashes = new ArrayList<>();
+        private HashMap<String, String> sentGiftMap = new HashMap<>();
+
+        public GetSentGiftsThread(Intent intent){
+            this.intent = intent;
+        }
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if(isEmpty){
+                    intent.putExtra("SENT GIFT MAP", sentGiftMap);
+                    Log.d("LPC", "put in an empty sent gift map: ");
+                    GetReceivedGiftsThread getReceivedGiftsThread = new GetReceivedGiftsThread(intent);
+                    getReceivedGiftsThread.start();
+                } else {
+                    if (giftMessages.size() < numSentGifts || giftRecipientNames.size() < numSentGifts){
+                        Log.d("LPC", "sent gifts handler didnt run");
+                        return;
+                    }
+                    //make passable strings in form "To: *name* - *message*"
+                    Log.d("LPC", "sent gift messages: "+giftMessages.toString());
+                    for (int i = 0; i < numSentGifts; i++) {
+                        String label = "To: ";
+                        if(giftMessages.get(i) == null) label += giftRecipientNames.get(i);
+                        else label += (giftRecipientNames.get(i) + " - " + giftMessages.get(i));
+                        //put in map label -> gift hash
+                        sentGiftMap.put(label, giftHashes.get(i));
+                    }
+                    intent.putExtra("SENT GIFT MAP", sentGiftMap);
+                    Log.d("LPC", "thread done - sent gift map: "+sentGiftMap.toString());
+                    GetReceivedGiftsThread getReceivedGiftsThread = new GetReceivedGiftsThread(intent);
+                    getReceivedGiftsThread.start();
+                }
+            }
+        };
+
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        @Override
+        public void run() {
+            super.run();
+            getSentGifts();
+        }
+
+        private void getSentGifts(){
+            Query query = mDatabase.child("users").orderByChild("userId").equalTo(fromID);
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    User newUser = new User();
+                    if(snapshot.exists()){
+                        newUser = UserManager.snapshotToUser(snapshot, fromID);
+                        if(newUser.getSentGifts() == null) {
+                            isEmpty = true;
+                            handler.post(runnable);
+                        } else {
+                            //get the number of sent gifts this user has
+                            numSentGifts = newUser.getSentGifts().keySet().size();
+                            Log.d("LPC", "num sentGifts: " + numSentGifts);
+                            giftHashes = new ArrayList<>(newUser.getSentGifts().keySet());
+                            for (String key : newUser.getSentGifts().keySet()) {
+                                String otherUserID = newUser.getSentGifts().get(key);
+                                //get the other user's name
+                                Query userNameQuery = mDatabase.child("users").orderByChild("userId").equalTo(otherUserID);
+                                userNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        String friendName = (String) snapshot.child(otherUserID).child("name").getValue();
+                                        giftRecipientNames.add(friendName);
+                                        getGiftMessages();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) { }
+            });
+        }
+        private void getGiftMessages(){
+            if(giftRecipientNames.size()<numSentGifts) return;
+            //get the gift messages
+            for(String hash: giftHashes){
+                Query userNameQuery = mDatabase.child("gifts").orderByChild("hashValue").equalTo(hash);
+                userNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String message = (String) snapshot.child(hash).child("message").getValue();
+                        giftMessages.add(message);
+                        handler.post(runnable);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) { }
+                });
+            }
+        }
+    }
+
+    /**
+     * Get the users received gifts
+     */
+    public class GetReceivedGiftsThread extends Thread{
+        private Intent intent;
+        private boolean isEmpty;
+        private int numReceivedGifts;
+        private ArrayList<String> giftSenderNames = new ArrayList<>();
+        private ArrayList<String> giftMessages = new ArrayList<>();
+        private ArrayList<String> giftHashes = new ArrayList<>();
+        private HashMap<String, String> receivedGiftsMap = new HashMap<>();
+
+        public GetReceivedGiftsThread(Intent intent){
+            this.intent = intent;
+        }
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (!isEmpty) {
+                    if (giftMessages.size() < numReceivedGifts || giftSenderNames.size() < numReceivedGifts)
+                        return;
+                    //make passable strings in form "From *name*: *message*"
+                    for (int i = 0; i < numReceivedGifts; i++) {
+                        String label = "From ";
+                        if(giftMessages.get(i) == null) label += giftSenderNames.get(i);
+                        else label += (giftSenderNames.get(i) + " - " + giftMessages.get(i));
+                        //put in map label -> gift hash
+                        receivedGiftsMap.put(label, giftHashes.get(i));
+                    }
+                }
+                intent.putExtra("RECEIVED GIFT MAP", receivedGiftsMap);
+                Log.d("LPC", "thread done-received gift map: "+receivedGiftsMap.toString());
+                Toast.makeText(getApplicationContext(), "Gift has been sent", Toast.LENGTH_SHORT).show();
+                startActivity(intent);
+            }
+        };
+
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        @Override
+        public void run() {
+            super.run();
+            getReceivedGifts();
+        }
+
+        private void getReceivedGifts(){
+            Query query = mDatabase.child("users").orderByChild("userId").equalTo(fromID);
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    User newUser = new User();
+                    if(snapshot.exists()){
+                        newUser = UserManager.snapshotToUser(snapshot, fromID);
+                        if(newUser.getReceivedGifts() == null) {
+                            isEmpty = true;
+                            handler.post(runnable);
+                        } else {
+                            numReceivedGifts = newUser.getReceivedGifts().keySet().size();
+                            Log.d("LPC", "num receivedGifts: " + numReceivedGifts);
+                            giftHashes = new ArrayList<>(newUser.getReceivedGifts().keySet());
+                            for (String key : newUser.getReceivedGifts().keySet()) {
+                                String otherUserID = newUser.getReceivedGifts().get(key);
+                                //get the other user's name
+                                Query userNameQuery = mDatabase.child("users").orderByChild("userId").equalTo(otherUserID);
+                                userNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        String friendName = (String) snapshot.child(otherUserID).child("name").getValue();
+                                        giftSenderNames.add(friendName);
+                                        getGiftMessages();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) { }
+            });
+        }
+        public void getGiftMessages(){
+            if(giftHashes.size()<numReceivedGifts) return;
+            //get the gift messages
+            for(String hash: giftHashes){
+                Query userNameQuery = mDatabase.child("gifts").orderByChild("hashValue").equalTo(hash);
+                userNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String message = (String) snapshot.child(hash).child("message").getValue();
+                        giftMessages.add(message);
+                        handler.post(runnable);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) { }
+                });
+            }
         }
     }
 

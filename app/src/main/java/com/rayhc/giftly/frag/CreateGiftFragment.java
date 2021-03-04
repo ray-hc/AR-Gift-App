@@ -12,8 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -36,9 +39,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class CreateGiftFragment extends Fragment {
+    //widgets
     private TextView recipientLabel;
     private Button linkButton, imageButton, videoButton, reviewButton, sendButton, chooseFriendButton;
     private EditText messageInput;
+    private Spinner giftTypeSpinner;
+    private static final String[] GIFT_TYPE_ARRAY = {"Normal", "Birthday", "Christmas"};
+    private static final HashMap<String, Integer> GIFT_TYPE_MAP = new HashMap<String, Integer>(){{
+        put("Normal", 0);
+        put("Birthday", 1);
+        put("Christmas", 2);
+    }};
+
+    //gift
     private Gift newGift;
 
     //user id
@@ -77,7 +90,6 @@ public class CreateGiftFragment extends Fragment {
             newGift = new Gift();
             newGift.setContentType(new HashMap<>());
             newGift.setLinks(new HashMap<>());
-            newGift.setGiftType(new HashMap<>());
         }
 
         //get possible recipient user data
@@ -103,6 +115,24 @@ public class CreateGiftFragment extends Fragment {
         sendButton = v.findViewById(R.id.send_button);
         chooseFriendButton = v.findViewById(R.id.choose_recipient_button);
         sendButton.setEnabled(newGift.getContentType().size() != 0 || newGift.getLinks().size() != 0);
+
+        //set up spinner
+        giftTypeSpinner = v.findViewById(R.id.gift_type_spinner);
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
+                (getContext(), android.R.layout.simple_spinner_item, GIFT_TYPE_ARRAY);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        giftTypeSpinner.setAdapter(spinnerArrayAdapter);
+        giftTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedItem = parent.getItemAtPosition(position).toString();
+                newGift.setGiftType(GIFT_TYPE_MAP.get(selectedItem));
+            }
+            //TODO: to close the onItemSelected
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         //set up message input
         messageInput = v.findViewById(R.id.message_input);
