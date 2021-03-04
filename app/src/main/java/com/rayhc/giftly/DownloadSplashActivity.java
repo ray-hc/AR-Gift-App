@@ -161,7 +161,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
      */
     public class GetFriendsThread extends Thread{
         private Intent intent;
-        private int numFriends = -1;
+        private int numFriends = 0;
 
         public GetFriendsThread(Intent intent){
             this.intent = intent;
@@ -194,13 +194,16 @@ public class DownloadSplashActivity extends AppCompatActivity {
                         //DUMMY CODE
                         HashMap<String, String> dummyMap = new HashMap<>();
                         //karim and ian
-                        dummyMap.put("pszb1aJGa1YZ5LZBascG7xfbMSI2", "pszb1aJGa1YZ5LZBascG7xfbMSI2");
-                        dummyMap.put("2XORnShjizLqK2UZwJb87Z8oi8L2", "2XORnShjizLqK2UZwJb87Z8oi8L2");
+//                        dummyMap.put("pszb1aJGa1YZ5LZBascG7xfbMSI2", "pszb1aJGa1YZ5LZBascG7xfbMSI2");
+//                        dummyMap.put("2XORnShjizLqK2UZwJb87Z8oi8L2", "2XORnShjizLqK2UZwJb87Z8oi8L2");
                         newUser.setFriends(dummyMap);
                         Log.d("LPC", "set my friends to :"+newUser.getFriends().toString());
                         //get the number of friends this user has
                         numFriends = newUser.getFriends().keySet().size();
                         Log.d("LPC", "num friends: "+numFriends);
+                        if(numFriends == 0){
+                            handler.post(runnable);
+                        }
                         for(String key: newUser.getFriends().keySet()){
                             String friendID = newUser.getFriends().get(key);
                             Query query = mDatabase.child("users").orderByChild("userId").equalTo(friendID);
@@ -229,7 +232,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
      * Get the users sent gifts
      */
     public class GetSentGiftsThread extends Thread{
-        private boolean isEmpty;
         private Intent intent;
         private int numSentGifts;
         private ArrayList<String> giftRecipientNames = new ArrayList<>();
@@ -244,30 +246,24 @@ public class DownloadSplashActivity extends AppCompatActivity {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                if(isEmpty){
-                    intent.putExtra("SENT GIFT MAP", sentGiftMap);
-                    Log.d("LPC", "put in an empty sent gift map: ");
-                    GetReceivedGiftsThread getReceivedGiftsThread = new GetReceivedGiftsThread(intent);
-                    getReceivedGiftsThread.start();
-                } else {
-                    if (giftMessages.size() < numSentGifts || giftRecipientNames.size() < numSentGifts){
-                        Log.d("LPC", "sent gifts handler didnt run");
-                        return;
-                    }
-                    //make passable strings in form "To: *name* - *message*"
-                    Log.d("LPC", "sent gift messages: "+giftMessages.toString());
-                    for (int i = 0; i < numSentGifts; i++) {
-                        String label = "To: ";
-                        if(giftMessages.get(i) == null) label += giftRecipientNames.get(i);
-                        else label += (giftRecipientNames.get(i) + " - " + giftMessages.get(i));
-                        //put in map label -> gift hash
-                        sentGiftMap.put(label, giftHashes.get(i));
-                    }
-                    intent.putExtra("SENT GIFT MAP", sentGiftMap);
-                    Log.d("LPC", "thread done - sent gift map: "+sentGiftMap.toString());
-                    GetReceivedGiftsThread getReceivedGiftsThread = new GetReceivedGiftsThread(intent);
-                    getReceivedGiftsThread.start();
+                if (giftMessages.size() < numSentGifts || giftRecipientNames.size() < numSentGifts) {
+                    Log.d("LPC", "sent gifts handler didnt run");
+                    return;
                 }
+                //make passable strings in form "To: *name* - *message*"
+                Log.d("LPC", "sent gift messages: " + giftMessages.toString());
+                for (int i = 0; i < numSentGifts; i++) {
+                    String label = "To: ";
+                    if (giftMessages.get(i) == null) label += giftRecipientNames.get(i);
+                    else label += (giftRecipientNames.get(i) + " - " + giftMessages.get(i));
+                    //put in map label -> gift hash
+                    sentGiftMap.put(label, giftHashes.get(i));
+                }
+                intent.putExtra("SENT GIFT MAP", sentGiftMap);
+                Log.d("LPC", "thread done - sent gift map: " + sentGiftMap.toString());
+                GetReceivedGiftsThread getReceivedGiftsThread = new GetReceivedGiftsThread(intent);
+                getReceivedGiftsThread.start();
+
             }
         };
 
@@ -288,7 +284,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     if(snapshot.exists()){
                         newUser = UserManager.snapshotToUser(snapshot, userID);
                         if(newUser.getSentGifts() == null) {
-                            isEmpty = true;
                             handler.post(runnable);
                         } else {
                             //get the number of sent gifts this user has
@@ -344,7 +339,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
      */
     public class GetReceivedGiftsThread extends Thread{
         private Intent intent;
-        private boolean isEmpty;
         private int numReceivedGifts;
         private ArrayList<String> giftSenderNames = new ArrayList<>();
         private ArrayList<String> giftMessages = new ArrayList<>();
@@ -358,20 +352,19 @@ public class DownloadSplashActivity extends AppCompatActivity {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                if (!isEmpty) {
-                    if (giftMessages.size() < numReceivedGifts || giftSenderNames.size() < numReceivedGifts)
-                        return;
-                    //make passable strings in form "From *name*: *message*"
-                    for (int i = 0; i < numReceivedGifts; i++) {
-                        String label = "From ";
-                        if(giftMessages.get(i) == null) label += giftSenderNames.get(i);
-                        else label += (giftSenderNames.get(i) + " - " + giftMessages.get(i));
-                        //put in map label -> gift hash
-                        receivedGiftsMap.put(label, giftHashes.get(i));
-                    }
+                if (giftMessages.size() < numReceivedGifts || giftSenderNames.size() < numReceivedGifts)
+                    return;
+                //make passable strings in form "From *name*: *message*"
+                for (int i = 0; i < numReceivedGifts; i++) {
+                    String label = "From ";
+                    if (giftMessages.get(i) == null) label += giftSenderNames.get(i);
+                    else label += (giftSenderNames.get(i) + " - " + giftMessages.get(i));
+                    //put in map label -> gift hash
+                    receivedGiftsMap.put(label, giftHashes.get(i));
                 }
+
                 intent.putExtra("RECEIVED GIFT MAP", receivedGiftsMap);
-                Log.d("LPC", "thread done-received gift map: "+receivedGiftsMap.toString());
+                Log.d("LPC", "thread done-received gift map: " + receivedGiftsMap.toString());
                 startActivity(intent);
             }
         };
@@ -393,7 +386,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     if(snapshot.exists()){
                         newUser = UserManager.snapshotToUser(snapshot, userID);
                         if(newUser.getReceivedGifts() == null) {
-                            isEmpty = true;
                             handler.post(runnable);
                         } else {
                             numReceivedGifts = newUser.getReceivedGifts().keySet().size();
