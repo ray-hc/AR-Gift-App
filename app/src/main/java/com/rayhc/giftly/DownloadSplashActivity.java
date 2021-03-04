@@ -5,6 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -192,12 +193,12 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     if(snapshot.exists()){
                         newUser = UserManager.snapshotToUser(snapshot, userID);
                         //DUMMY CODE
-                        HashMap<String, String> dummyMap = new HashMap<>();
-                        //karim and ian
-//                        dummyMap.put("pszb1aJGa1YZ5LZBascG7xfbMSI2", "pszb1aJGa1YZ5LZBascG7xfbMSI2");
-//                        dummyMap.put("2XORnShjizLqK2UZwJb87Z8oi8L2", "2XORnShjizLqK2UZwJb87Z8oi8L2");
-                        newUser.setFriends(dummyMap);
-                        Log.d("LPC", "set my friends to :"+newUser.getFriends().toString());
+//                        HashMap<String, String> dummyMap = new HashMap<>();
+//                        //karim and ian
+////                        dummyMap.put("pszb1aJGa1YZ5LZBascG7xfbMSI2", "pszb1aJGa1YZ5LZBascG7xfbMSI2");
+////                        dummyMap.put("2XORnShjizLqK2UZwJb87Z8oi8L2", "2XORnShjizLqK2UZwJb87Z8oi8L2");
+//                        newUser.setFriends(dummyMap);
+//                        Log.d("LPC", "set my friends to :"+newUser.getFriends().toString());
                         //get the number of friends this user has
                         numFriends = newUser.getFriends().keySet().size();
                         Log.d("LPC", "num friends: "+numFriends);
