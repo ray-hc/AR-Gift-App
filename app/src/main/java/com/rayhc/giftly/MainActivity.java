@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 
 import com.firebase.ui.auth.AuthUI;
@@ -40,9 +41,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
     public static final String NAV_ITEM_ID = "NAV_ITEM_ID";
     private static final int RC_SIGN_IN = 123;
+
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+
+    private Gift mGift;
 
     private User activityUser;
 
@@ -55,49 +61,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private CreateGiftFragment createGiftFragment;
     private HomeFragment homeFragment;
 
-    private int navId;
-
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser mFirebaseUser;
-
-    private Gift mGift;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // create the toolbar view and navigation view
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        // get id to restore state if needed
-        if (savedInstanceState != null) {
-            navId = savedInstanceState.getInt(NAV_ITEM_ID);
-        }
-        else {
-            navId = R.id.nav_home;
-        }
-
-        //define fragments
-        friendsFragment = new FriendsFragment();
-        createGiftFragment = new CreateGiftFragment();
-        homeFragment = new HomeFragment();
-
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(drawerToggle);
-        drawerToggle.syncState();
-
-        NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        navigationView.getMenu().findItem(navId).setChecked(true);
-
         // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
+        if(mFirebaseUser == null) {
+            //starts login page
+            // Choose authentication providers
+            List<AuthUI.IdpConfig> providers = Arrays.asList(
+                    new AuthUI.IdpConfig.EmailBuilder().build(),
+                    new AuthUI.IdpConfig.PhoneBuilder().build(),
+                    new AuthUI.IdpConfig.GoogleBuilder().build());
+            // Create and launch sign-in intent
+            startActivityForResult(
+                    AuthUI.getInstance()
+                            .createSignInIntentBuilder()
+                            .setAvailableProviders(providers)
+                            .build(),
+                    RC_SIGN_IN);
+        }  else{
+            //go to download splash
+            Intent intent = new Intent(this, DownloadSplashActivity.class);
+            intent.putExtra("USER ID", mFirebaseUser.getUid());
+            intent.putExtra("GET GIFTS", true);
+            startActivity(intent);
+        }
+
+        /*
         //determine if we've gotten gifts yet
         Intent startIntent = getIntent();
         if(startIntent.getBooleanExtra("GOT GIFTS", false)){
@@ -132,112 +127,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         else{
-            if(mFirebaseUser == null){
-                //starts login page
-                // Choose authentication providers
-                List<AuthUI.IdpConfig> providers = Arrays.asList(
-                        new AuthUI.IdpConfig.EmailBuilder().build(),
-                        new AuthUI.IdpConfig.PhoneBuilder().build(),
-                        new AuthUI.IdpConfig.GoogleBuilder().build());
-                // Create and launch sign-in intent
-                startActivityForResult(
-                        AuthUI.getInstance()
-                                .createSignInIntentBuilder()
-                                .setAvailableProviders(providers)
-                                .build(),
-                        RC_SIGN_IN);
-            } else{
-                //go to download splash
-                Intent intent = new Intent(this, DownloadSplashActivity.class);
-                intent.putExtra("USER ID", mFirebaseUser.getUid());
-                intent.putExtra("GET GIFTS", true);
-                startActivity(intent);
-            }
-            navId = R.id.nav_home;
-        }
-
 
 
         navigateToFragment(navId);
 
-        //go to db demo for now
-//        Intent intent = new Intent(this, FirebaseDemoActivity.class);
-//        startActivity(intent);
-
-        //go to create gift
-//        Gift gift = new Gift();
-//        gift.setReceiver("Logan 2");
-//        gift.setSender("Logan 1");
-//        gift.setTimeCreated(100);
-//        gift.setHashValue(gift.createHashValue());
-//        gift.setContentType(new HashMap<>());
-////        Intent intent = new Intent(this, ImageActivity.class);
-////        Intent intent = new Intent(this, VideoActivity.class);
-//        Intent intent = new Intent(this, LinkActivity.class);
-//        intent.putExtra("GIFT", gift);
-//        startActivity(intent);
-
+         */
     }
 
     // creates fragment if chosen
     public void navigateToFragment(int navId) {
         if (navId == R.id.nav_home){
-            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, homeFragment, "HomeFragment").commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new HomeFragment(), "HomeFragment").commit();
         }
         else if (navId == R.id.nav_create_gift){
-            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, createGiftFragment, "CreateGiftFragment").commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new CreateGiftFragment(), "CreateGiftFragment").commit();
         }
         else if (navId == R.id.nav_friends_list){
-            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, friendsFragment, "FriendsFragment").commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new FriendsFragment(), "FriendsFragment").commit();
         }
-    }
-
-    //navigates to and from fragment
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        item.setChecked(true);
-        navId = item.getItemId();
-
-        //needs to update the gift lists on home, if home selected
-        if(navId == R.id.nav_home){
-            Intent intent = new Intent(this, DownloadSplashActivity.class);
-            intent.putExtra("USER ID", mFirebaseUser.getUid());
-            intent.putExtra("GET GIFTS", true);
-            startActivity(intent);
-        } else {
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    navigateToFragment((item.getItemId()));
-                }
-            }, 250);
-
-        }
-
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    // To handle state changes
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(NAV_ITEM_ID, navId);
     }
 
     private void onAuthSuccess(FirebaseUser currentUser) {
-        String userId = currentUser.getUid();
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPref.edit();
-
         editor.putString("userId", currentUser.getUid());
         editor.apply();
-
-        //go to download splash
-        Intent intent = new Intent(this, DownloadSplashActivity.class);
-        intent.putExtra("USER ID", userId);
-        intent.putExtra("GET GIFTS", true);
-        startActivity(intent);
     }
 
     @Override
