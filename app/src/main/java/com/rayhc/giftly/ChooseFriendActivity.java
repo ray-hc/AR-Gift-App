@@ -50,7 +50,7 @@ public class ChooseFriendActivity extends AppCompatActivity {
 
                 //TODO: make sure this is passing the right data around
                 Intent intent;
-                intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent = new Intent(getApplicationContext(), CreateGiftActivity.class);
                 intent.putExtra("MAKING GIFT", true);
                 intent.putExtra("FRIEND ID", friendID);
                 intent.putExtra("FRIEND NAME", label);
@@ -64,7 +64,7 @@ public class ChooseFriendActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        Intent intent = new Intent(getApplicationContext(), CreateGiftActivity.class);
         intent.putExtra("MAKING GIFT", true);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
         intent.putExtra("FRIEND NAME", friendName);

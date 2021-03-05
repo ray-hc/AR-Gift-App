@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Giftly">
-        <activity android:name=".EditContentsActivity"></activity>
+        <activity android:name=".CreateGiftActivity"></activity>
+        <activity android:name=".EditContentsActivity" />
         <activity android:name=".ViewContentsActivity" />
         <activity android:name=".ChooseFriendActivity" />
         <activity android:name=".DownloadSplashActivity" />

@@ -109,7 +109,7 @@ public class LinkActivity extends AppCompatActivity {
             //delete the old link if its a replacement
             if(mFileLabel != null) mGift.getLinks().remove(mFileLabel);
             Log.d("LPC", "set gift link to: " + link);
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, CreateGiftActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
             intent.putExtra("MAKING GIFT", true);
             intent.putExtra("FRIEND NAME", friendName);
@@ -124,7 +124,7 @@ public class LinkActivity extends AppCompatActivity {
      * Remove the chosen link from the gifts contents
      */
     public void onDelete(){
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, CreateGiftActivity.class);
         mGift.getLinks().remove(mFileLabel);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
         intent.putExtra("MAKING GIFT", true);

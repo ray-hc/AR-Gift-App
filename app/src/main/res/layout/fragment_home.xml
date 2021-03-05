@@ -1,42 +1,156 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:fillViewport="true" >
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dip" >
+        android:layout_marginTop="16dp"
+        android:text="NameInFunFont"
+        android:textSize="36sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView">
 
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/newGiftTitle"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textStyle="bold"
-            android:text="RECEIVED GIFTS" />
-
-        <ListView
-            android:id="@+id/inbox_gifts_recieved"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
-        </ListView>
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/send_gift_title"
+            app:layout_constraintEnd_toStartOf="@+id/presentImg"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/newGiftSubtitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dip"
-            android:gravity="center_vertical"
-            android:textStyle="bold"
-            android:text="SENT GIFTS" />
+            android:text="@string/send_gift_subtitle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/newGiftTitle" />
+
+
+        <ImageView
+            android:id="@+id/presentImg"
+            android:layout_width="67dp"
+            android:layout_height="62dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/newGiftTitle"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/sentGifts"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/col2Guide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="20dp"
+            app:layout_constraintGuide_percent="0.6" />
+
+        <TextView
+            android:id="@+id/sentGiftsTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/sent_gifts_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/sentGiftsTo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/to"
+            app:layout_constraintBottom_toBottomOf="@+id/sentGiftsTitle"
+            app:layout_constraintStart_toStartOf="@id/col2Guide" />
 
         <ListView
             android:id="@+id/inbox_gifts_sent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
-        </ListView>
-    </LinearLayout>
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:text="You haven't sent any gifts yet"
+            app:layout_constraintTop_toBottomOf="@id/sentGiftsTitle"
+            tools:layout_editor_absoluteX="10dp" />
 
-</ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/recGifts"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:backgroundTintMode="multiply"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sentGifts">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/col2Guide2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="20dp"
+            app:layout_constraintGuide_percent="0.6" />
+
+        <TextView
+            android:id="@+id/recGiftsTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/received_gifts_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/recGiftsFrom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/from"
+            app:layout_constraintBottom_toBottomOf="@+id/recGiftsTitle"
+            app:layout_constraintStart_toStartOf="@id/col2Guide2" />
+
+        <ListView
+            android:id="@+id/inbox_gifts_recieved"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:text="You have no unopened gifts"
+            app:layout_constraintTop_toBottomOf="@id/recGiftsTitle"
+            tools:layout_editor_absoluteX="10dp" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/create_gift_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CREATE GIFT"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
