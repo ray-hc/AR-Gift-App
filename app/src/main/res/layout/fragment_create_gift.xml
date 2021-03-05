@@ -1,214 +1,193 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <!--RECIPIENT-->
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <ImageView
+        android:id="@+id/giftImg"
+        android:layout_width="112dp"
+        android:layout_height="111dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="gift"
+        android:scaleType="centerInside"
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/toCard"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/card_gradient_yellow"
-        android:orientation="vertical">
-        <!--RECIPIENT-->
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp">
 
-        <ImageView
-            android:id="@+id/giftImg"
-            android:layout_width="112dp"
-            android:layout_height="111dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp"
-            android:contentDescription="gift"
-            android:scaleType="centerInside"
+        <Button
+            android:id="@+id/choose_recipient_button"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_below="@+id/recipient"
+            android:padding="0dp"
+            android:text="PICK"
+            app:cornerRadius="13dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/toTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="To:"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/recipient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="nobody yet!"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/toTitle"
+            app:layout_constraintStart_toEndOf="@+id/toTitle" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Spinner
+        android:id="@+id/gift_type_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="16dp" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/msgCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp">
+
+        <TextView
+            android:id="@+id/messageTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Message:"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/gift_pink" />
+            app:layout_constraintTop_toTopOf="parent" />
 
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/toCard"
-            style="@style/plainCard"
+        <EditText
+            android:id="@+id/message_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:paddingTop="6dp"
-            android:paddingBottom="6dp">
+            android:hint="Enter a message (required): "
+            android:inputType="text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/messageTitle" />
 
-            <Button
-                android:id="@+id/choose_recipient_button"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_below="@+id/recipient"
-                android:padding="0dp"
-                android:text="PICK"
-                app:cornerRadius="13dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/toTitle"
-                style="@style/header2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="To:"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+    <!--MESSAGE BOX-->
 
-            <TextView
-                android:id="@+id/recipient"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="nobody yet!"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="@+id/toTitle"
-                app:layout_constraintStart_toEndOf="@+id/toTitle" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linkCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <Spinner
-            android:id="@+id/gift_type_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:padding="16dp" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/msgCard"
-            style="@style/plainCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp">
-
-            <TextView
-                android:id="@+id/messageTitle"
-                style="@style/header2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Message:"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <EditText
-                android:id="@+id/message_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:hint="Enter a message (optional): "
-                android:inputType="text"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/messageTitle" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <!--MESSAGE BOX-->
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/linkCard"
-            style="@style/plainCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="visible">
-
-            <ListView
-                android:id="@+id/linkList"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:layout_editor_absoluteX="18dp"
-                tools:layout_editor_absoluteY="12dp" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <LinearLayout
-            android:id="@+id/mediaCard"
-            style="@style/plainCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:layout_editor_absoluteX="20dp"
-            tools:layout_editor_absoluteY="476dp">
-
-            <GridView
-                android:id="@+id/mediaGrid"
-                android:layout_width="match_parent"
-                android:layout_height="97dp">
-
-            </GridView>
-
-        </LinearLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/editButtons"
+        <ListView
+            android:id="@+id/linkList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="16dp"
-            android:orientation="horizontal">
+            tools:layout_editor_absoluteX="18dp"
+            tools:layout_editor_absoluteY="12dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <ImageButton
-                android:id="@+id/video_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/circle_button"
-                android:scaleType="centerCrop"
-                app:layout_constraintEnd_toStartOf="@+id/image_button"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@android:drawable/ic_menu_slideshow" />
+    <LinearLayout
+        android:id="@+id/mediaCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="20dp"
+        tools:layout_editor_absoluteY="476dp">
 
-            <ImageButton
-                android:id="@+id/image_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/circle_button"
-                android:scaleType="centerCrop"
-                app:layout_constraintEnd_toStartOf="@+id/link_button"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/video_button"
-                app:layout_constraintTop_toTopOf="@+id/video_button"
-                app:srcCompat="@android:drawable/ic_menu_gallery" />
+<!--        <GridView-->
+<!--            android:id="@+id/mediaGrid"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="97dp"-->
+<!--            android:horizontalSpacing="1dp"-->
+<!--            android:numColumns="5"-->
+<!--            android:verticalSpacing="1dp" >-->
 
-            <ImageButton
-                android:id="@+id/link_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/circle_button"
-                android:scaleType="centerCrop"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/image_button"
-                app:layout_constraintTop_toTopOf="@+id/video_button"
-                app:srcCompat="@android:drawable/ic_menu_gallery" />
-
-            <Button
-                android:id="@+id/send_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="SEND GIFT"
-                app:cornerRadius="13dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/video_button" />
-
-            <Button
-                android:id="@+id/send_button2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="CLOSE"
-                app:cornerRadius="13dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/send_button" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+<!--        </GridView>-->
+        <Button
+            android:id="@+id/review_contents_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Your gift is empty"/>
 
     </LinearLayout>
-</ScrollView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/editButtons"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/video_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toStartOf="@+id/image_button"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/ic_menu_slideshow" />
+
+        <ImageButton
+            android:id="@+id/image_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toStartOf="@+id/link_button"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/video_button"
+            app:layout_constraintTop_toTopOf="@+id/video_button"
+            app:srcCompat="@android:drawable/ic_menu_gallery" />
+
+        <Button
+            android:id="@+id/send_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="SEND GIFT"
+            app:cornerRadius="13dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/video_button" />
+
+        <ImageButton
+            android:id="@+id/link_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/image_button"
+            app:layout_constraintTop_toTopOf="@+id/video_button"
+            app:srcCompat="@android:drawable/ic_menu_gallery" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

@@ -140,6 +140,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             navId = R.id.nav_create_gift;
         }
+        //opening a gift
+        else if(startIntent.getBooleanExtra("FROM OPEN", false)){
+            createGiftFragment = new CreateGiftFragment();
+            Bundle bundle = new Bundle();
+
+            String label = startIntent.getStringExtra("LABEL");
+            String otherName = null;
+            if(label != null){
+                if(label.contains("-")) otherName = label.substring(label.indexOf(":")+2, label.indexOf("-"));
+                else otherName = label.substring(label.indexOf(":")+2);
+            }
+            bundle.putString("OTHER NAME", otherName);
+            bundle.putBoolean("FROM OPEN", true);
+            bundle.putBoolean("FROM RECEIVE", false);
+
+
+            mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
+            Log.d("LPC", "container activity got gift: " + mGift.toString());
+            bundle.putSerializable(Globals.CURR_GIFT_KEY, mGift);
+
+            createGiftFragment.setArguments(bundle);
+
+            navId = R.id.nav_create_gift;
+        }
 
         else{
             if(mFirebaseUser == null){
@@ -270,6 +294,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.d("iandebug", "User Login Failed");
             }
 
+        }
+    }
+
+    /**
+     * Back press callback
+     */
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(navId == R.id.nav_create_gift || navId == R.id.nav_friends_list){
+            Log.d("LPC", "create gift pressed back");
+            //go to download splash
+            Intent intent = new Intent(this, DownloadSplashActivity.class);
+            intent.putExtra("USER ID", mFirebaseUser.getUid());
+            intent.putExtra("GET GIFTS", true);
+            startActivity(intent);
         }
     }
 

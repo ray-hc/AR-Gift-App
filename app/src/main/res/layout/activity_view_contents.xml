@@ -37,31 +37,69 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:indeterminate="true"/>
-    <!--IMAGE VIEW-->
-    <ImageView
-        android:id="@+id/image_gift"
+    <RelativeLayout
+        android:id="@+id/view_media_container"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_margin="10dp"/>
+        android:layout_centerVertical="true">
 
-    <!--VIDEO VIEW-->
-    <VideoView
-        android:id="@+id/video_gift"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_margin="10dp"/>
+        <!--IMAGE VIEW-->
+        <ImageView
+            android:id="@+id/image_gift"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp"/>
+
+        <!--VIDEO VIEW-->
+        <VideoView
+            android:id="@+id/video_gift"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp"/>
+
+
+    </RelativeLayout>
+
 
     <!--SAVE BUTTON-->
     <Button
         android:id="@+id/save_contents_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="50dp"
+        android:layout_below="@+id/view_media_container"
+        android:layout_marginTop="30dp"
         android:layout_centerHorizontal="true"
         android:text="SAVE TO GALLERY"/>
+    <LinearLayout
+        android:id="@+id/nav_buttons_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/save_contents_button"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/view_previous_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="false"
+        android:layout_weight="0.5"
+        android:layout_margin="10dp"
+        android:text="PREVIOUS"
+        />
+
+    <Button
+        android:id="@+id/view_next_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:layout_margin="10dp"
+        android:text="next"
+        />
+    </LinearLayout>
 </RelativeLayout>
