@@ -103,4 +103,8 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
+    public void onCreateGiftClick(View v) {
+
+    }
+
 }
