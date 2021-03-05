@@ -145,22 +145,22 @@ public class CreateGiftFragment extends Fragment {
         messageInput = v.findViewById(R.id.message_input);
 
         //set up spinner
-//        giftTypeSpinner = v.findViewById(R.id.gift_type_spinner);
-//        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
-//                (getContext(), android.R.layout.simple_spinner_item, GIFT_TYPE_ARRAY);
-//        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-//        giftTypeSpinner.setAdapter(spinnerArrayAdapter);
-//        giftTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-//        {
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                String selectedItem = parent.getItemAtPosition(position).toString();
-//                newGift.setGiftType(GIFT_TYPE_MAP.get(selectedItem));
-//            }
-//            //TODO: to close the onItemSelected
-//            public void onNothingSelected(AdapterView<?> parent) {
-//
-//            }
-//        });
+        giftTypeSpinner = v.findViewById(R.id.gift_type_spinner);
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
+                (getContext(), android.R.layout.simple_spinner_item, GIFT_TYPE_ARRAY);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        giftTypeSpinner.setAdapter(spinnerArrayAdapter);
+        giftTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedItem = parent.getItemAtPosition(position).toString();
+                newGift.setGiftType(GIFT_TYPE_MAP.get(selectedItem));
+            }
+            //TODO: to close the onItemSelected
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         //handle if from open
         if(fromOpen){

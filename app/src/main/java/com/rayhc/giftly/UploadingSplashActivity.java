@@ -45,13 +45,9 @@ public class UploadingSplashActivity extends AppCompatActivity {
     private FirebaseStorage mStorage;
 
 
-    private boolean mFromReview;
-    private String mFileLabel;
     private Gift mGift;
     private String fromID, toID;
 
-    private final ScheduledExecutorService scheduler =
-            Executors.newScheduledThreadPool(1);
 
 
     @Override
@@ -110,9 +106,6 @@ public class UploadingSplashActivity extends AppCompatActivity {
         public void run() {
             Log.d("LPC", "media thread start");
             //upload the strings first
-//            Log.d("LPC", "save gift hash: "+saveGift.getHashValue());
-//            mDatabase.child("gifts").child(saveGift.getHashValue()).setValue(saveGift);
-//            Log.d("LPC", "wrote gift to the rt DB");
 
             //send the gift
             sendGift(fromID, toID);
@@ -224,7 +217,6 @@ public class UploadingSplashActivity extends AppCompatActivity {
         private Intent intent;
         private int numSentGifts;
         private ArrayList<String> giftRecipientNames = new ArrayList<>();
-        //        private ArrayList<String> giftMessages = new ArrayList<>();
         private HashMap<String, String> giftMsgMap = new HashMap<>();
         private ArrayList<String> giftHashes = new ArrayList<>();
         private HashMap<String, String> sentGiftMap = new HashMap<>();
@@ -242,11 +234,8 @@ public class UploadingSplashActivity extends AppCompatActivity {
                 }
                 //make passable strings in form "To: *name* - *message*"
                 Log.d("LPC", "sent gift msg map: " + giftMsgMap.toString());
-//                ArrayList<String> msgList = new ArrayList<>(giftMsgMap.keySet());
                 for (String hash : giftMsgMap.keySet()) {
                     String label = "To: "+giftMsgMap.get(hash);
-//                    if (giftMessages.get(i) == null) label += giftRecipientNames.get(i);
-//                    else label += (giftRecipientNames.get(i) + " - " + giftMessages.get(i));
                     //put in map label -> gift hash
                     sentGiftMap.put(label, hash);
                 }
@@ -336,7 +325,6 @@ public class UploadingSplashActivity extends AppCompatActivity {
         private Intent intent;
         private int numReceivedGifts;
         private ArrayList<String> giftSenderNames = new ArrayList<>();
-        //        private ArrayList<String> giftMessages = new ArrayList<>();
         private HashMap<String, String> giftMsgMap = new HashMap<>();
         private ArrayList<String> giftHashes = new ArrayList<>();
         private HashMap<String, String> receivedGiftsMap = new HashMap<>();
@@ -354,7 +342,6 @@ public class UploadingSplashActivity extends AppCompatActivity {
                 }
                 //make passable strings in form "To: *name* - *message*"
                 Log.d("LPC", "received gift msg map: " + giftMsgMap.toString());
-//                ArrayList<String> msgList = new ArrayList<>(giftMsgMap.keySet());
                 for (String hash : giftMsgMap.keySet()) {
                     String label = "From: "+giftMsgMap.get(hash);
                     //put in map label -> gift hash
@@ -426,7 +413,6 @@ public class UploadingSplashActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String message = (String) snapshot.child(hash).child("message").getValue();
                         String displayText = giftMsgMap.get(hash)+" - "+message;
-//                        giftMessages.add(message);
                         giftMsgMap.put(hash, displayText);
                         Log.d("LPC", "getting gift with hash: "+hash+" with message: "+message);
                         handler.post(runnable);

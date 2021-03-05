@@ -60,6 +60,13 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <Spinner
+        android:id="@+id/gift_type_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="16dp" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/msgCard"
         android:layout_width="match_parent"
