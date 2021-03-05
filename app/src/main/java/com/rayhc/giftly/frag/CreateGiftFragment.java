@@ -2,6 +2,8 @@ package com.rayhc.giftly.frag;
 
 import android.content.Context;
 import android.content.Intent;
+
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.preference.PreferenceManager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -41,7 +44,8 @@ import java.util.HashMap;
 public class CreateGiftFragment extends Fragment {
     //widgets
     private TextView recipientLabel;
-    private Button linkButton, imageButton, videoButton, reviewButton, sendButton, chooseFriendButton;
+    AppCompatImageButton linkButton, imageButton, videoButton;
+    private Button sendButton, chooseFriendButton;
     private EditText messageInput;
     private Spinner giftTypeSpinner;
     private static final String[] GIFT_TYPE_ARRAY = {"Normal", "Birthday", "Christmas"};
@@ -114,7 +118,7 @@ public class CreateGiftFragment extends Fragment {
         linkButton = v.findViewById(R.id.link_button);
         imageButton = v.findViewById(R.id.image_button);
         videoButton = v.findViewById(R.id.video_button);
-        reviewButton = v.findViewById(R.id.review_button);
+        //reviewButton = v.findViewById(R.id.review_button);
         sendButton = v.findViewById(R.id.send_button);
         chooseFriendButton = v.findViewById(R.id.choose_recipient_button);
         sendButton.setEnabled(newGift.getContentType().size() != 0 || newGift.getLinks().size() != 0);
@@ -187,13 +191,15 @@ public class CreateGiftFragment extends Fragment {
             startActivity(intent);
         });
 
-        reviewButton.setOnClickListener(v14 -> {
+        /*reviewButton.setOnClickListener(v14 -> {
             Intent intent = new Intent(getActivity(), ReviewGiftActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             intent.putExtra("FRIEND NAME", recipientName);
             intent.putExtra("FRIEND ID", recipientID);
             startActivity(intent);
         });
+
+         */
 
         sendButton.setOnClickListener(v14 ->{
             Intent intent = new Intent(getActivity(), UploadingSplashActivity.class);
