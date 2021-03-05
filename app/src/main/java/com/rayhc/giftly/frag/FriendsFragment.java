@@ -56,6 +56,8 @@ public class FriendsFragment extends Fragment {
 
         context = this.getActivity().getApplicationContext();
 
+        Button b = (Button) view.findViewById(R.id.add_friend);
+
         friendsListView = (ListView) view.findViewById(R.id.friends_list);
         requestsListView = (ListView) view.findViewById(R.id.requests_list);
 
@@ -64,29 +66,16 @@ public class FriendsFragment extends Fragment {
         ListUtils.setDynamicHeight(friendsListView);
         ListUtils.setDynamicHeight(requestsListView);
 
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
 
         return view;
     }
 
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu, menu);
+    public void onAddFriendsClick(View view) {
+        DialogFragment.newFragment(R.id.add_friend).show(
+                getActivity().getSupportFragmentManager(), getString(R.string.normal_dialog_fragment));
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
-
-        switch (item.getItemId()) {
-            case R.id.add_friend:
-                DialogFragment.newFragment(R.id.add_friend).show(
-                        getActivity().getSupportFragmentManager(), getString(R.string.normal_dialog_fragment));
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 
     // To send a friend request
     public void addFriend(String addedFriendEmail) {

@@ -23,6 +23,7 @@ import androidx.preference.PreferenceManager;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -45,16 +46,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
     public static final String NAV_ITEM_ID = "NAV_ITEM_ID";
     private static final int RC_SIGN_IN = 123;
 
     private User activityUser;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
-
-//    private ActionBarDrawerToggle drawerToggle;
-//    private DrawerLayout drawerLayout;
 
     private FriendsFragment friendsFragment;
     private CreateGiftFragment createGiftFragment;
@@ -73,31 +71,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        // create the toolbar view and navigation view
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-//
-//        // get id to restore state if needed
-//        if (savedInstanceState != null) {
-//            navId = savedInstanceState.getInt(NAV_ITEM_ID);
-//        }
-//        else {
-//            navId = R.id.nav_home;
-//        }
+        // get id to restore state if needed
+        if (savedInstanceState != null) {
+            navId = savedInstanceState.getInt(NAV_ITEM_ID);
+        }
+        else {
+            navId = R.id.nav_home;
+        }
 
         //define fragments
         friendsFragment = new FriendsFragment();
         createGiftFragment = new CreateGiftFragment();
         homeFragment = new HomeFragment();
 
-//        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        drawerLayout.addDrawerListener(drawerToggle);
-//        drawerToggle.syncState();
-
-        NavigationView navigationView = (NavigationView)findViewById(R.id.bottomNavigationView);
-        navigationView.setNavigationItemSelectedListener(this);
-        navigationView.getMenu().findItem(navId).setChecked(true);
+        BottomNavigationView navigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
+        navigationView.setOnNavigationItemSelectedListener(this);
 
         // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -140,30 +128,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             navId = R.id.nav_create_gift;
         }
-        //opening a gift
-        else if(startIntent.getBooleanExtra("FROM OPEN", false)){
-            createGiftFragment = new CreateGiftFragment();
-            Bundle bundle = new Bundle();
-
-            String label = startIntent.getStringExtra("LABEL");
-            String otherName = null;
-            if(label != null){
-                if(label.contains("-")) otherName = label.substring(label.indexOf(":")+2, label.indexOf("-"));
-                else otherName = label.substring(label.indexOf(":")+2);
-            }
-            bundle.putString("OTHER NAME", otherName);
-            bundle.putBoolean("FROM OPEN", true);
-            bundle.putBoolean("FROM RECEIVE", false);
-
-
-            mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
-            Log.d("LPC", "container activity got gift: " + mGift.toString());
-            bundle.putSerializable(Globals.CURR_GIFT_KEY, mGift);
-
-            createGiftFragment.setArguments(bundle);
-
-            navId = R.id.nav_create_gift;
-        }
 
         else{
             if(mFirebaseUser == null){
@@ -194,11 +158,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             navId = R.id.nav_home;
         }
 
-
-
         navigateToFragment(navId);
-
-
     }
 
     // creates fragment if chosen
@@ -294,22 +254,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.d("iandebug", "User Login Failed");
             }
 
-        }
-    }
-
-    /**
-     * Back press callback
-     */
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        if(navId == R.id.nav_create_gift || navId == R.id.nav_friends_list){
-            Log.d("LPC", "create gift pressed back");
-            //go to download splash
-            Intent intent = new Intent(this, DownloadSplashActivity.class);
-            intent.putExtra("USER ID", mFirebaseUser.getUid());
-            intent.putExtra("GET GIFTS", true);
-            startActivity(intent);
         }
     }
 
