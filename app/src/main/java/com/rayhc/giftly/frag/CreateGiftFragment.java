@@ -139,8 +139,10 @@ public class CreateGiftFragment extends Fragment {
         videoButton = v.findViewById(R.id.video_button);
         sendButton = v.findViewById(R.id.send_button);
         chooseFriendButton = v.findViewById(R.id.choose_recipient_button);
-        sendButton.setEnabled(recipientID != null && (newGift.getContentType().size() != 0 || newGift.getLinks().size() != 0));
+        sendButton.setEnabled(newGift.getMessage() != null && recipientID != null &&
+                (newGift.getContentType().size() != 0 || newGift.getLinks().size() != 0));
         linksList = v.findViewById(R.id.linkList);
+        recipientLabel = v.findViewById(R.id.recipient);
         reviewButton = v.findViewById(R.id.review_contents_button);
         messageInput = v.findViewById(R.id.message_input);
 
@@ -174,7 +176,6 @@ public class CreateGiftFragment extends Fragment {
 
             //turn off message input & recipient
             messageInput.setFocusable(false);
-            recipientLabel = v.findViewById(R.id.recipient);
             if(otherName != null && !fromReceive) recipientLabel.setText("This Gift is to: "+otherName);
             else if(otherName != null)  recipientLabel.setText("This Gift is from: "+otherName);
         }
@@ -189,6 +190,11 @@ public class CreateGiftFragment extends Fragment {
                 if(actionId == EditorInfo.IME_ACTION_DONE) {
                     input= v.getText().toString();
                     newGift.setMessage(input);
+                    if(input.length() == 0) sendButton.setEnabled(false);
+                    if(recipientID != null &&
+                            (newGift.getContentType().size() != 0 || newGift.getLinks().size() != 0)
+                    && input.length()>0)
+                        sendButton.setEnabled(true);
                     Log.d("LPC", "set gift message to: "+newGift.getMessage());
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
