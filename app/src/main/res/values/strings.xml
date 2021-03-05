@@ -2,6 +2,7 @@
     <string name="app_name">Giftly</string>
     <string name="ok_button">Ok</string>
     <string name="cancel_button">Cancel</string>
+    <string name="add_friend_button">Add Friend</string>
     <string name="add_friend_dialog">Add Friend By Email:</string>
     <string name="normal_dialog_fragment">normal_dialog_fragment</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -14,6 +15,8 @@
 
     <string name="sent_gifts_title">Sent</string>
     <string name="received_gifts_title">Received</string>
+    <string name="friends_list_title">Friends</string>
+    <string name="requests_list_title">Friend Requests</string>
     <string name="to">To:</string>
     <string name="from">From:</string>
 

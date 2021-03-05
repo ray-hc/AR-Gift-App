@@ -5,8 +5,11 @@
 
     <item
         android:id="@+id/add_friend"
+        style="@style/header2"
         android:orderInCategory="100"
-        android:title="Add Friend"
+        android:title="@string/add_friend_button"
+        android:textColor="#FFFFFF"
+        android:textSize="36sp"
         app:showAsAction="always" />
 
 </menu>

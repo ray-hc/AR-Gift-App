@@ -48,8 +48,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private final Handler handler = new Handler(Looper.getMainLooper());
 
-    private ActionBarDrawerToggle drawerToggle;
-    private DrawerLayout drawerLayout;
+//    private ActionBarDrawerToggle drawerToggle;
+//    private DrawerLayout drawerLayout;
 
     private FriendsFragment friendsFragment;
     private CreateGiftFragment createGiftFragment;
@@ -68,29 +68,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // create the toolbar view and navigation view
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        // get id to restore state if needed
-        if (savedInstanceState != null) {
-            navId = savedInstanceState.getInt(NAV_ITEM_ID);
-        }
-        else {
-            navId = R.id.nav_home;
-        }
+//        // create the toolbar view and navigation view
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+//
+//        // get id to restore state if needed
+//        if (savedInstanceState != null) {
+//            navId = savedInstanceState.getInt(NAV_ITEM_ID);
+//        }
+//        else {
+//            navId = R.id.nav_home;
+//        }
 
         //define fragments
         friendsFragment = new FriendsFragment();
         createGiftFragment = new CreateGiftFragment();
         homeFragment = new HomeFragment();
 
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(drawerToggle);
-        drawerToggle.syncState();
+//        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//        drawerLayout.addDrawerListener(drawerToggle);
+//        drawerToggle.syncState();
 
-        NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView)findViewById(R.id.bottomNavigationView);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().findItem(navId).setChecked(true);
 
@@ -167,14 +167,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // creates fragment if chosen
     public void navigateToFragment(int navId) {
-        if (navId == R.id.nav_home){
+        if (navId == R.id.nav_friends_list){
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, friendsFragment, "FriendsFragment").commit();
+        }
+        else if (navId == R.id.nav_home){
             getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, homeFragment, "HomeFragment").commit();
         }
-        else if (navId == R.id.nav_create_gift){
-            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, createGiftFragment, "CreateGiftFragment").commit();
-        }
-        else if (navId == R.id.nav_friends_list){
-            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, friendsFragment, "FriendsFragment").commit();
+        else if (navId == R.id.nav_settings){
+//            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, createGiftFragment, "CreateGiftFragment").commit();
         }
     }
 
@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }
 
-        drawerLayout.closeDrawer(GravityCompat.START);
+//        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -261,3 +261,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 }
+
