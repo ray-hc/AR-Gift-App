@@ -8,11 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.rayhc.giftly.CreateGiftActivity;
 import com.rayhc.giftly.DownloadSplashActivity;
 import com.rayhc.giftly.R;
 import com.rayhc.giftly.util.Gift;
@@ -28,6 +30,9 @@ public class HomeFragment extends Fragment {
     private HashMap<String, String> giftsSent;
     private ListView recievedGifts;
     private ListView sentGifts;
+
+    //create gift button
+    private Button createGiftButton;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,6 +56,15 @@ public class HomeFragment extends Fragment {
         //wire lists
         recievedGifts = root.findViewById(R.id.inbox_gifts_recieved);
         sentGifts = root.findViewById(R.id.inbox_gifts_sent);
+
+        //wire button
+        createGiftButton = root.findViewById(R.id.create_gift_button);
+        createGiftButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), CreateGiftActivity.class));
+            }
+        });
 
         //populate the sent gift list view
         if(giftsSent != null){

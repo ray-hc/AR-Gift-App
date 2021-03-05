@@ -130,7 +130,7 @@ public class VideoActivity extends AppCompatActivity {
         //delete the old file if its a replacement
         if(mFileLabel != null) mGift.getContentType().remove(mFileLabel);
         Log.d("LPC", "just video image: "+mGift.getContentType().get(key));
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, CreateGiftActivity.class);
         intent.putExtra("MAKING GIFT", true);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
         intent.putExtra("FRIEND NAME", friendName);
@@ -142,7 +142,7 @@ public class VideoActivity extends AppCompatActivity {
      * Remove the chosen video from the gifts contents
      */
     public void onDelete(){
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, CreateGiftActivity.class);
         mGift.getContentType().remove(mFileLabel);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
         intent.putExtra("MAKING GIFT", true);
