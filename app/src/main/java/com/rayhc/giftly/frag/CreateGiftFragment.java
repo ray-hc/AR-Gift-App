@@ -84,10 +84,13 @@ public class CreateGiftFragment extends Fragment {
             Log.d("LPC", "create frag: got gift from bundle");
             Log.d("LPC", "create frag: gift from bundle content: "+newGift.getContentType().toString());
         }
-        //otherwise make this dummy gift
+        //otherwise make a new gift
         else{
             Log.d("LPC", "create gift frag: making new gift");
             newGift = new Gift();
+            newGift.setSender(mUserId);
+            newGift.setTimeCreated(System.currentTimeMillis());
+            newGift.getHashValue();
             newGift.setContentType(new HashMap<>());
             newGift.setLinks(new HashMap<>());
         }

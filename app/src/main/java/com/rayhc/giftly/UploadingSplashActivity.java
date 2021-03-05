@@ -1,6 +1,7 @@
 package com.rayhc.giftly;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -116,11 +117,6 @@ public class UploadingSplashActivity extends AppCompatActivity {
             //send the gift
             sendGift(fromID, toID);
 
-
-            //now upload media
-            ArrayList<String> keys = new ArrayList<>(saveGift.getContentType().keySet());
-            int index = 0;
-            uploadFile(index, keys);
         }
         /**
          * First part of process to send gift
@@ -153,7 +149,30 @@ public class UploadingSplashActivity extends AppCompatActivity {
                     User toUser = new User();
                     if(snapshot.exists()){
                         toUser = UserManager.snapshotToUser(snapshot, toID);
-                        UserManager.sendGift(fromUser, toUser, mGift);
+                        mGift.setReceiver(toID);
+                        Log.d("LPC", "sendGift: gift sender: "+mGift.getSender());
+                        Log.d("LPC", "sendGift: gift time create: "+mGift.getTimeCreated());
+                        fromUser.addSentGifts(mGift);
+                        toUser.addReceivedGifts(mGift);
+                        User finalToUser = toUser;
+                        new Thread() {
+                            public void run(){
+                                DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+                                db.child("users").child(fromID).setValue(fromUser);
+                                db.child("users").child(toID).setValue(finalToUser);
+                                db.child("gifts").child(mGift.getHashValue()).setValue(mGift,
+                                        new DatabaseReference.CompletionListener() {
+                                            @Override
+                                            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                                //now upload media
+                                                ArrayList<String> keys = new ArrayList<>(saveGift.getContentType().keySet());
+                                                int index = 0;
+                                                uploadFile(index, keys);
+                                            }
+                                        });
+
+                            }
+                        }.start();
                     }
                 }
 
@@ -333,6 +352,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
 
                 intent.putExtra("RECEIVED GIFT MAP", receivedGiftsMap);
                 Log.d("LPC", "thread done-received gift map: " + receivedGiftsMap.toString());
+                intent.putExtra("SENT GIFT", true);
                 startActivity(intent);
             }
         };

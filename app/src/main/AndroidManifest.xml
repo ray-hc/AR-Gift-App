@@ -11,6 +11,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true"
         android:theme="@style/Theme.Giftly">
         <activity android:name=".ViewContentsActivity"></activity>
         <activity android:name=".ChooseFriendActivity" />
@@ -27,11 +28,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".FirebaseDemoActivity" />
+        <activity android:name=".DemoFirebaseActivity" />
         <activity android:name=".LinkActivity" />
         <activity android:name=".ImageActivity" />
         <activity android:name=".VideoActivity" />
-        <activity android:name=".FragmentContainerActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
