@@ -57,6 +57,13 @@ public class FriendsFragment extends Fragment {
         context = this.getActivity().getApplicationContext();
 
         Button b = (Button) view.findViewById(R.id.add_friend);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment.newFragment(R.id.add_friend).show(
+                        getActivity().getSupportFragmentManager(), getString(R.string.normal_dialog_fragment));
+            }
+        });
 
         friendsListView = (ListView) view.findViewById(R.id.friends_list);
         requestsListView = (ListView) view.findViewById(R.id.requests_list);
@@ -66,16 +73,8 @@ public class FriendsFragment extends Fragment {
         ListUtils.setDynamicHeight(friendsListView);
         ListUtils.setDynamicHeight(requestsListView);
 
-//        setHasOptionsMenu(true);
-
         return view;
     }
-
-    public void onAddFriendsClick(View view) {
-        DialogFragment.newFragment(R.id.add_friend).show(
-                getActivity().getSupportFragmentManager(), getString(R.string.normal_dialog_fragment));
-    }
-
 
     // To send a friend request
     public void addFriend(String addedFriendEmail) {
@@ -244,7 +243,10 @@ public class FriendsFragment extends Fragment {
 
                                     if (friend.equals(friendName1)){
                                         UserManager.removeFriend(activityUser, friendID);
-                                        getUserFromDB();
+                                        friendsList.remove(friendName1);
+
+                                        friendsListAdapter = new MyFriendsListAdapter(context, R.layout.friend_entry, friendsList);
+                                        friendsListView.setAdapter(friendsListAdapter);
                                     }
                                 }
 
@@ -300,6 +302,14 @@ public class FriendsFragment extends Fragment {
 
                                     if (request.equals(requestName)){
                                         UserManager.acceptFriendRequest(activityUser, requestID);
+                                        requestsList.remove(requestName);
+                                        friendsList.add(requestName);
+
+                                        requestsListAdapter = new MyRequestsListAdapter(context, R.layout.friend_request_entry, requestsList);
+                                        requestsListView.setAdapter(requestsListAdapter);
+
+                                        friendsListAdapter = new MyFriendsListAdapter(context, R.layout.friend_entry, friendsList);
+                                        friendsListView.setAdapter(friendsListAdapter);
                                     }
                                 }
 
@@ -328,6 +338,10 @@ public class FriendsFragment extends Fragment {
 
                                     if (request.equals(requestName)){
                                         UserManager.declineFriendRequest(activityUser, requestID);
+                                        requestsList.remove(requestName);
+
+                                        requestsListAdapter = new MyRequestsListAdapter(context, R.layout.friend_request_entry, requestsList);
+                                        requestsListView.setAdapter(requestsListAdapter);
                                     }
                                 }
 
