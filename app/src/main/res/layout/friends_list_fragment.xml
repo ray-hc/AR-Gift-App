@@ -20,7 +20,20 @@ android:orientation="vertical">
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cornerRadius="13dp"
+        android:id="@+id/add_friend"
+        android:text="@string/add_friend_button"
+        android:textColor="@color/blackish"
+        android:fontFamily="sans-serif"
+        android:textSize="14dp"
+        android:onClick="onAddFriendsClick"
+        app:layout_constraintRight_toLeftOf="@+id/friends_title"
+        tools:ignore="MissingConstraints" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/friends_layout"
             style="@style/plainCard"
             android:layout_width="match_parent"
