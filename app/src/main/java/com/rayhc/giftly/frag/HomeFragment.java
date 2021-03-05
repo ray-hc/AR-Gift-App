@@ -85,6 +85,7 @@ public class HomeFragment extends Fragment {
                     intent.putExtra("LABEL", label);
                     intent.putExtra("HASH VALUE", giftsRecieved.get(label));
                     intent.putExtra("FROM OPEN", true);
+                    intent.putExtra("FROM RECEIVE", true);
                     Log.d("LPC", "getting gift w hash: "+giftsRecieved.get(label));
                     startActivity(intent);
                 }
