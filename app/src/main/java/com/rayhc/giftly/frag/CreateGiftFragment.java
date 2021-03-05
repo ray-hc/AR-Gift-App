@@ -124,7 +124,7 @@ public class CreateGiftFragment extends Fragment {
         videoButton = v.findViewById(R.id.video_button);
         sendButton = v.findViewById(R.id.send_button);
         chooseFriendButton = v.findViewById(R.id.choose_recipient_button);
-        sendButton.setEnabled(newGift.getContentType().size() != 0 || newGift.getLinks().size() != 0);
+        sendButton.setEnabled(recipientID != null && (newGift.getContentType().size() != 0 || newGift.getLinks().size() != 0));
         linksList = v.findViewById(R.id.linkList);
         reviewButton = v.findViewById(R.id.review_contents_button);
 

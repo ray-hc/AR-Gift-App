@@ -54,7 +54,7 @@ public class EditContentsActivity extends AppCompatActivity {
         Intent startIntent = getIntent();
         mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
         contentMap = mGift.getContentType();
-        if(currIndex == contentMap.size()) mNextButton.setEnabled(false);
+        if(currIndex == contentMap.size()-1) mNextButton.setEnabled(false);
         friendName = startIntent.getStringExtra("FRIEND NAME");
         friendID = startIntent.getStringExtra("FRIEND ID");
 
@@ -142,12 +142,15 @@ public class EditContentsActivity extends AppCompatActivity {
      */
     public void onSave() {
         String key;
-        if(mFileLabel.startsWith("image")) key = "image_" + Globals.sdf.format(new Date(System.currentTimeMillis()));
-        else key = "video_" + Globals.sdf.format(new Date(System.currentTimeMillis()));
-        mGift.getContentType().put(key, "content://media/" + currentData.getPath());
-        //delete the old file if its a replacement
-        if(mFileLabel != null) mGift.getContentType().remove(mFileLabel);
-        Log.d("LPC", "just saved image: "+mGift.getContentType().get(key));
+        if(currentData != null) {
+            if (mFileLabel.startsWith("image"))
+                key = "image_" + Globals.sdf.format(new Date(System.currentTimeMillis()));
+            else key = "video_" + Globals.sdf.format(new Date(System.currentTimeMillis()));
+            mGift.getContentType().put(key, "content://media/" + currentData.getPath());
+            //delete the old file if its a replacement
+            if (mFileLabel != null) mGift.getContentType().remove(mFileLabel);
+            Log.d("LPC", "just saved image: " + mGift.getContentType().get(key));
+        }
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
         intent.putExtra("MAKING GIFT", true);
