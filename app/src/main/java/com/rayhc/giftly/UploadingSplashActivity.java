@@ -110,7 +110,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
         public void run() {
             Log.d("LPC", "media thread start");
             //upload the strings first
-            Log.d("LPC", "save gift hash: "+saveGift.getHashValue());
+//            Log.d("LPC", "save gift hash: "+saveGift.getHashValue());
 //            mDatabase.child("gifts").child(saveGift.getHashValue()).setValue(saveGift);
 //            Log.d("LPC", "wrote gift to the rt DB");
 
@@ -149,7 +149,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
                     User toUser = new User();
                     if(snapshot.exists()){
                         toUser = UserManager.snapshotToUser(snapshot, toID);
-                        mGift.setReceiver(toID);
+                        saveGift.setReceiver(toID);
                         Log.d("LPC", "sendGift: gift sender: "+mGift.getSender());
                         Log.d("LPC", "sendGift: gift time create: "+mGift.getTimeCreated());
                         fromUser.addSentGifts(mGift);
@@ -160,11 +160,12 @@ public class UploadingSplashActivity extends AppCompatActivity {
                                 DatabaseReference db = FirebaseDatabase.getInstance().getReference();
                                 db.child("users").child(fromID).setValue(fromUser);
                                 db.child("users").child(toID).setValue(finalToUser);
-                                db.child("gifts").child(mGift.getHashValue()).setValue(mGift,
+                                db.child("gifts").child(saveGift.getHashValue()).setValue(saveGift,
                                         new DatabaseReference.CompletionListener() {
                                             @Override
                                             public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
                                                 //now upload media
+                                                Log.d("LPC", "save gift hash: "+saveGift.getHashValue());
                                                 ArrayList<String> keys = new ArrayList<>(saveGift.getContentType().keySet());
                                                 int index = 0;
                                                 uploadFile(index, keys);
@@ -199,6 +200,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
                     if (selectedData.toString().contains("image"))
                         path = "gift/" + saveGift.getHashValue() + "/" + fileName + ".jpg";
                     else path = "gift/" + saveGift.getHashValue() + "/" + fileName + ".mp4";
+                    Log.d("LPC", "media upload file path: "+path);
                     StorageReference giftRef = storageRef.child(path);
                     UploadTask uploadTask = giftRef.putFile(selectedData);
                     uploadTask.addOnCompleteListener(UploadingSplashActivity.this, new OnCompleteListener<UploadTask.TaskSnapshot>() {
@@ -355,8 +357,6 @@ public class UploadingSplashActivity extends AppCompatActivity {
 //                ArrayList<String> msgList = new ArrayList<>(giftMsgMap.keySet());
                 for (String hash : giftMsgMap.keySet()) {
                     String label = "From: "+giftMsgMap.get(hash);
-//                    if (giftMessages.get(i) == null) label += giftRecipientNames.get(i);
-//                    else label += (giftRecipientNames.get(i) + " - " + giftMessages.get(i));
                     //put in map label -> gift hash
                     receivedGiftsMap.put(label, hash);
                 }
@@ -417,7 +417,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
             });
         }
         public void getGiftMessages(){
-            if(giftHashes.size()<numReceivedGifts) return;
+            if(giftSenderNames.size()<numReceivedGifts) return;
             //get the gift messages
             for(String hash: giftHashes){
                 Query userNameQuery = mDatabase.child("gifts").orderByChild("hashValue").equalTo(hash);

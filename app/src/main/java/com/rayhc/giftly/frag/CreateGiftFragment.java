@@ -68,7 +68,7 @@ public class CreateGiftFragment extends Fragment {
     String mUserId;
 
     //from open stuff
-    private boolean fromOpen, fromReceive;
+    private boolean fromOpen;
     private String otherName;
 
     //recipient stuff
@@ -120,8 +120,6 @@ public class CreateGiftFragment extends Fragment {
         //from open data
         if(extras != null && extras.getBoolean("FROM OPEN", false)){
             fromOpen = true;
-            fromReceive = extras.getBoolean("FROM RECEIVE", false);
-            Log.d("LPC", "from receive?: "+fromReceive);
             Log.d("LPC", "from open is true");
             otherName = extras.getString("OTHER NAME");
         }
@@ -176,8 +174,8 @@ public class CreateGiftFragment extends Fragment {
 
             //turn off message input & recipient
             messageInput.setFocusable(false);
-            if(otherName != null && !fromReceive) recipientLabel.setText("This Gift is to: "+otherName);
-            else if(otherName != null)  recipientLabel.setText("This Gift is from: "+otherName);
+            if(otherName != null && !fromOpen) recipientLabel.setText("This Gift is to: "+otherName);
+            else if(otherName != null )  recipientLabel.setText("This Gift is from: "+otherName);
         }
 
         //set up message input

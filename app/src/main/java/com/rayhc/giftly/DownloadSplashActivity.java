@@ -436,7 +436,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
             });
         }
         public void getGiftMessages(){
-            if(giftHashes.size()<numReceivedGifts) return;
+            if(giftSenderNames.size()<numReceivedGifts) return;
             //get the gift messages
             for(String hash: giftHashes){
                 Query userNameQuery = mDatabase.child("gifts").orderByChild("hashValue").equalTo(hash);
