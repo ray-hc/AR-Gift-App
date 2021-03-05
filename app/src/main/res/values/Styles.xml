@@ -45,12 +45,12 @@
     <style name="miniGift">
         <item name="android:layout_width">20dp</item>
         <item name="android:layout_height">22dp</item>
-        <item name="srcCompat">@drawable/giftbox_yellow</item>
+        <item name="srcCompat">@drawable/gift_yellow</item>
     </style>
     <style name="arrow">
         <item name="android:layout_width">20dp</item>
         <item name="android:layout_height">20dp</item>
-        <item name="srcCompat">@drawable/arrow_07</item>
+        <item name="srcCompat">@drawable/arrow</item>
         <item name="android:scaleType">centerInside</item>
         <item name="android:background">@android:color/transparent</item>
     </style>
