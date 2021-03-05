@@ -140,6 +140,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             navId = R.id.nav_create_gift;
         }
+        //opening a gift
+        else if(startIntent.getBooleanExtra("FROM OPEN", false)){
+            createGiftFragment = new CreateGiftFragment();
+            Bundle bundle = new Bundle();
+
+            String label = startIntent.getStringExtra("LABEL");
+            String otherName = null;
+            if(label != null){
+                if(label.contains("-")) otherName = label.substring(label.indexOf(":"), label.indexOf("-"));
+                else otherName = label.substring(label.indexOf(":"));
+            }
+            bundle.putString("OTHER NAME", otherName);
+            bundle.putBoolean("FROM OPEN", true);
+
+
+            mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
+            Log.d("LPC", "container activity got gift: " + mGift.toString());
+            bundle.putSerializable(Globals.CURR_GIFT_KEY, mGift);
+
+            createGiftFragment.setArguments(bundle);
+
+            navId = R.id.nav_create_gift;
+        }
 
         else{
             if(mFirebaseUser == null){

@@ -61,6 +61,7 @@ public class HomeFragment extends Fragment {
                     //download the gift
                     Intent intent;
                     intent = new Intent(getContext(), DownloadSplashActivity.class);
+                    intent.putExtra("LABEL", label);
                     intent.putExtra("HASH VALUE", giftsSent.get(label));
                     intent.putExtra("FROM OPEN", true);
                     Log.d("LPC", "getting gift w hash: "+giftsSent.get(label));
@@ -81,6 +82,7 @@ public class HomeFragment extends Fragment {
                     //download the gift
                     Intent intent;
                     intent = new Intent(getContext(), DownloadSplashActivity.class);
+                    intent.putExtra("LABEL", label);
                     intent.putExtra("HASH VALUE", giftsRecieved.get(label));
                     intent.putExtra("FROM OPEN", true);
                     Log.d("LPC", "getting gift w hash: "+giftsRecieved.get(label));
