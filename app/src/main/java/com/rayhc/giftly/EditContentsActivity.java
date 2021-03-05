@@ -35,6 +35,7 @@ public class EditContentsActivity extends AppCompatActivity {
     private ImageView mImageView;
     private VideoView mVideoView;
 
+    /*
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,6 +131,7 @@ public class EditContentsActivity extends AppCompatActivity {
      */
 
     //*******BUTTON CALLBACKS*******//
+    /*
     public void onChoose() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         if(mFileLabel.startsWith("image")) intent.setType("image/*");
@@ -139,7 +141,7 @@ public class EditContentsActivity extends AppCompatActivity {
 
     /**
      * Update the content type of the gift with an image and its URI
-     */
+     *//*
     public void onSave() {
         String key;
         if(currentData != null) {
@@ -163,6 +165,7 @@ public class EditContentsActivity extends AppCompatActivity {
     /**
      * Remove the chosen image from the gifts contents
      */
+    /*
     public void onDelete(){
         Intent intent = new Intent(this, CreateGiftActivity.class);
         mGift.getContentType().remove(mFileLabel);
@@ -188,8 +191,9 @@ public class EditContentsActivity extends AppCompatActivity {
         handleMedia(keyList);
     }
 
-    //******ON ACTIVITY RESULT******//
+    //******ON ACTIVITY RESULT******/
 
+    /*
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -207,4 +211,5 @@ public class EditContentsActivity extends AppCompatActivity {
             }
         }
     }
+    */
 }

@@ -3,8 +3,6 @@
     <item>
         <shape>
             <solid android:color="#FF7070"/>
-            <corners android:radius="13dp"/>
-            <padding android:left="0dp" android:top="0dp" android:right="0dp" android:bottom="0dp" />
         </shape>
     </item>
     <item>
@@ -13,8 +11,6 @@
                 android:startColor="#FFF496"
                 android:endColor="#00FFFFFF"
                 android:angle="-90"/>
-            <padding android:left="0dp" android:top="0dp" android:right="0dp" android:bottom="0dp" />
-            <corners android:radius="13dp"/>
         </shape>
     </item>
 </layer-list>

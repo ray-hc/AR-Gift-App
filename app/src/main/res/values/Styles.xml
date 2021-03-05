@@ -19,7 +19,7 @@
 
     <style name="header">
         <item name="android:textColor">@color/blackish</item>
-        <item name="fontFamily">sans-serif-black</item>
+        <item name="fontFamily">sans-serif-medium</item>
         <item name="android:textSize">28dp</item>
     </style>
     <style name="header2">
