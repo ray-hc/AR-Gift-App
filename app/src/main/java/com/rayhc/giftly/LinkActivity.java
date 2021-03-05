@@ -104,7 +104,8 @@ public class LinkActivity extends AppCompatActivity {
         String link = mEditText.getText().toString();
         try {
             new URL(link);
-            mGift.getLinks().put(link, link);
+            String key = "link_"+Globals.sdf.format(System.currentTimeMillis());
+            mGift.getLinks().put(key, link);
             //delete the old link if its a replacement
             if(mFileLabel != null) mGift.getLinks().remove(mFileLabel);
             Log.d("LPC", "set gift link to: " + link);

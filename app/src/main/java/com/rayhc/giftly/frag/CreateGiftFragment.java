@@ -212,19 +212,24 @@ public class CreateGiftFragment extends Fragment {
             Log.d("LPC", "from download splash - links : "+newGift.getLinks().toString());
             ArrayList<String> linkNames = new ArrayList<>();
             linkNames.addAll(newGift.getLinks().keySet());
-            linksList.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, linkNames));
+            HashMap<String, String> displayMap = new HashMap<>();
+            for(String label: linkNames){
+                displayMap.put(newGift.getLinks().get(label), label);
+            }
+            linksList.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1,
+                    new ArrayList<>(displayMap.keySet())));
             linksList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     String label = (String) parent.getItemAtPosition(position);
-                    Log.d("LPC", "media list view position click label: "+ label);
-
+                    Log.d("LPC", "link list view position click label: "+ label);
+                    Log.d("LPC", "link list clicked link key: "+ displayMap.get(label));
                     Intent intent;
                     //go to ViewContents if opening a gift, else go to LinkActivity
                     if(fromOpen) intent = new Intent(getContext(), ViewContentsActivity.class);
                     else intent = new Intent(getContext(), LinkActivity.class);
                     intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
-                    intent.putExtra(Globals.FILE_LABEL_KEY, label);
+                    intent.putExtra(Globals.FILE_LABEL_KEY, displayMap.get(label));
                     intent.putExtra(Globals.FROM_REVIEW_KEY, true);
                     startActivity(intent);
                 }
