@@ -99,7 +99,7 @@
             app:layout_constraintStart_toStartOf="@id/col2Guide" />
 
         <ListView
-            android:id="@+id/inbox_gifts_recieved"
+            android:id="@+id/inbox_gifts_sent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
@@ -147,7 +147,7 @@
             app:layout_constraintStart_toStartOf="@id/col2Guide2" />
 
         <ListView
-            android:id="@+id/inbox_gifts_sent"
+            android:id="@+id/inbox_gifts_recieved"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"

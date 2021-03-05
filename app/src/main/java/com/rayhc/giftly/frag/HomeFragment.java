@@ -15,6 +15,9 @@ import androidx.fragment.app.Fragment;
 
 import com.rayhc.giftly.DownloadSplashActivity;
 import com.rayhc.giftly.R;
+import com.rayhc.giftly.util.Gift;
+import com.rayhc.giftly.util.GiftAdapter;
+import com.rayhc.giftly.util.Globals;
 import com.rayhc.giftly.util.ListUtils;
 
 import java.util.ArrayList;
@@ -54,47 +57,46 @@ public class HomeFragment extends Fragment {
             ArrayList<String> sentGiftMessages = new ArrayList<>();
             sentGiftMessages.addAll(giftsSent.keySet());
             sentGifts.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, sentGiftMessages));
-            sentGifts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String label = (String) parent.getItemAtPosition(position);
-                    //download the gift
-                    Intent intent;
-                    intent = new Intent(getContext(), DownloadSplashActivity.class);
-                    intent.putExtra("HASH VALUE", giftsSent.get(label));
-                    intent.putExtra("FROM OPEN", true);
-                    Log.d("LPC", "getting gift w hash: "+giftsSent.get(label));
-                    startActivity(intent);
-                }
+            sentGifts.setOnItemClickListener((parent, view, position, id) -> {
+                String label = (String) parent.getItemAtPosition(position);
+                //download the gift
+                Intent intent;
+                intent = new Intent(getContext(), DownloadSplashActivity.class);
+                intent.putExtra("HASH VALUE", giftsSent.get(label));
+                intent.putExtra("FROM OPEN", true);
+                Log.d("LPC", "getting gift w hash: "+giftsSent.get(label));
+                startActivity(intent);
             });
         }
 
-        if(giftsRecieved != null){
+        if(giftsRecieved != null || true){ // added || true for testing.
             //populate the received gift list view
             ArrayList<String> receivedGiftMessages = new ArrayList<>();
-            receivedGiftMessages.addAll(giftsRecieved.keySet());
-            recievedGifts.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, receivedGiftMessages));
-            recievedGifts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String label = (String) parent.getItemAtPosition(position);
-                    //download the gift
-                    Intent intent;
-                    intent = new Intent(getContext(), DownloadSplashActivity.class);
-                    intent.putExtra("HASH VALUE", giftsRecieved.get(label));
-                    intent.putExtra("FROM OPEN", true);
-                    Log.d("LPC", "getting gift w hash: "+giftsRecieved.get(label));
-                    startActivity(intent);
-                }
+            //receivedGiftMessages.addAll(giftsRecieved.keySet()); commenting out for testing
+
+            // testing code.
+            receivedGiftMessages.add("Happy Holidays!");
+            receivedGiftMessages.add("Your First Gift");
+
+            recievedGifts.setAdapter(new GiftAdapter(getActivity(), 0, receivedGiftMessages));
+
+            // comment out for testing:
+            /*
+            recievedGifts.setOnItemClickListener((parent, view, position, id) -> {
+                String label = (String) parent.getItemAtPosition(position);
+                //download the gift
+                Intent intent;
+                intent = new Intent(getContext(), DownloadSplashActivity.class);
+                intent.putExtra("HASH VALUE", giftsRecieved.get(label));
+                intent.putExtra("FROM OPEN", true);
+                Log.d("LPC", "getting gift w hash: "+giftsRecieved.get(label));
+                startActivity(intent);
             });
+             */
         }
 
-
-
-
-
-        ListUtils.setDynamicHeight(recievedGifts);
-        ListUtils.setDynamicHeight(sentGifts);
+        //ListUtils.setDynamicHeight(recievedGifts); not sure what these do? - ray.
+        //ListUtils.setDynamicHeight(sentGifts);
 
         //give them on click listeners
 
