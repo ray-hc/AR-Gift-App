@@ -100,11 +100,11 @@ public class LinkActivity extends AppCompatActivity {
      * Or replace it if replacing
      */
     public void onSave() {
-        String key = "link_" + Globals.sdf.format(new Date(System.currentTimeMillis()));
+//        String key = "link_" + Globals.sdf.format(new Date(System.currentTimeMillis()));
         String link = mEditText.getText().toString();
         try {
             new URL(link);
-            mGift.getLinks().put(key, link);
+            mGift.getLinks().put(link, link);
             //delete the old link if its a replacement
             if(mFileLabel != null) mGift.getLinks().remove(mFileLabel);
             Log.d("LPC", "set gift link to: " + link);

@@ -5,6 +5,8 @@ import android.content.Intent;
 import androidx.preference.PreferenceManager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -16,6 +18,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
+import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -26,6 +31,7 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.rayhc.giftly.DownloadSplashActivity;
+import com.rayhc.giftly.EditContentsActivity;
 import com.rayhc.giftly.ImageActivity;
 import com.rayhc.giftly.LinkActivity;
 import com.rayhc.giftly.R;
@@ -41,8 +47,10 @@ import java.util.HashMap;
 public class CreateGiftFragment extends Fragment {
     //widgets
     private TextView recipientLabel;
-    private Button linkButton, imageButton, videoButton, reviewButton, sendButton, chooseFriendButton;
+    private Button sendButton, chooseFriendButton, reviewButton;
+    private ImageButton linkButton, imageButton, videoButton;
     private EditText messageInput;
+    private ListView linksList;
     private Spinner giftTypeSpinner;
     private static final String[] GIFT_TYPE_ARRAY = {"Normal", "Birthday", "Christmas"};
     private static final HashMap<String, Integer> GIFT_TYPE_MAP = new HashMap<String, Integer>(){{
@@ -114,28 +122,29 @@ public class CreateGiftFragment extends Fragment {
         linkButton = v.findViewById(R.id.link_button);
         imageButton = v.findViewById(R.id.image_button);
         videoButton = v.findViewById(R.id.video_button);
-        reviewButton = v.findViewById(R.id.review_button);
         sendButton = v.findViewById(R.id.send_button);
         chooseFriendButton = v.findViewById(R.id.choose_recipient_button);
         sendButton.setEnabled(newGift.getContentType().size() != 0 || newGift.getLinks().size() != 0);
+        linksList = v.findViewById(R.id.linkList);
+        reviewButton = v.findViewById(R.id.review_contents_button);
 
         //set up spinner
-        giftTypeSpinner = v.findViewById(R.id.gift_type_spinner);
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
-                (getContext(), android.R.layout.simple_spinner_item, GIFT_TYPE_ARRAY);
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-        giftTypeSpinner.setAdapter(spinnerArrayAdapter);
-        giftTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedItem = parent.getItemAtPosition(position).toString();
-                newGift.setGiftType(GIFT_TYPE_MAP.get(selectedItem));
-            }
-            //TODO: to close the onItemSelected
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+//        giftTypeSpinner = v.findViewById(R.id.gift_type_spinner);
+//        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
+//                (getContext(), android.R.layout.simple_spinner_item, GIFT_TYPE_ARRAY);
+//        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+//        giftTypeSpinner.setAdapter(spinnerArrayAdapter);
+//        giftTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+//        {
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                String selectedItem = parent.getItemAtPosition(position).toString();
+//                newGift.setGiftType(GIFT_TYPE_MAP.get(selectedItem));
+//            }
+//            //TODO: to close the onItemSelected
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
 
         //set up message input
         messageInput = v.findViewById(R.id.message_input);
@@ -161,6 +170,32 @@ public class CreateGiftFragment extends Fragment {
         recipientLabel = v.findViewById(R.id.recipient);
         if(recipientName != null) recipientLabel.setText("This Gift is to: "+recipientName);
 
+        //set up links list view
+        if(newGift.getLinks() != null){
+            Log.d("LPC", "from download splash - contentType : "+newGift.getLinks().toString());
+            ArrayList<String> linkNames = new ArrayList<>();
+            linkNames.addAll(newGift.getLinks().keySet());
+            linksList.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, linkNames));
+            linksList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String label = (String) parent.getItemAtPosition(position);
+                    Log.d("LPC", "media list view position click label: "+ label);
+
+                    Intent intent;
+                    //go to ViewContents if opening a gift, else go to LinkActivity
+//                    if(fromOpen) intent = new Intent(getApplicationContext(), ViewContentsActivity.class);
+//                    else
+                    intent = new Intent(getContext(), LinkActivity.class);
+                    intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
+                    intent.putExtra(Globals.FILE_LABEL_KEY, label);
+                    intent.putExtra(Globals.FROM_REVIEW_KEY, true);
+                    startActivity(intent);
+                }
+            });
+        }
+
+
 
         //click listeners for adding contents to the gift
         linkButton.setOnClickListener(v12 -> {
@@ -170,6 +205,24 @@ public class CreateGiftFragment extends Fragment {
             intent.putExtra("FRIEND ID", recipientID);
             startActivity(intent);
         });
+
+        //set up review button
+        if(newGift.getContentType().size() == 0) reviewButton.setEnabled(false);
+        if(newGift.getContentType().size() > 0){
+            String text = "Click to review/edit your gift's "+newGift.getContentType().size()+" media files";
+            reviewButton.setText(text);
+        }
+        reviewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), EditContentsActivity.class);
+                intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
+                intent.putExtra("FRIEND NAME", recipientName);
+                intent.putExtra("FRIEND ID", recipientID);
+                startActivity(intent);
+            }
+        });
+
 
         imageButton.setOnClickListener(v1 -> {
             Intent intent = new Intent(getActivity(), ImageActivity.class);
@@ -187,13 +240,6 @@ public class CreateGiftFragment extends Fragment {
             startActivity(intent);
         });
 
-        reviewButton.setOnClickListener(v14 -> {
-            Intent intent = new Intent(getActivity(), ReviewGiftActivity.class);
-            intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
-            intent.putExtra("FRIEND NAME", recipientName);
-            intent.putExtra("FRIEND ID", recipientID);
-            startActivity(intent);
-        });
 
         sendButton.setOnClickListener(v14 ->{
             Intent intent = new Intent(getActivity(), UploadingSplashActivity.class);
@@ -217,5 +263,7 @@ public class CreateGiftFragment extends Fragment {
 
         return v;
     }
+
+
 
 }
