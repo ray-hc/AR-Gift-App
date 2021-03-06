@@ -95,9 +95,11 @@ public class DownloadSplashActivity extends AppCompatActivity {
             Log.d("LPC", "getting gift w hash: "+hashValue);
             Log.d("LPC", "running gift downloader thread: from open? "+startIntent.getBooleanExtra("FROM OPEN", false));
 
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, CreateGiftActivity.class);
             intent.putExtra("FROM OPEN", startIntent.getBooleanExtra("FROM OPEN", false));
             intent.putExtra("HASH VALUE", startIntent.getStringExtra("HASH VALUE"));
+            intent.putExtra("SENT GIFT MAP", startIntent.getSerializableExtra("SENT GIFT MAP"));
+            intent.putExtra("RECEIVED GIFT MAP", startIntent.getSerializableExtra("RECEIVED GIFT MAP"));
             intent.putExtra("LABEL", startIntent.getStringExtra("LABEL"));
             GiftDownloaderThread giftDownloaderThread = new GiftDownloaderThread(intent);
             giftDownloaderThread.start();
@@ -265,13 +267,13 @@ public class DownloadSplashActivity extends AppCompatActivity {
                 Log.d("LPC", "sent gift msg map: " + giftMsgMap.toString());
 //                ArrayList<String> msgList = new ArrayList<>(giftMsgMap.keySet());
                 for (String hash : giftMsgMap.keySet()) {
-                    String label = "To: "+giftMsgMap.get(hash);
+                    String label = giftMsgMap.get(hash);
 //                    if (giftMessages.get(i) == null) label += giftRecipientNames.get(i);
 //                    else label += (giftRecipientNames.get(i) + " - " + giftMessages.get(i));
                     //put in map label -> gift hash
                     sentGiftMap.put(label, hash);
                 }
-                intent.putExtra(SENT_MAP_KEY, sentGiftMap);
+                intent.putExtra(Globals.SENT_MAP_KEY, sentGiftMap);
                 Log.d("LPC", "thread done - sent gift map: " + sentGiftMap.toString());
                 GetReceivedGiftsThread getReceivedGiftsThread = new GetReceivedGiftsThread(intent);
                 getReceivedGiftsThread.start();
@@ -339,7 +341,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String message = (String) snapshot.child(hash).child("message").getValue();
-                        String displayText = giftMsgMap.get(hash)+" - "+message;
+                        String displayText = giftMsgMap.get(hash)+"|"+message;
 //                        giftMessages.add(message);
                         giftMsgMap.put(hash, displayText);
                         Log.d("LPC", "getting gift with hash: "+hash+" with message: "+message);
@@ -379,14 +381,14 @@ public class DownloadSplashActivity extends AppCompatActivity {
                 Log.d("LPC", "received gift msg map: " + giftMsgMap.toString());
 //                ArrayList<String> msgList = new ArrayList<>(giftMsgMap.keySet());
                 for (String hash : giftMsgMap.keySet()) {
-                    String label = "From: "+giftMsgMap.get(hash);
+                    String label = giftMsgMap.get(hash);
 //                    if (giftMessages.get(i) == null) label += giftRecipientNames.get(i);
 //                    else label += (giftRecipientNames.get(i) + " - " + giftMessages.get(i));
                     //put in map label -> gift hash
                     receivedGiftsMap.put(label, hash);
                 }
 
-                intent.putExtra(REC_MAP_KEY, receivedGiftsMap);
+                intent.putExtra(Globals.REC_MAP_KEY, receivedGiftsMap);
                 Log.d("LPC", "thread done-received gift map: " + receivedGiftsMap.toString());
                 startActivity(intent);
             }
@@ -449,7 +451,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String message = (String) snapshot.child(hash).child("message").getValue();
-                        String displayText = giftMsgMap.get(hash)+" - "+message;
+                        String displayText = giftMsgMap.get(hash)+"|"+message;
 //                        giftMessages.add(message);
                         giftMsgMap.put(hash, displayText);
                         Log.d("LPC", "getting gift with hash: "+hash+" with message: "+message);

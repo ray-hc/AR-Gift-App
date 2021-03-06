@@ -33,7 +33,7 @@ import java.util.HashMap;
 public class CreateGiftActivity extends AppCompatActivity {
 
     //widgets
-    private TextView recipientLabel, reviewLabel;
+    private TextView recipientLabel;
     private Button sendButton, chooseFriendButton, reviewButton;
     private ImageButton linkButton, imageButton, videoButton;
     private EditText messageInput;
@@ -114,7 +114,8 @@ public class CreateGiftActivity extends AppCompatActivity {
 
         sentGiftMap = (HashMap) extras.getSerializableExtra("SENT GIFT MAP");
         receivedGiftMap = (HashMap) extras.getSerializableExtra("RECEIVED GIFT MAP");
-        
+        Log.d("LPC", "crete gift sent map: "+sentGiftMap.toString());
+
 
         //wire in widgets
         linkButton = findViewById(R.id.link_button);
@@ -126,7 +127,6 @@ public class CreateGiftActivity extends AppCompatActivity {
                 (newGift.getContentType().size() != 0 || newGift.getLinks().size() != 0));
         linksList = findViewById(R.id.linkList);
         recipientLabel = findViewById(R.id.recipient);
-        reviewLabel = findViewById(R.id.review_label);
         reviewButton = findViewById(R.id.review_contents_button);
         messageInput = findViewById(R.id.message_input);
 
@@ -238,7 +238,6 @@ public class CreateGiftActivity extends AppCompatActivity {
         if (newGift.getContentType() == null || newGift.getContentType().size() == 0)
             reviewButton.setEnabled(false);
         else {
-
             String text = "Click to review/edit your gift's " + newGift.getContentType().size() + " media files";
             reviewButton.setText(text);
         }
