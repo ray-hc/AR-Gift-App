@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditContentsActivity">
+
+    <!--DELETE BUTTON (REVIEW MODE ONLY)-->
+    <Button
+        android:id="@+id/contents_delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/chosen_image_label"
+        android:layout_marginTop="100dp"
+        android:text="DELETE"/>
+
+    <!--IMAGE VIEW-->
+    <TextView
+        android:id="@+id/chosen_contents_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/chosen_image"
+        android:layout_margin="10dp"
+        android:layout_centerHorizontal="true"
+        android:text="Your Media:"
+        android:textSize="25sp"/>
+    <RelativeLayout
+        android:id="@+id/media_container"
+        android:layout_below="@+id/contents_delete_button"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_centerHorizontal="true">
+        <ImageView
+            android:id="@+id/chosen_contents_image"
+            android:layout_centerVertical="true"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_margin="20dp"
+            android:layout_centerHorizontal="true" />
+        <VideoView
+            android:id="@+id/chosen_contents_video"
+            android:layout_centerVertical="true"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_margin="20dp"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/contents_choose_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/media_container"
+        android:layout_centerHorizontal="true"
+        android:text="Choose Media"/>
+
+    <!--BUTTON GROUP-->
+    <LinearLayout
+        android:id="@+id/image_activity_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/contents_choose_button"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/contents_cancel_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="false"
+            android:layout_weight="0.5"
+            android:layout_margin="10dp"
+            android:text="Cancel"
+            />
+
+        <Button
+            android:id="@+id/contents_save_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_margin="10dp"
+            android:text="Save"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/nav_buttons_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/image_activity_button_layout"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/previous_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="false"
+            android:layout_weight="0.5"
+            android:layout_margin="10dp"
+            android:text="PREVIOUS"
+            />
+
+        <Button
+            android:id="@+id/next_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_margin="10dp"
+            android:text="next"
+            />
+    </LinearLayout>
+
+</RelativeLayout>

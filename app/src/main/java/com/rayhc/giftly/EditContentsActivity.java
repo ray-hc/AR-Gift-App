@@ -30,7 +30,7 @@ public class EditContentsActivity extends AppCompatActivity {
     private String friendName, friendID, mFileLabel;
     int currIndex = 0;
 
-    
+
     private Button mChooseButton, mSaveButton, mCancelButton, mDeleteButton, mNextButton, mPreviousButton;
     private ImageView mImageView;
     private VideoView mVideoView;

@@ -111,23 +111,23 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             homeFragment.setArguments(bundle);
             navId = R.id.nav_home;
         }
-        //go to create gift fragment
-        else if(startIntent.getBooleanExtra("MAKING GIFT", false)){
-            createGiftFragment = new CreateGiftFragment();
-            Bundle bundle = new Bundle();
-
-            bundle.putString("FRIEND NAME", startIntent.getStringExtra("FRIEND NAME"));
-            bundle.putString("FRIEND ID", startIntent.getStringExtra("FRIEND ID"));
-
-
-            mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
-            Log.d("LPC", "container activity got gift: " + mGift.toString());
-            bundle.putSerializable(Globals.CURR_GIFT_KEY, mGift);
-
-            createGiftFragment.setArguments(bundle);
-
-            navId = R.id.nav_create_gift;
-        }
+//        //go to create gift fragment
+//        else if(startIntent.getBooleanExtra("MAKING GIFT", false)){
+//            createGiftFragment = new CreateGiftFragment();
+//            Bundle bundle = new Bundle();
+//
+//            bundle.putString("FRIEND NAME", startIntent.getStringExtra("FRIEND NAME"));
+//            bundle.putString("FRIEND ID", startIntent.getStringExtra("FRIEND ID"));
+//
+//
+//            mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
+//            Log.d("LPC", "container activity got gift: " + mGift.toString());
+//            bundle.putSerializable(Globals.CURR_GIFT_KEY, mGift);
+//
+//            createGiftFragment.setArguments(bundle);
+//
+//            navId = R.id.nav_create_gift;
+//        }
 
         else{
             if(mFirebaseUser == null){
