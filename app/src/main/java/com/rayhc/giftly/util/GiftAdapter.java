@@ -36,6 +36,10 @@ public class GiftAdapter extends ArrayAdapter<String> {
         this.giftTitles = giftTitles;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+        for (String giftTitle : giftTitles) {
+            Log.d(Globals.TAG, giftTitle);
+        }
+
         // make a randomized list of the color options.
         colors = new ArrayList<>();
 
@@ -46,7 +50,7 @@ public class GiftAdapter extends ArrayAdapter<String> {
         Collections.shuffle(colors);
 
         //
-        for (int i = 0; i < giftTitles.size() - colors.size(); i++) {
+        for (int i = 0; i <= giftTitles.size() - colors.size() + 1; i++) {
             colors.add(colors.get(i % colors.size()));
         }
 
@@ -67,6 +71,8 @@ public class GiftAdapter extends ArrayAdapter<String> {
     @Override
     public View getView (int pos, View convertView, ViewGroup parent) {
         View view = convertView;
+
+        Log.d(Globals.TAG, getItem(pos) + "");
 
         if (convertView == null) { // if not already cached
             view = inflater.inflate(R.layout.single_gift, null); // make a new view
