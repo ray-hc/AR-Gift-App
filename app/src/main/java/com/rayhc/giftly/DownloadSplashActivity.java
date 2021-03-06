@@ -5,7 +5,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -26,6 +25,10 @@ import com.rayhc.giftly.util.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import static com.rayhc.giftly.util.Globals.GOT_GIFTS_KEY;
+import static com.rayhc.giftly.util.Globals.REC_MAP_KEY;
+import static com.rayhc.giftly.util.Globals.SENT_MAP_KEY;
 
 /**
  * This is loading splash screen for when the gift data is being download from the cloud
@@ -71,8 +74,8 @@ public class DownloadSplashActivity extends AppCompatActivity {
             intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
             intent.putExtra("FRIEND NAME", recipientName);
             intent.putExtra("FRIEND ID", recipientID);
-            intent.putExtra("SENT GIFT MAP", startIntent.getSerializableExtra("SENT GIFT MAP"));
-            intent.putExtra("RECEIVED GIFT MAP", startIntent.getSerializableExtra("RECEIVED GIFT MAP"));
+            intent.putExtra(SENT_MAP_KEY, startIntent.getSerializableExtra(SENT_MAP_KEY));
+            intent.putExtra(REC_MAP_KEY, startIntent.getSerializableExtra(REC_MAP_KEY));
             GetFriendsThread getFriendsThread = new GetFriendsThread(intent);
             getFriendsThread.start();
 
@@ -81,7 +84,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
         else if(startIntent.getBooleanExtra("GET GIFTS", false)){
             userID = startIntent.getStringExtra("USER ID");
             Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("GOT GIFTS", true);
+            intent.putExtra(GOT_GIFTS_KEY, true);
             GetSentGiftsThread sentGiftsThread = new GetSentGiftsThread(intent);
             sentGiftsThread.start();
         }
@@ -268,7 +271,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     //put in map label -> gift hash
                     sentGiftMap.put(label, hash);
                 }
-                intent.putExtra("SENT GIFT MAP", sentGiftMap);
+                intent.putExtra(SENT_MAP_KEY, sentGiftMap);
                 Log.d("LPC", "thread done - sent gift map: " + sentGiftMap.toString());
                 GetReceivedGiftsThread getReceivedGiftsThread = new GetReceivedGiftsThread(intent);
                 getReceivedGiftsThread.start();
@@ -383,7 +386,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     receivedGiftsMap.put(label, hash);
                 }
 
-                intent.putExtra("RECEIVED GIFT MAP", receivedGiftsMap);
+                intent.putExtra(REC_MAP_KEY, receivedGiftsMap);
                 Log.d("LPC", "thread done-received gift map: " + receivedGiftsMap.toString());
                 startActivity(intent);
             }

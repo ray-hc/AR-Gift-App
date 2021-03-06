@@ -14,17 +14,12 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.preference.PreferenceManager;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -33,7 +28,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.rayhc.giftly.frag.CreateGiftFragment;
 import com.rayhc.giftly.frag.FriendsFragment;
 import com.rayhc.giftly.frag.HomeFragment;
 import com.rayhc.giftly.util.Gift;
@@ -44,7 +38,10 @@ import com.rayhc.giftly.util.User;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+
+import static com.rayhc.giftly.util.Globals.GOT_GIFTS_KEY;
+import static com.rayhc.giftly.util.Globals.REC_MAP_KEY;
+import static com.rayhc.giftly.util.Globals.SENT_MAP_KEY;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
     public static final String NAV_ITEM_ID = "NAV_ITEM_ID";
@@ -55,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     private FriendsFragment friendsFragment;
-    private CreateGiftFragment createGiftFragment;
     private HomeFragment homeFragment;
 
     private int navId;
@@ -66,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     SharedPreferences prefs;
 
     private Gift mGift;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,18 +76,18 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             navId = R.id.nav_home;
         }
 
-        //get first run info
+        // get first run info
         if(prefs == null) prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         Log.d("LPC", "is prefs null?: "+(prefs==null));
         firstRun = prefs.getBoolean("isFirstRun", true);
         Log.d("LPC", "is first run? "+firstRun);
 
-        //define fragments
+        // define fragments
         friendsFragment = new FriendsFragment();
-        createGiftFragment = new CreateGiftFragment();
         homeFragment = new HomeFragment();
 
-        BottomNavigationView navigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
+        // get navigation
+        BottomNavigationView navigationView = findViewById(R.id.bottomNavigationView);
         navigationView.setOnNavigationItemSelectedListener(this);
 
         // Initialize Firebase Auth
@@ -104,17 +99,17 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         //determine if we've gotten gifts yet
         Intent startIntent = getIntent();
-        if(startIntent.getBooleanExtra("GOT GIFTS", false)){
+        if(startIntent.getBooleanExtra(GOT_GIFTS_KEY, false)){
             HashMap<String, String> sentGiftsMap, receivedGiftsMap;
-            sentGiftsMap = (HashMap<String, String>)startIntent.getSerializableExtra("SENT GIFT MAP");
-            receivedGiftsMap = (HashMap<String, String>)startIntent.getSerializableExtra("RECEIVED GIFT MAP");
+            sentGiftsMap = (HashMap<String, String>)startIntent.getSerializableExtra(SENT_MAP_KEY);
+            receivedGiftsMap = (HashMap<String, String>)startIntent.getSerializableExtra(REC_MAP_KEY);
             Log.d("LPC", "sent gifts map in main activity: "+sentGiftsMap.toString());
             Log.d("LPC", "received gifts map in main activity: "+receivedGiftsMap.toString());
-            homeFragment = new HomeFragment();
+            //homeFragment = new HomeFragment(); <-- I don't think needed bc created new fragment on line 87.
             Bundle bundle = new Bundle();
 
-            bundle.putSerializable("SENT GIFT MAP", startIntent.getSerializableExtra("SENT GIFT MAP"));
-            bundle.putSerializable("RECEIVED GIFT MAP", startIntent.getSerializableExtra("RECEIVED GIFT MAP"));
+            bundle.putSerializable(SENT_MAP_KEY, startIntent.getSerializableExtra(SENT_MAP_KEY));
+            bundle.putSerializable(REC_MAP_KEY, startIntent.getSerializableExtra(REC_MAP_KEY));
             homeFragment.setArguments(bundle);
             navId = R.id.nav_home;
         }
@@ -138,19 +133,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         else{
             if(mFirebaseUser == null){
-                //starts login page
-                // Choose authentication providers
-                List<AuthUI.IdpConfig> providers = Arrays.asList(
-                        new AuthUI.IdpConfig.EmailBuilder().build(),
-                        new AuthUI.IdpConfig.PhoneBuilder().build(),
-                        new AuthUI.IdpConfig.GoogleBuilder().build());
-                // Create and launch sign-in intent
-                startActivityForResult(
-                        AuthUI.getInstance()
-                                .createSignInIntentBuilder()
-                                .setAvailableProviders(providers)
-                                .build(),
-                        RC_SIGN_IN);
+                loadFirebase();
             } else{
                 if(startIntent.getBooleanExtra("SENT GIFT", false)){
                     mGift = new Gift();
@@ -172,6 +155,23 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
 
         navigateToFragment(navId);
+    }
+
+    // launches authentication intent with preferences.
+    private void loadFirebase() {
+        //starts login page
+        // Choose authentication providers
+        List<AuthUI.IdpConfig> providers = Arrays.asList(
+                new AuthUI.IdpConfig.EmailBuilder().build(),
+                new AuthUI.IdpConfig.PhoneBuilder().build(),
+                new AuthUI.IdpConfig.GoogleBuilder().build());
+        // Create and launch sign-in intent
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .build(),
+                RC_SIGN_IN);
     }
 
     @Override
@@ -219,7 +219,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
 //        }
 
-//        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -235,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPref.edit();
 
-        editor.putString("userId", currentUser.getUid());
+        editor.putString(Globals.USER_ID_KEY, currentUser.getUid());
         editor.apply();
 
         //go to download splash
