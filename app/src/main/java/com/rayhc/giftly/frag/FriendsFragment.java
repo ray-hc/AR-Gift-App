@@ -1,6 +1,7 @@
 package com.rayhc.giftly.frag;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +28,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.rayhc.giftly.CreateGiftActivity;
+import com.rayhc.giftly.FindFriendsActivity;
 import com.rayhc.giftly.util.ListUtils;
 import com.rayhc.giftly.R;
 import com.rayhc.giftly.util.User;
@@ -60,8 +63,8 @@ public class FriendsFragment extends Fragment {
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogFragment.newFragment(R.id.add_friend).show(
-                        getActivity().getSupportFragmentManager(), getString(R.string.normal_dialog_fragment));
+                Intent intent = new Intent(getContext(), FindFriendsActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -279,6 +282,8 @@ public class FriendsFragment extends Fragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             String request = r.get(position);
+//            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//            convertView = inflater.inflate(res, false);
             convertView = LayoutInflater.from(getContext()).inflate(res, parent, false);
 
             TextView friendName = (TextView) convertView.findViewById(R.id.friend_request);
