@@ -30,6 +30,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.rayhc.giftly.CreateGiftActivity;
 import com.rayhc.giftly.FindFriendsActivity;
+import com.rayhc.giftly.util.Globals;
 import com.rayhc.giftly.util.ListUtils;
 import com.rayhc.giftly.R;
 import com.rayhc.giftly.util.User;
@@ -54,12 +55,12 @@ public class FriendsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.friends_list_fragment, container, false);
 
-        friendsList = new ArrayList<String>();
-        requestsList = new ArrayList<String>();
+        friendsList = new ArrayList<>();
+        requestsList = new ArrayList<>();
 
         context = this.getActivity().getApplicationContext();
 
-        Button b = (Button) view.findViewById(R.id.add_friend);
+        Button b = view.findViewById(R.id.add_friend);
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,8 +69,8 @@ public class FriendsFragment extends Fragment {
             }
         });
 
-        friendsListView = (ListView) view.findViewById(R.id.friends_list);
-        requestsListView = (ListView) view.findViewById(R.id.requests_list);
+        friendsListView = view.findViewById(R.id.friends_list);
+        requestsListView = view.findViewById(R.id.requests_list);
 
         getUserFromDB();
 
@@ -124,7 +125,7 @@ public class FriendsFragment extends Fragment {
 
                 Log.d("kitani", "Requests Added");
 
-                friendsListAdapter = new MyFriendsListAdapter(context, R.layout.friend_entry, friendsList);
+                friendsListAdapter = new MyFriendsListAdapter(context, 0, friendsList);
                 requestsListAdapter = new MyRequestsListAdapter(context, R.layout.friend_request_entry, requestsList);
 
                 friendsListView.setAdapter(friendsListAdapter);
@@ -211,25 +212,27 @@ public class FriendsFragment extends Fragment {
     public class MyFriendsListAdapter extends ArrayAdapter<String> {
         Context context;
         ArrayList<String> f;
-        int res;
+        LayoutInflater inflater;
 
         public MyFriendsListAdapter(Context c, int resource, ArrayList<String> friends) {
             super(c, resource, friends);
             this.context = c;
-            this.res = resource;
             this.f = friends;
+            inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             String friend = f.get(position);
-            convertView = LayoutInflater.from(getContext()).inflate(res, parent, false);
-            Log.d("kitani", "Friend: " + friend );
+
+            convertView = inflater.inflate(R.layout.friend_entry, null);
+            Log.d(Globals.TAG, "Friend: " + friend );
 
             TextView friendName = convertView.findViewById(R.id.friend);
             friendName.setText(friend);
 
             Button remove = convertView.findViewById(R.id.remove_button);
+
 
             remove.setOnClickListener(v -> {
                 Thread thread = new Thread(() -> {
@@ -271,26 +274,28 @@ public class FriendsFragment extends Fragment {
         Context context;
         ArrayList<String> r;
         int res;
+        LayoutInflater inflater;
 
         public MyRequestsListAdapter(Context c, int resource, ArrayList<String> requests) {
             super(c, resource, requests);
             this.context = c;
             this.res = resource;
             this.r = requests;
+            inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             String request = r.get(position);
-//            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//            convertView = inflater.inflate(res, false);
-            convertView = LayoutInflater.from(getContext()).inflate(res, parent, false);
 
-            TextView friendName = (TextView) convertView.findViewById(R.id.friend_request);
+            convertView = inflater.inflate(R.layout.friend_request_entry, null);
+            //convertView = LayoutInflater.from(getContext()).inflate(res, parent, false);
+
+            TextView friendName = convertView.findViewById(R.id.friend_request);
             friendName.setText(request);
 
-            Button add = (Button) convertView.findViewById(R.id.add_button);
-            Button decline = (Button) convertView.findViewById(R.id.decline_button);
+            Button add = convertView.findViewById(R.id.add_button);
+            Button decline = convertView.findViewById(R.id.decline_button);
 
             add.setOnClickListener(v -> {
                 Thread thread = new Thread(() -> {
