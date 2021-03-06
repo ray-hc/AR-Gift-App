@@ -131,20 +131,40 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         else{
             if(mFirebaseUser == null){
-                //starts login page
-                // Choose authentication providers
-                List<AuthUI.IdpConfig> providers = Arrays.asList(
-                        new AuthUI.IdpConfig.EmailBuilder().build(),
-                        new AuthUI.IdpConfig.PhoneBuilder().build(),
-                        new AuthUI.IdpConfig.GoogleBuilder().build());
-                // Create and launch sign-in intent
-                startActivityForResult(
-                        AuthUI.getInstance()
-                                .createSignInIntentBuilder()
-                                .setAvailableProviders(providers)
-                                .build(),
-                        RC_SIGN_IN);
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+                DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+                String displayUserID = sharedPref.getString("userId", "");
+                if(displayUserID.equals("")) {
+                    Query query = db.child("users").orderByChild("userId").equalTo(displayUserID);
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                activityUser = UserManager.snapshotToUser(snapshot, displayUserID);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                        }
+                    });
+                } else {
+
+                    //starts login page
+                    // Choose authentication providers
+                    List<AuthUI.IdpConfig> providers = Arrays.asList(
+                            new AuthUI.IdpConfig.EmailBuilder().build(),
+                            new AuthUI.IdpConfig.GoogleBuilder().build());
+                    // Create and launch sign-in intent
+                    startActivityForResult(
+                            AuthUI.getInstance()
+                                    .createSignInIntentBuilder()
+                                    .setAvailableProviders(providers)
+                                    .build(),
+                            RC_SIGN_IN);
+                }
             } else{
+
                 if(startIntent.getBooleanExtra("SENT GIFT", false)){
                     mGift = new Gift();
                     Log.d("LPC", "onCreate: made a new gift");
@@ -157,7 +177,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }
             navId = R.id.nav_home;
         }
-
         navigateToFragment(navId);
     }
 
