@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import androidx.annotation.Nullable;
@@ -34,7 +35,8 @@ public class HomeFragment extends Fragment {
     private ListView sentGifts;
 
     //create gift button
-    private Button createGiftButton, refreshButton;
+    private Button createGiftButton;
+    private ImageButton refreshButton;
 
     //firebase user info
     private FirebaseAuth mFirebaseAuth;
@@ -56,6 +58,7 @@ public class HomeFragment extends Fragment {
             giftsSent = (HashMap<String, String>) extras.getSerializable("SENT GIFT MAP");
             Log.d("LPC", "home frag: sent gift map from bundle content: "+giftsSent.toString());
             giftsRecieved = (HashMap<String, String>) extras.getSerializable("RECEIVED GIFT MAP");
+            giftsRecieved.put("hii","34");
         }
     }
 
@@ -109,7 +112,7 @@ public class HomeFragment extends Fragment {
         if(giftsRecieved != null){ // added || true for testing.
             //populate the received gift list view
             ArrayList<String> receivedGiftMessages = new ArrayList<>();
-            //receivedGiftMessages.addAll(giftsRecieved.keySet()); commenting out for testing
+            receivedGiftMessages.addAll(giftsRecieved.keySet()); // commenting out for testing
 
             // testing code.
             receivedGiftMessages.add("Happy Holidays!");

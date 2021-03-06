@@ -33,7 +33,7 @@ import java.util.HashMap;
 public class CreateGiftActivity extends AppCompatActivity {
 
     //widgets
-    private TextView recipientLabel;
+    private TextView recipientLabel, reviewLabel;
     private Button sendButton, chooseFriendButton, reviewButton;
     private ImageButton linkButton, imageButton, videoButton;
     private EditText messageInput;
@@ -126,6 +126,7 @@ public class CreateGiftActivity extends AppCompatActivity {
                 (newGift.getContentType().size() != 0 || newGift.getLinks().size() != 0));
         linksList = findViewById(R.id.linkList);
         recipientLabel = findViewById(R.id.recipient);
+        reviewLabel = findViewById(R.id.review_label);
         reviewButton = findViewById(R.id.review_contents_button);
         messageInput = findViewById(R.id.message_input);
 
@@ -188,7 +189,7 @@ public class CreateGiftActivity extends AppCompatActivity {
         });
 
         //set up the recipient label
-        if (recipientName != null) recipientLabel.setText("This Gift is to: " + recipientName);
+        if (recipientName != null) recipientLabel.setText(recipientName);
 
         //set up links list view
         if (newGift.getLinks() != null) {
@@ -237,6 +238,7 @@ public class CreateGiftActivity extends AppCompatActivity {
         if (newGift.getContentType() == null || newGift.getContentType().size() == 0)
             reviewButton.setEnabled(false);
         else {
+
             String text = "Click to review/edit your gift's " + newGift.getContentType().size() + " media files";
             reviewButton.setText(text);
         }

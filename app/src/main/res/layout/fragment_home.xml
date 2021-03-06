@@ -22,6 +22,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageButton
+            android:id="@+id/refresh_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/pink_circle"
+            android:elevation="6dp"
+            android:scaleType="centerInside"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/stat_notify_sync" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout"
             style="@style/plainCard"
@@ -65,15 +78,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <Button
-            android:id="@+id/refresh_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="REFRESH"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/constraintLayout" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/sentGifts"
             style="@style/plainCard"
@@ -81,7 +85,7 @@
             android:layout_height="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/refresh_button">
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/col2Guide"

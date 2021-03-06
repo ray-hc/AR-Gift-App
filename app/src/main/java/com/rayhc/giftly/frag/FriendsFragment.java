@@ -223,10 +223,10 @@ public class FriendsFragment extends Fragment {
             convertView = LayoutInflater.from(getContext()).inflate(res, parent, false);
             Log.d("kitani", "Friend: " + friend );
 
-            TextView friendName = (TextView) convertView.findViewById(R.id.friend);
+            TextView friendName = convertView.findViewById(R.id.friend);
             friendName.setText(friend);
 
-            Button remove = (Button) convertView.findViewById(R.id.remove_button);
+            Button remove = convertView.findViewById(R.id.remove_button);
 
             remove.setOnClickListener(v -> {
                 Thread thread = new Thread(() -> {
