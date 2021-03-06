@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1017103204243-q6jjtelljd7c1tcspr2609i6btotqrd0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rayhc.giftly",
+            "certificate_hash": "583cc1b7251f9b75fbddb350a42d4b96bc6a5ec7"
+          }
+        },
+        {
           "client_id": "1017103204243-5l8lqcurl87to30835u0808b42mrnnqk.apps.googleusercontent.com",
           "client_type": 3
         }
