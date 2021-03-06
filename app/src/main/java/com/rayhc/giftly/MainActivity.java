@@ -1,75 +1,301 @@
 package com.rayhc.giftly;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Toast;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
+import androidx.preference.PreferenceManager;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.rayhc.giftly.frag.CreateGiftFragment;
+import com.rayhc.giftly.frag.FriendsFragment;
+import com.rayhc.giftly.frag.HomeFragment;
+import com.rayhc.giftly.util.Gift;
+import com.rayhc.giftly.util.Globals;
+import com.rayhc.giftly.util.UserManager;
+import com.rayhc.giftly.util.User;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends AppCompatActivity {
-    private AppBarConfiguration myAppBarConfiguration;
-    FloatingActionButton actionButton;
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+    public static final String NAV_ITEM_ID = "NAV_ITEM_ID";
+    private static final int RC_SIGN_IN = 123;
+
+    private User activityUser;
+
+    private final Handler handler = new Handler(Looper.getMainLooper());
+
+    private FriendsFragment friendsFragment;
+    private CreateGiftFragment createGiftFragment;
+    private HomeFragment homeFragment;
+
+    private int navId;
+
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+
+    private Gift mGift;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //sets up navigation system
-        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        // get id to restore state if needed
+        if (savedInstanceState != null) {
+            navId = savedInstanceState.getInt(NAV_ITEM_ID);
+        }
+        else {
+            navId = R.id.nav_home;
+        }
 
-        myAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_home,
-                R.id.nav_create_gift, R.id.nav_friends_list).setOpenableLayout(drawerLayout).
-                build();
-        NavController navController = Navigation.findNavController(this,
-                R.id.nav_host_fragment);
-        NavigationUI.setupActionBarWithNavController(this, navController, myAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
+        //define fragments
+        friendsFragment = new FriendsFragment();
+        createGiftFragment = new CreateGiftFragment();
+        homeFragment = new HomeFragment();
 
-        //starts login page
-//        Intent intent = new Intent(this, LoginActivity.class);
-//        startActivity(intent);
+        BottomNavigationView navigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
+        navigationView.setOnNavigationItemSelectedListener(this);
 
-        //go to db demo for now
-//        Intent intent = new Intent(this, FirebaseDemoActivity.class);
-//        startActivity(intent);
+        // Initialize Firebase Auth
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
-        //go to create gift
-//        Gift gift = new Gift();
-//        gift.setReceiver("Logan 2");
-//        gift.setSender("Logan 1");
-//        gift.setTimeCreated(100);
-//        gift.setHashValue(gift.createHashValue());
-//        gift.setContentType(new HashMap<>());
-////        Intent intent = new Intent(this, ImageActivity.class);
-////        Intent intent = new Intent(this, VideoActivity.class);
-//        Intent intent = new Intent(this, LinkActivity.class);
-//        intent.putExtra("GIFT", gift);
-//        startActivity(intent);
+        //check permissions
+        checkPermissions();
 
-//        Intent intent = new Intent(this, LoginActivity.class);
-//        startActivity(intent);
+        //determine if we've gotten gifts yet
+        Intent startIntent = getIntent();
+        if(startIntent.getBooleanExtra("GOT GIFTS", false)){
+            HashMap<String, String> sentGiftsMap, receivedGiftsMap;
+            sentGiftsMap = (HashMap<String, String>)startIntent.getSerializableExtra("SENT GIFT MAP");
+            receivedGiftsMap = (HashMap<String, String>)startIntent.getSerializableExtra("RECEIVED GIFT MAP");
+            Log.d("LPC", "sent gifts map in main activity: "+sentGiftsMap.toString());
+            Log.d("LPC", "received gifts map in main activity: "+receivedGiftsMap.toString());
+            homeFragment = new HomeFragment();
+            Bundle bundle = new Bundle();
+
+            bundle.putSerializable("SENT GIFT MAP", startIntent.getSerializableExtra("SENT GIFT MAP"));
+            bundle.putSerializable("RECEIVED GIFT MAP", startIntent.getSerializableExtra("RECEIVED GIFT MAP"));
+
+            homeFragment.setArguments(bundle);
+            navId = R.id.nav_home;
+        }
+//        //go to create gift fragment
+//        else if(startIntent.getBooleanExtra("MAKING GIFT", false)){
+//            createGiftFragment = new CreateGiftFragment();
+//            Bundle bundle = new Bundle();
+//
+//            bundle.putString("FRIEND NAME", startIntent.getStringExtra("FRIEND NAME"));
+//            bundle.putString("FRIEND ID", startIntent.getStringExtra("FRIEND ID"));
+//
+//
+//            mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
+//            Log.d("LPC", "container activity got gift: " + mGift.toString());
+//            bundle.putSerializable(Globals.CURR_GIFT_KEY, mGift);
+//
+//            createGiftFragment.setArguments(bundle);
+//
+//            navId = R.id.nav_create_gift;
+//        }
+
+        else{
+            if(mFirebaseUser == null){
+                //starts login page
+                // Choose authentication providers
+                List<AuthUI.IdpConfig> providers = Arrays.asList(
+                        new AuthUI.IdpConfig.EmailBuilder().build(),
+                        new AuthUI.IdpConfig.PhoneBuilder().build(),
+                        new AuthUI.IdpConfig.GoogleBuilder().build());
+                // Create and launch sign-in intent
+                startActivityForResult(
+                        AuthUI.getInstance()
+                                .createSignInIntentBuilder()
+                                .setAvailableProviders(providers)
+                                .build(),
+                        RC_SIGN_IN);
+            } else{
+                if(startIntent.getBooleanExtra("SENT GIFT", false)){
+                    mGift = new Gift();
+                    Log.d("LPC", "onCreate: made a new gift");
+                }
+                //go to download splash
+                Intent intent = new Intent(this, DownloadSplashActivity.class);
+                intent.putExtra("USER ID", mFirebaseUser.getUid());
+                intent.putExtra("GET GIFTS", true);
+                startActivity(intent);
+            }
+            navId = R.id.nav_home;
+        }
+
+        navigateToFragment(navId);
+    }
+
+    // creates fragment if chosen
+    public void navigateToFragment(int navId) {
+        if (navId == R.id.nav_friends_list){
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, friendsFragment, "FriendsFragment").commit();
+        }
+        else if (navId == R.id.nav_home){
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, homeFragment, "HomeFragment").commit();
+        }
+        else if (navId == R.id.nav_settings){
+//            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, createGiftFragment, "CreateGiftFragment").commit();
+        }
+    }
+
+    //navigates to and from fragment
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        item.setChecked(true);
+        navId = item.getItemId();
+
+        //needs to update the gift lists on home, if home selected
+        if(navId == R.id.nav_home){
+            Intent intent = new Intent(this, DownloadSplashActivity.class);
+            intent.putExtra("USER ID", mFirebaseUser.getUid());
+            intent.putExtra("GET GIFTS", true);
+            startActivity(intent);
+        } else {
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    navigateToFragment((item.getItemId()));
+                }
+            }, 250);
+
+        }
+
+//        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    // To handle state changes
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(NAV_ITEM_ID, navId);
+    }
+
+    private void onAuthSuccess(FirebaseUser currentUser) {
+        String userId = currentUser.getUid();
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putString("userId", currentUser.getUid());
+        editor.apply();
+
+        //go to download splash
+        Intent intent = new Intent(this, DownloadSplashActivity.class);
+        intent.putExtra("USER ID", userId);
+        intent.putExtra("GET GIFTS", true);
+        startActivity(intent);
     }
 
     @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        return NavigationUI.navigateUp(navController, myAppBarConfiguration)
-                || super.onSupportNavigateUp();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("LPC", "onActivityResult: called");
+        if (requestCode == RC_SIGN_IN) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+            DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+            if (resultCode == RESULT_OK) {
+                Log.d("LPC", "result ok");
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                Query query = db.child("users").orderByChild("userId").equalTo(user.getUid());
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot){
+                        Log.d("LPC", "does data snap exist?: "+snapshot.exists());
+                        if(snapshot.exists()){
+                            Log.d("LPC", "snapshot exists");
+                            activityUser = UserManager.snapshotToUser(snapshot, user.getUid());
+                            Log.d("LPC", "user exists");
+                        }
+                        else activityUser = UserManager.snapshotToEmptyUser(snapshot, user);
+                        onAuthSuccess(user);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+            } else {
+                Log.d("iandebug", "User Login Failed");
+            }
+
+        }
+    }
+
+    /**
+     * Request user permission to write to external storage
+     */
+    public void checkPermissions() {
+        if (Build.VERSION.SDK_INT < 23)
+            return;
+        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+        }
+    }
+
+    /**
+     * Deal with denial of storage permissions (adapted from class code)
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
+        }else if (grantResults[0] == PackageManager.PERMISSION_DENIED ){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    //Show an explanation to the user *asynchronously*
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("This permission is important for the app.")
+                            .setTitle("Important permission required");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+                            }
+
+                        }
+                    });
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+                }else{
+                    //Never ask again and handle your app without permission.
+                }
+            }
+        }
     }
 }
+

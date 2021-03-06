@@ -1,13 +1,11 @@
 package com.rayhc.giftly;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -17,6 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.rayhc.giftly.util.Gift;
+import com.rayhc.giftly.util.Globals;
+
 public class LinkActivity extends AppCompatActivity {
 
     private Button mSaveButton, mCancelButton, mDeleteButton;
@@ -24,6 +25,8 @@ public class LinkActivity extends AppCompatActivity {
 
     //get gift
     private Gift mGift;
+
+    private String friendName, friendID;
 
     //from review
     private boolean mFromReview;
@@ -39,6 +42,8 @@ public class LinkActivity extends AppCompatActivity {
         Log.d("LPC", "onCreate: saved gift: " + mGift.toString());
         mFromReview = startIntent.getBooleanExtra(Globals.FROM_REVIEW_KEY, false);
         mFileLabel = startIntent.getStringExtra(Globals.FILE_LABEL_KEY);
+        friendName = startIntent.getStringExtra("FRIEND NAME");
+        friendID = startIntent.getStringExtra("FRIEND ID");
 
         //wire button and edit text
         mSaveButton = (Button) findViewById(R.id.choose_link_save_button);
@@ -95,16 +100,20 @@ public class LinkActivity extends AppCompatActivity {
      * Or replace it if replacing
      */
     public void onSave() {
-        String key = "link_" + Globals.sdf.format(new Date(System.currentTimeMillis()));
+//        String key = "link_" + Globals.sdf.format(new Date(System.currentTimeMillis()));
         String link = mEditText.getText().toString();
         try {
             new URL(link);
+            String key = "link_"+Globals.sdf.format(System.currentTimeMillis());
             mGift.getLinks().put(key, link);
             //delete the old link if its a replacement
             if(mFileLabel != null) mGift.getLinks().remove(mFileLabel);
             Log.d("LPC", "set gift link to: " + link);
-            Intent intent = new Intent(this, FragmentContainerActivity.class);
+            Intent intent = new Intent(this, CreateGiftActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
+            intent.putExtra("MAKING GIFT", true);
+            intent.putExtra("FRIEND NAME", friendName);
+            intent.putExtra("FRIEND ID", friendID);
             startActivity(intent);
         } catch (MalformedURLException e) {
             showErrorDialog();
@@ -115,9 +124,12 @@ public class LinkActivity extends AppCompatActivity {
      * Remove the chosen link from the gifts contents
      */
     public void onDelete(){
-        Intent intent = new Intent(this, FragmentContainerActivity.class);
+        Intent intent = new Intent(this, CreateGiftActivity.class);
         mGift.getLinks().remove(mFileLabel);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
+        intent.putExtra("MAKING GIFT", true);
+        intent.putExtra("FRIEND NAME", friendName);
+        intent.putExtra("FRIEND ID", friendID);
         startActivity(intent);
     }
 

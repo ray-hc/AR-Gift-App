@@ -24,4 +24,5 @@
             android:onClick="onViewClick"
             android:text="Check Current User" />
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

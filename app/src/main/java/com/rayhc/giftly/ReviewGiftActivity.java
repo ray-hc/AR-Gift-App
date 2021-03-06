@@ -14,6 +14,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.rayhc.giftly.util.Gift;
+import com.rayhc.giftly.util.Globals;
+import com.rayhc.giftly.util.ListUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,109 +32,118 @@ public class ReviewGiftActivity extends AppCompatActivity {
     private ListView mLinkList, mMediaList;
     private Gift gift;
 
-    //TODO: change this placeholder
-    private String [] data1 ={"Link 1", "Link 2", "Link 3", "Link 4", "Link 5"};
+    private boolean fromOpen;
+    private TextView mMessageView;
+
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review_gift);
 
+        //firebase user data
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
         //wire views
         mLinkList = (ListView)findViewById(R.id.link_listView);
         mMediaList = (ListView)findViewById(R.id.media_listView);
+
+        //wire message view and hide
+        mMessageView = (TextView) findViewById(R.id.message_view);
+        mMessageView.setVisibility(View.GONE);
 
         //get gift object
         Intent startIntent = getIntent();
         gift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
 
+        fromOpen = startIntent.getBooleanExtra("FROM OPEN", false);
+        if(fromOpen && gift.getMessage() != null) {
+            mMessageView.setVisibility(View.VISIBLE);
+            mMessageView.setText("Message: "+gift.getMessage());
+        }
+
         //populate the listview for media
-        Log.d("LPC", "from download splash - contentType : "+gift.getContentType().toString());
-        ArrayList<String> mediaFileNames = new ArrayList<>();
-        mediaFileNames.addAll(gift.getContentType().keySet());
+        if(gift.getContentType() != null){
+            Log.d("LPC", "from download splash - contentType : "+gift.getContentType().toString());
+            ArrayList<String> mediaFileNames = new ArrayList<>();
+            mediaFileNames.addAll(gift.getContentType().keySet());
+            mMediaList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mediaFileNames));
+            mMediaList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String label = (String) parent.getItemAtPosition(position);
+                    Log.d("LPC", "media list view position click label: "+ label);
+
+                    Intent intent;
+                    //go to ViewContents if opening a gift, else go to ImageActivity
+                    if(label.startsWith("image")) {
+                        if(fromOpen) intent = new Intent(getApplicationContext(), ViewContentsActivity.class);
+                        else intent = new Intent(getApplicationContext(), ImageActivity.class);
+                        intent.putExtra(Globals.CURR_GIFT_KEY, gift);
+                        intent.putExtra(Globals.FILE_LABEL_KEY, label);
+                        intent.putExtra("FROM OPEN", startIntent.getBooleanExtra("FROM OPEN", false));
+                        intent.putExtra(Globals.FROM_REVIEW_KEY, true);
+                        startActivity(intent);
+                    }
+                    //go to ViewContents if opening a gift, else go to VideoActivity
+                    else if(label.startsWith("video")){
+                        if(fromOpen) intent = new Intent(getApplicationContext(), ViewContentsActivity.class);
+                        else intent = new Intent(getApplicationContext(), VideoActivity.class);
+                        intent.putExtra(Globals.CURR_GIFT_KEY, gift);
+                        intent.putExtra(Globals.FILE_LABEL_KEY, label);
+                        intent.putExtra("FROM OPEN", startIntent.getBooleanExtra("FROM OPEN", false));
+                        intent.putExtra(Globals.FROM_REVIEW_KEY, true);
+                        startActivity(intent);
+                    }
+
+                }
+            });
+        }
+
 
         //populate the listview for links
-        Log.d("LPC", "from download splash - contentType : "+gift.getLinks().toString());
-        ArrayList<String> linkNames = new ArrayList<>();
-        linkNames.addAll(gift.getLinks().keySet());
+        if(gift.getLinks() != null){
+            Log.d("LPC", "from download splash - contentType : "+gift.getLinks().toString());
+            ArrayList<String> linkNames = new ArrayList<>();
+            linkNames.addAll(gift.getLinks().keySet());
+            mLinkList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, linkNames));
+            mLinkList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String label = (String) parent.getItemAtPosition(position);
+                    Log.d("LPC", "media list view position click label: "+ label);
 
-
-        mLinkList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, linkNames));
-        mMediaList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mediaFileNames));
-
-        mLinkList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String label = (String) parent.getItemAtPosition(position);
-                Log.d("LPC", "media list view position click label: "+ label);
-//                String dataPath = gift.getContentType().get(label);
-//                Log.d("LPC", "media list view position click file: "+ dataPath);
-
-                Intent intent;
-                intent = new Intent(getApplicationContext(), LinkActivity.class);
-                intent.putExtra(Globals.CURR_GIFT_KEY, gift);
-                intent.putExtra(Globals.FILE_LABEL_KEY, label);
-                intent.putExtra(Globals.FROM_REVIEW_KEY, true);
-                startActivity(intent);
-            }
-        });
-
-        mMediaList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String label = (String) parent.getItemAtPosition(position);
-                Log.d("LPC", "media list view position click label: "+ label);
-//                String dataPath = gift.getContentType().get(label);
-//                Log.d("LPC", "media list view position click file: "+ dataPath);
-
-                Intent intent;
-                //go to ImageActivity if an image
-                if(label.startsWith("image")) {
-                    intent = new Intent(getApplicationContext(), ImageActivity.class);
+                    Intent intent;
+                    //go to ViewContents if opening a gift, else go to LinkActivity
+                    if(fromOpen) intent = new Intent(getApplicationContext(), ViewContentsActivity.class);
+                    else intent = new Intent(getApplicationContext(), LinkActivity.class);
                     intent.putExtra(Globals.CURR_GIFT_KEY, gift);
                     intent.putExtra(Globals.FILE_LABEL_KEY, label);
                     intent.putExtra(Globals.FROM_REVIEW_KEY, true);
                     startActivity(intent);
                 }
-                //go to VideoActivity if a video
-                else if(label.startsWith("video")){
-                    intent = new Intent(getApplicationContext(), VideoActivity.class);
-                    intent.putExtra(Globals.CURR_GIFT_KEY, gift);
-                    intent.putExtra(Globals.FILE_LABEL_KEY, label);
-                    intent.putExtra(Globals.FROM_REVIEW_KEY, true);
-                    startActivity(intent);
-                }
+            });
+        }
 
-            }
-        });
 
         ListUtils.setDynamicHeight(mLinkList);
         ListUtils.setDynamicHeight(mMediaList);
     }
-
-
     /**
-     * Util class so the listviews all fit
+     * Go back to ReviewGift on back pressed, if from open
      */
-    public static class ListUtils {
-        public static void setDynamicHeight(ListView mListView) {
-            ListAdapter mListAdapter = mListView.getAdapter();
-            if (mListAdapter == null) {
-                // when adapter is null
-                return;
-            }
-            int height = 0;
-            int desiredWidth = View.MeasureSpec.makeMeasureSpec(mListView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-            for (int i = 0; i < mListAdapter.getCount(); i++) {
-                View listItem = mListAdapter.getView(i, null, mListView);
-                listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-                height += listItem.getMeasuredHeight();
-            }
-            ViewGroup.LayoutParams params = mListView.getLayoutParams();
-            params.height = height + (mListView.getDividerHeight() * (mListAdapter.getCount() - 1));
-            mListView.setLayoutParams(params);
-            mListView.requestLayout();
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(fromOpen){
+            Intent intent = new Intent(this, DownloadSplashActivity.class);
+            intent.putExtra("USER ID", mFirebaseUser.getUid());
+            intent.putExtra("GET GIFTS", true);
+            startActivity(intent);
         }
     }
-
 }

@@ -2,48 +2,28 @@ package com.rayhc.giftly;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.MediaController;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.storage.FileDownloadTask;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.rayhc.giftly.util.Gift;
+import com.rayhc.giftly.util.Globals;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
 
 public class VideoActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_PICK_FROM_GALLERY = 2;
 
-//    //storage ref
-//    private FirebaseStorage mStorage;
-//    private StorageReference storageRef;
 
     //widgets
     private VideoView mVideoView;
@@ -53,6 +33,8 @@ public class VideoActivity extends AppCompatActivity {
     //data from gift
     private Gift mGift;
     private Uri currentData;
+
+    private String friendName, friendID;
 
     //from review
     private boolean mFromReview;
@@ -72,6 +54,8 @@ public class VideoActivity extends AppCompatActivity {
         Log.d("LPC", "onCreate: saved gift: "+mGift.toString());
         mFromReview = startIntent.getBooleanExtra(Globals.FROM_REVIEW_KEY, false);
         mFileLabel = startIntent.getStringExtra(Globals.FILE_LABEL_KEY);
+        friendName = startIntent.getStringExtra("FRIEND NAME");
+        friendID = startIntent.getStringExtra("FRIEND ID");
 
         //wire button and video view
         mChooseButton = (Button) findViewById(R.id.video_choose_button);
@@ -146,8 +130,11 @@ public class VideoActivity extends AppCompatActivity {
         //delete the old file if its a replacement
         if(mFileLabel != null) mGift.getContentType().remove(mFileLabel);
         Log.d("LPC", "just video image: "+mGift.getContentType().get(key));
-        Intent intent = new Intent(this, FragmentContainerActivity.class);
+        Intent intent = new Intent(this, CreateGiftActivity.class);
+        intent.putExtra("MAKING GIFT", true);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
+        intent.putExtra("FRIEND NAME", friendName);
+        intent.putExtra("FRIEND ID", friendID);
         startActivity(intent);
     }
 
@@ -155,9 +142,12 @@ public class VideoActivity extends AppCompatActivity {
      * Remove the chosen video from the gifts contents
      */
     public void onDelete(){
-        Intent intent = new Intent(this, FragmentContainerActivity.class);
+        Intent intent = new Intent(this, CreateGiftActivity.class);
         mGift.getContentType().remove(mFileLabel);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
+        intent.putExtra("MAKING GIFT", true);
+        intent.putExtra("FRIEND NAME", friendName);
+        intent.putExtra("FRIEND ID", friendID);
         startActivity(intent);
     }
 
@@ -180,7 +170,7 @@ public class VideoActivity extends AppCompatActivity {
     /**
      * Custom Media Controller so it doesn't disappear
      */
-    public class MyMediaController extends MediaController {
+    public static class MyMediaController extends MediaController {
         public MyMediaController(Context context, AttributeSet attrs) {
             super(context, attrs);
         }

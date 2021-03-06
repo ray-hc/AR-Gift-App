@@ -28,7 +28,8 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
-        android:layout_centerVertical="true"/>
+        android:layout_centerVertical="true"
+        android:inputType="text"/>
 <!--BUTTON LAYOUT-->
     <LinearLayout
         android:id="@+id/choose_link_button_layout"

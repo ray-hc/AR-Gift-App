@@ -1,2 +1,5 @@
 include ':app'
 rootProject.name = "Giftly"
+
+include ':unityLibrary'
+project(':unityLibrary').projectDir=new File('.\\unityLibrary')

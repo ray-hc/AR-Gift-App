@@ -1,11 +1,27 @@
 <resources>
-    <string name="app_name">Giftly</string>
+    <string name="app_name">Joyshare</string>
+    <string name="ok_button">Ok</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="add_friend_button">Add Friend</string>
+    <string name="add_friend_dialog">Add Friend By Email:</string>
+    <string name="normal_dialog_fragment">normal_dialog_fragment</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <string name="send_gift_title">Make Someone\'s Day</string>
-    <string name="send_gift_subtitle">Send a gift now!</string>
+    <string name="send_gift_title">Make \nSomeone\'s Day</string>
+    <string name="send_gift_subtitle">Send a gift</string>
 
     <string name="sent_gifts_title">Sent</string>
     <string name="received_gifts_title">Received</string>
+    <string name="friends_list_title">Friends</string>
+    <string name="requests_list_title">Friend Requests</string>
     <string name="to">To:</string>
     <string name="from">From:</string>
+
+    <!-- Create Gift stuff -->
+    <string name="num_of_pics_added">You\'ve added %1$d media files to this gift.</string>
+    <string name="review_button">Review</string>
+    <string name="create_gift_title">Create Gift</string>
 </resources>

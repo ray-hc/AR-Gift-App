@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="plainCard">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_marginStart">20dp</item>
+        <item name="android:layout_marginEnd">20dp</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:paddingLeft">18dp</item>
+        <item name="android:paddingRight">18dp</item>
+        <item name="android:background">@drawable/card</item>
+        <item name="android:elevation">5dp</item>
+    </style>
+    <style name="gradientCardYellow" parent="plainCard">
+        <item name="android:background">@drawable/card_gradient_yellow</item>
+    </style>
+
+    <style name="header">
+        <item name="android:textColor">@color/blackish</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">28dp</item>
+    </style>
+    <style name="header2">
+        <item name="android:textColor">@color/blackish</item>
+        <item name="fontFamily">sans-serif-black</item>
+        <item name="android:textSize">20dp</item>
+    </style>
+    <style name="header3">
+        <item name="android:textColor">@color/blackish</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">18dp</item>
+    </style>
+    <style name="body">
+        <item name="android:textColor">@color/blackish</item>
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textSize">14dp</item>
+    </style>
+    <style name="body_light">
+        <item name="android:textColor">@color/dark_grey</item>
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textSize">14dp</item>
+    </style>
+    <style name="miniGift">
+        <item name="android:layout_width">20dp</item>
+        <item name="android:layout_height">22dp</item>
+        <item name="srcCompat">@drawable/gift_yellow</item>
+    </style>
+    <style name="arrow">
+        <item name="android:layout_width">20dp</item>
+        <item name="android:layout_height">20dp</item>
+        <item name="srcCompat">@drawable/arrow</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+</resources>

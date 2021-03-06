@@ -1,12 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="test_friends">
-        <item>Karim Itani</item>
-        <item>Ray Crist</item>
-        <item>Uhuru Hashimoto</item>
-        <item>Logan Chang</item>
-        <item>Ian Kim</item>
-    </string-array>
-
 </resources>
