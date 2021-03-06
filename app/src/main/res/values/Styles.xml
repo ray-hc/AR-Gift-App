@@ -16,10 +16,20 @@
     <style name="gradientCardYellow" parent="plainCard">
         <item name="android:background">@drawable/card_gradient_yellow</item>
     </style>
-
+    <style name="title">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="fontFamily">@font/chewy</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textSize">40sp</item>
+    </style>
+    <style name="title2" parent="title">
+        <item name="android:textSize">30sp</item>
+    </style>
     <style name="header">
         <item name="android:textColor">@color/blackish</item>
-        <item name="fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-black</item>
         <item name="android:textSize">28dp</item>
     </style>
     <style name="header2">

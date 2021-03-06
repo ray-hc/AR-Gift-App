@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
@@ -8,10 +8,10 @@ android:orientation="vertical">
 
     <TextView
         android:id="@+id/friends_title"
-        style="@style/header"
+        style="@style/title2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:text="Friends"
         android:textColor="#FFFFFF"
         android:textSize="36sp"
@@ -20,27 +20,24 @@ android:orientation="vertical">
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
+        android:id="@+id/add_friend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginTop="16dp"
-        app:cornerRadius="13dp"
-        android:id="@+id/add_friend"
+        android:fontFamily="sans-serif"
         android:text="@string/add_friend_button"
         android:textColor="@color/blackish"
-        android:fontFamily="sans-serif"
-        android:textSize="14dp"
-        app:layout_constraintRight_toRightOf="@+id/friends_title"
+        app:cornerRadius="13dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintRight_toRightOf="@+id/friends_title"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/friends_layout"
             style="@style/plainCard"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/friends_title">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/friends"
@@ -66,13 +63,9 @@ android:orientation="vertical">
             android:id="@+id/requests_layout"
             style="@style/plainCard"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:backgroundTint="@color/pink"
-            android:backgroundTintMode="multiply"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/friends_layout">
-
+            android:backgroundTintMode="multiply">
 
             <TextView
                 android:id="@+id/requests"
@@ -94,4 +87,4 @@ android:orientation="vertical">
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
