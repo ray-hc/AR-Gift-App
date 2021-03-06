@@ -143,10 +143,10 @@ public class UploadingSplashActivity extends AppCompatActivity {
                     if(snapshot.exists()){
                         toUser = UserManager.snapshotToUser(snapshot, toID);
                         saveGift.setReceiver(toID);
-                        Log.d("LPC", "sendGift: gift sender: "+mGift.getSender());
-                        Log.d("LPC", "sendGift: gift time create: "+mGift.getTimeCreated());
-                        fromUser.addSentGifts(mGift);
-                        toUser.addReceivedGifts(mGift);
+                        Log.d("LPC", "sendGift: gift sender: "+saveGift.getSender());
+                        Log.d("LPC", "sendGift: gift time create: "+saveGift.getTimeCreated());
+                        fromUser.addSentGifts(saveGift);
+                        toUser.addReceivedGifts(saveGift);
                         User finalToUser = toUser;
                         new Thread() {
                             public void run(){

@@ -118,7 +118,8 @@ public class CreateGiftActivity extends AppCompatActivity {
 
         sentGiftMap = (HashMap) extras.getSerializableExtra("SENT GIFT MAP");
         receivedGiftMap = (HashMap) extras.getSerializableExtra("RECEIVED GIFT MAP");
-        
+        Log.d("LPC", "crete gift sent map: "+sentGiftMap.toString());
+
 
         //wire in widgets
         linkButton = findViewById(R.id.link_button);
@@ -204,7 +205,7 @@ public class CreateGiftActivity extends AppCompatActivity {
             for (String label : linkNames) {
                 displayMap.put(newGift.getLinks().get(label), label);
             }
-            linksList.setAdapter(new ArrayAdapter<String>(this, R.layout.link_entry,
+            linksList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
                     new ArrayList<>(displayMap.keySet())));
             linksList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override

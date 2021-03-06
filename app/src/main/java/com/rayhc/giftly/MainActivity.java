@@ -79,9 +79,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Log.d(Globals.TAG, "Created!");
 
         // get first run info
-        if(prefs == null) prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        Log.d("LPC", "is prefs null?: "+(prefs==null));
-        firstRun = prefs.getBoolean("isFirstRun", true);
+        prefs = this.getPreferences(MODE_PRIVATE);
+//        Log.d("LPC", "is prefs null?: "+(prefs==null));
+//        firstRun = prefs.getBoolean("isFirstRun", true);
         Log.d("LPC", "is first run? "+firstRun);
 
         // define fragments
@@ -212,12 +212,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 ////            startActivity(intent);
 //        }
 //        else {
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    navigateToFragment((item.getItemId()));
-                }
-            }, 250);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                navigateToFragment((item.getItemId()));
+            }
+        }, 250);
 
 //        }
 
