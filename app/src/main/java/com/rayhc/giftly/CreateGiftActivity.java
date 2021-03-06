@@ -2,6 +2,7 @@ package com.rayhc.giftly;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.preference.PreferenceManager;
 
 import android.content.Context;
@@ -37,12 +38,13 @@ import static com.rayhc.giftly.util.Globals.SENT_MAP_KEY;
 public class CreateGiftActivity extends AppCompatActivity {
 
     //widgets
-    private TextView recipientLabel, reviewLabel;
+    private TextView recipientLabel, reviewLabel,toTitle, createGiftTitle;
     private Button sendButton, chooseFriendButton, reviewButton;
     private ImageButton linkButton, imageButton, videoButton;
     private EditText messageInput;
     private ListView linksList;
     private Spinner giftTypeSpinner;
+    private ConstraintLayout spinnerCard;
 
     private static final HashMap<String, Integer> GIFT_TYPE_MAP = new HashMap<String, Integer>(){{
         put(Globals.OTHER, 0);
@@ -134,6 +136,9 @@ public class CreateGiftActivity extends AppCompatActivity {
         reviewLabel = findViewById(R.id.review_label);
         reviewButton = findViewById(R.id.review_contents_button);
         messageInput = findViewById(R.id.message_input);
+        toTitle = findViewById(R.id.toTitle);
+        createGiftTitle = findViewById(R.id.createGiftTitle);
+        spinnerCard = findViewById(R.id.spinnerCard);
 
         //set up spinner
         giftTypeSpinner = findViewById(R.id.gift_type_spinner);
@@ -165,9 +170,11 @@ public class CreateGiftActivity extends AppCompatActivity {
 
             //turn off message input & recipient
             messageInput.setFocusable(false);
-            if (otherName != null && !fromOpen)
-                recipientLabel.setText("This Gift is to: " + otherName);
-            else if (otherName != null) recipientLabel.setText("This Gift is from: " + otherName);
+            recipientLabel.setText(extras.getStringExtra("FRIEND NAME"));
+            if(extras.getBooleanExtra("IS RECEIVED", false))
+                toTitle.setText("From: ");
+            spinnerCard.setVisibility(View.GONE);
+            createGiftTitle.setText("View Gift");
         }
 
         //set up message input

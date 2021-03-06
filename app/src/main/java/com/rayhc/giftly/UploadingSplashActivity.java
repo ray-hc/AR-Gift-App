@@ -235,7 +235,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
                 //make passable strings in form "To: *name* - *message*"
                 Log.d("LPC", "sent gift msg map: " + giftMsgMap.toString());
                 for (String hash : giftMsgMap.keySet()) {
-                    String label = "To: "+giftMsgMap.get(hash);
+                    String label = giftMsgMap.get(hash);
                     //put in map label -> gift hash
                     sentGiftMap.put(label, hash);
                 }
@@ -305,7 +305,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String message = (String) snapshot.child(hash).child("message").getValue();
-                        String displayText = giftMsgMap.get(hash)+" - "+message;
+                        String displayText = giftMsgMap.get(hash)+"|"+message;
 //                        giftMessages.add(message);
                         giftMsgMap.put(hash, displayText);
                         Log.d("LPC", "getting gift with hash: "+hash+" with message: "+message);
@@ -343,7 +343,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
                 //make passable strings in form "To: *name* - *message*"
                 Log.d("LPC", "received gift msg map: " + giftMsgMap.toString());
                 for (String hash : giftMsgMap.keySet()) {
-                    String label = "From: "+giftMsgMap.get(hash);
+                    String label = giftMsgMap.get(hash);
                     //put in map label -> gift hash
                     receivedGiftsMap.put(label, hash);
                 }
@@ -412,7 +412,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String message = (String) snapshot.child(hash).child("message").getValue();
-                        String displayText = giftMsgMap.get(hash)+" - "+message;
+                        String displayText = giftMsgMap.get(hash)+"|"+message;
                         giftMsgMap.put(hash, displayText);
                         Log.d("LPC", "getting gift with hash: "+hash+" with message: "+message);
                         handler.post(runnable);

@@ -106,6 +106,7 @@ public class HomeFragment extends Fragment {
                 intent.putExtra("HASH VALUE", giftsSent.get(label));
                 intent.putExtra("FROM OPEN", true);
                 intent.putExtra("SENT GIFT MAP",giftsSent);
+                intent.putExtra("USER ID", mFirebaseUser.getUid());
                 intent.putExtra("RECEIVED GIFT MAP",giftsRecieved);
                 Log.d("LPC", "getting gift w hash: "+giftsSent.get(label));
                 startActivity(intent);
@@ -133,6 +134,7 @@ public class HomeFragment extends Fragment {
                 intent.putExtra("HASH VALUE", giftsRecieved.get(label));
                 intent.putExtra("FROM OPEN", true);
                 intent.putExtra("SENT GIFT MAP",giftsSent);
+                intent.putExtra("USER ID", mFirebaseUser.getUid());
                 intent.putExtra("RECEIVED GIFT MAP",giftsRecieved);
                 Log.d("LPC", "getting gift w hash: "+giftsRecieved.get(label));
                 startActivity(intent);

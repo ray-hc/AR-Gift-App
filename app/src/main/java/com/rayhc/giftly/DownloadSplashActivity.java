@@ -65,9 +65,9 @@ public class DownloadSplashActivity extends AppCompatActivity {
         mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
         recipientName = startIntent.getStringExtra("FRIEND NAME");
         recipientID = startIntent.getStringExtra("FRIEND ID");
+        userID = startIntent.getStringExtra("USER ID");
         //if its getting friends
         if(startIntent.getBooleanExtra("GET FRIENDS", false)){
-            userID = startIntent.getStringExtra("USER ID");
             friendMap = new HashMap<>();
 
             Intent intent = new Intent(this, ChooseFriendActivity.class);
@@ -82,7 +82,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
         }
         //if its getting sent & received gifts
         else if(startIntent.getBooleanExtra("GET GIFTS", false)){
-            userID = startIntent.getStringExtra("USER ID");
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra(GOT_GIFTS_KEY, true);
             GetSentGiftsThread sentGiftsThread = new GetSentGiftsThread(intent);
@@ -116,6 +115,8 @@ public class DownloadSplashActivity extends AppCompatActivity {
         private Gift loadedGift;
         private Query query;
         private Intent intent;
+        private boolean isReceived;
+        String friendName;
 
         public GiftDownloaderThread(Intent intent){
             this.intent = intent;
@@ -125,6 +126,9 @@ public class DownloadSplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 intent.putExtra(Globals.CURR_GIFT_KEY, loadedGift);
+                Log.d("LPC", "runnable gift download get friend name: "+friendName);
+                intent.putExtra("FRIEND NAME", friendName);
+                intent.putExtra("IS RECEIVED", isReceived);
                 startActivity(intent);
             }
         };
@@ -153,7 +157,11 @@ public class DownloadSplashActivity extends AppCompatActivity {
                         Log.d("LPC", "time loaded gift created "+loadedGift.getTimeCreated());
                         intent.putExtra("OPENED GIFT", loadedGift);
                         intent.putExtra("FROM OPEN", true);
-                        handler.post(runnable);
+                        if(loadedGift.getSender().equals(userID)) getFriendName(loadedGift.getReceiver());
+                        else {
+                            getFriendName(loadedGift.getSender());
+                            isReceived = true;
+                        }
                     } else {
                         showErrorDialog();
                         Log.d("LPC", "snapshot doesn't exist");
@@ -161,6 +169,30 @@ public class DownloadSplashActivity extends AppCompatActivity {
                 }
 
 
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+
+        public void getFriendName(String id){
+            query = mDatabase.child("users").orderByChild(id);
+            query.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
+//                    Log.d("LPC", "snapshot: " + snapshot.getValue());
+                    User user;
+                    if (snapshot.exists()) {
+                        user = snapshot.child(id).getValue(User.class);
+                        friendName = user.getName();
+                        handler.post(runnable);
+                    } else {
+                        showErrorDialog();
+                        Log.d("LPC", "snapshot doesn't exist");
+                    }
+                }
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
 
