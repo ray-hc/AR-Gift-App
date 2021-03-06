@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
                 DatabaseReference db = FirebaseDatabase.getInstance().getReference();
                 String displayUserID = sharedPref.getString("userId", "");
-                if(displayUserID.equals("")) {
+                if(!displayUserID.equals("")) {
                     Query query = db.child("users").orderByChild("userId").equalTo(displayUserID);
                     query.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         //needs to update the gift lists on home, if home selected
         if(navId == R.id.nav_home){
             Intent intent = new Intent(this, DownloadSplashActivity.class);
-            intent.putExtra("USER ID", mFirebaseUser.getUid());
+            intent.putExtra("USER ID", activityUser.getUserId());
             intent.putExtra("GET GIFTS", true);
             startActivity(intent);
         } else {
