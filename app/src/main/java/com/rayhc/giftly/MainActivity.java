@@ -62,6 +62,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
+    private boolean firstRun = true;
+    SharedPreferences prefs;
 
     private Gift mGift;
 
@@ -78,6 +80,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         else {
             navId = R.id.nav_home;
         }
+
+        //get first run info
+        if(prefs == null) prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        Log.d("LPC", "is prefs null?: "+(prefs==null));
+        firstRun = prefs.getBoolean("isFirstRun", true);
+        Log.d("LPC", "is first run? "+firstRun);
 
         //define fragments
         friendsFragment = new FriendsFragment();
@@ -107,7 +115,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
             bundle.putSerializable("SENT GIFT MAP", startIntent.getSerializableExtra("SENT GIFT MAP"));
             bundle.putSerializable("RECEIVED GIFT MAP", startIntent.getSerializableExtra("RECEIVED GIFT MAP"));
-
             homeFragment.setArguments(bundle);
             navId = R.id.nav_home;
         }
@@ -150,15 +157,30 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     Log.d("LPC", "onCreate: made a new gift");
                 }
                 //go to download splash
-                Intent intent = new Intent(this, DownloadSplashActivity.class);
-                intent.putExtra("USER ID", mFirebaseUser.getUid());
-                intent.putExtra("GET GIFTS", true);
-                startActivity(intent);
+                if(firstRun) {
+                    Log.d("LPC", "run in firstRun");
+                    SharedPreferences.Editor edit = prefs.edit();
+                    edit.putBoolean("isFirstRun", Boolean.FALSE);
+                    edit.apply();
+                    Intent intent = new Intent(this, DownloadSplashActivity.class);
+                    intent.putExtra("USER ID", mFirebaseUser.getUid());
+                    intent.putExtra("GET GIFTS", true);
+                    startActivity(intent);
+                }
             }
             navId = R.id.nav_home;
         }
 
         navigateToFragment(navId);
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d("LPC", "onDestroy: set pref to true");
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putBoolean("isFirstRun", Boolean.TRUE);
+        edit.apply();
+        super.onDestroy();
     }
 
     // creates fragment if chosen
@@ -181,12 +203,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         navId = item.getItemId();
 
         //needs to update the gift lists on home, if home selected
-        if(navId == R.id.nav_home){
-            Intent intent = new Intent(this, DownloadSplashActivity.class);
-            intent.putExtra("USER ID", mFirebaseUser.getUid());
-            intent.putExtra("GET GIFTS", true);
-            startActivity(intent);
-        } else {
+//        if(navId == R.id.nav_home){
+////            Intent intent = new Intent(this, DownloadSplashActivity.class);
+////            intent.putExtra("USER ID", mFirebaseUser.getUid());
+////            intent.putExtra("GET GIFTS", true);
+////            startActivity(intent);
+//        }
+//        else {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -194,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 }
             }, 250);
 
-        }
+//        }
 
 //        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
@@ -216,10 +239,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         editor.apply();
 
         //go to download splash
-        Intent intent = new Intent(this, DownloadSplashActivity.class);
-        intent.putExtra("USER ID", userId);
-        intent.putExtra("GET GIFTS", true);
-        startActivity(intent);
+        if(firstRun) {
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.putBoolean("isFirstRun", Boolean.FALSE);
+            edit.apply();
+            Log.d("LPC", "run in first run in auth success");
+            Intent intent = new Intent(this, DownloadSplashActivity.class);
+            intent.putExtra("USER ID", userId);
+            intent.putExtra("GET GIFTS", true);
+            startActivity(intent);
+        }
     }
 
     @Override

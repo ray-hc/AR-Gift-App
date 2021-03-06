@@ -14,6 +14,8 @@ import android.widget.ListView;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.rayhc.giftly.CreateGiftActivity;
 import com.rayhc.giftly.DownloadSplashActivity;
 import com.rayhc.giftly.R;
@@ -32,12 +34,20 @@ public class HomeFragment extends Fragment {
     private ListView sentGifts;
 
     //create gift button
-    private Button createGiftButton;
+    private Button createGiftButton, refreshButton;
+
+    //firebase user info
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+
+        //get firebase user data
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         //get possible gift data
         Bundle extras = getArguments();
@@ -57,12 +67,25 @@ public class HomeFragment extends Fragment {
         recievedGifts = root.findViewById(R.id.inbox_gifts_recieved);
         sentGifts = root.findViewById(R.id.inbox_gifts_sent);
 
-        //wire button
+        //wire buttons
         createGiftButton = root.findViewById(R.id.create_gift_button);
         createGiftButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getContext(), CreateGiftActivity.class));
+                Intent intent = new Intent(getContext(), CreateGiftActivity.class);
+                intent.putExtra("SENT GIFT MAP", giftsSent);
+                intent.putExtra("RECEIVED GIFT MAP", giftsRecieved);
+                startActivity(intent);
+            }
+        });
+        refreshButton = root.findViewById(R.id.refresh_button);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), DownloadSplashActivity.class);
+                intent.putExtra("GET GIFTS", true);
+                intent.putExtra("USER ID", mFirebaseUser.getUid());
+                startActivity(intent);
             }
         });
 
