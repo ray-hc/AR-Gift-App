@@ -71,6 +71,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Intent di = new Intent(this, DemoStartUnityActivity.class);
+        startActivity(di);
+
+
         // get id to restore state if needed
         if (savedInstanceState != null) {
             navId = savedInstanceState.getInt(NAV_ITEM_ID);
@@ -237,6 +241,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }, 250);
 
         }
+
+
 
 //        drawerLayout.closeDrawer(GravityCompat.START);
         return true;

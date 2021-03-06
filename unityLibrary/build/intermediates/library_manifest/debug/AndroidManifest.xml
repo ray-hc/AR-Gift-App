@@ -38,6 +38,12 @@
             android:launchMode="singleTask"
             android:screenOrientation="fullSensor"
             android:theme="@style/UnityThemeSelector" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
             <meta-data
                 android:name="unityplayer.UnityActivity"
                 android:value="true" />
@@ -51,13 +57,13 @@
             android:value="0" />
         <meta-data
             android:name="unity.splash-enable"
-            android:value="False" />
+            android:value="True" />
         <meta-data
             android:name="notch.config"
             android:value="portrait|landscape" />
         <meta-data
             android:name="unity.build-id"
-            android:value="5e920f61-5bef-418a-8875-bec9c19cec63" />
+            android:value="d6df39ab-ca16-43d2-93ce-7ea3e969c128" />
         <meta-data
             android:name="unityplayer.SkipPermissionsDialog"
             android:value="true" />
