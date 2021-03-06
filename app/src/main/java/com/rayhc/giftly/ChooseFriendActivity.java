@@ -21,7 +21,7 @@ public class ChooseFriendActivity extends AppCompatActivity {
 
     private ListView friendListView;
 
-    private HashMap<String, String> friendMap;
+    private HashMap<String, String> friendMap, sentGiftMap, receivedGiftMap;
 
     private Gift mGift;
     private String friendName, friendID;
@@ -36,6 +36,8 @@ public class ChooseFriendActivity extends AppCompatActivity {
         mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
         friendName = startIntent.getStringExtra("FRIEND NAME");
         friendID = startIntent.getStringExtra("FRIEND ID");
+        sentGiftMap = (HashMap) startIntent.getSerializableExtra("SENT GIFT MAP");
+        receivedGiftMap = (HashMap) startIntent.getSerializableExtra("RECEIVED GIFT MAP");
 
         friendListView = (ListView) findViewById(R.id.friends_listView);
         //populate the listview for media
@@ -54,6 +56,8 @@ public class ChooseFriendActivity extends AppCompatActivity {
                 intent.putExtra("MAKING GIFT", true);
                 intent.putExtra("FRIEND ID", friendID);
                 intent.putExtra("FRIEND NAME", label);
+                intent.putExtra("SENT GIFT MAP", startIntent.getSerializableExtra("SENT GIFT MAP"));
+                intent.putExtra("RECEIVED GIFT MAP", startIntent.getSerializableExtra("RECEIVED GIFT MAP"));
                 intent.putExtra("FROM FRIEND CHOOSE", true);
                 intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
                 startActivity(intent);
@@ -69,6 +73,8 @@ public class ChooseFriendActivity extends AppCompatActivity {
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
         intent.putExtra("FRIEND NAME", friendName);
         intent.putExtra("FRIEND ID", friendID);
+        intent.putExtra("SENT GIFT MAP", sentGiftMap);
+        intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
         startActivity(intent);
     }
 }

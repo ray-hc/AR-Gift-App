@@ -10,6 +10,7 @@ import android.widget.EditText;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
+import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -27,6 +28,7 @@ public class LinkActivity extends AppCompatActivity {
     private Gift mGift;
 
     private String friendName, friendID;
+    private HashMap<String, String> sentGiftMap, receivedGiftMap;
 
     //from review
     private boolean mFromReview;
@@ -44,6 +46,8 @@ public class LinkActivity extends AppCompatActivity {
         mFileLabel = startIntent.getStringExtra(Globals.FILE_LABEL_KEY);
         friendName = startIntent.getStringExtra("FRIEND NAME");
         friendID = startIntent.getStringExtra("FRIEND ID");
+        sentGiftMap = (HashMap) startIntent.getSerializableExtra("SENT GIFT MAP");
+        receivedGiftMap = (HashMap) startIntent.getSerializableExtra("RECEIVED GIFT MAP");
 
         //wire button and edit text
         mSaveButton = (Button) findViewById(R.id.choose_link_save_button);
@@ -114,6 +118,8 @@ public class LinkActivity extends AppCompatActivity {
             intent.putExtra("MAKING GIFT", true);
             intent.putExtra("FRIEND NAME", friendName);
             intent.putExtra("FRIEND ID", friendID);
+            intent.putExtra("SENT GIFT MAP", sentGiftMap);
+            intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
             startActivity(intent);
         } catch (MalformedURLException e) {
             showErrorDialog();
@@ -130,6 +136,8 @@ public class LinkActivity extends AppCompatActivity {
         intent.putExtra("MAKING GIFT", true);
         intent.putExtra("FRIEND NAME", friendName);
         intent.putExtra("FRIEND ID", friendID);
+        intent.putExtra("SENT GIFT MAP", sentGiftMap);
+        intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
         startActivity(intent);
     }
 

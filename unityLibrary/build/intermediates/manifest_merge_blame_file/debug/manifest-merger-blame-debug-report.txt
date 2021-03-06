@@ -8,114 +8,114 @@
 8
 9    <uses-sdk
 10        android:minSdkVersion="26"
-10-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml
+10-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml
 11        android:targetSdkVersion="29" />
-11-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml
+11-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml
 12
 13    <uses-feature android:glEsVersion="0x00030000" />
-13-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:16:3-52
-13-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:16:17-49
+13-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:16:3-52
+13-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:16:17-49
 14
 15    <uses-permission android:name="android.permission.INTERNET" />
-15-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:17:3-65
-15-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:17:20-62
+15-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:17:3-65
+15-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:17:20-62
 16
 17    <uses-feature
-17-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:18:3-88
+17-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:18:3-88
 18        android:name="android.hardware.touchscreen"
-18-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:18:17-60
+18-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:18:17-60
 19        android:required="false" />
-19-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:18:61-85
+19-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:18:61-85
 20    <uses-feature
-20-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:19:3-99
+20-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:19:3-99
 21        android:name="android.hardware.touchscreen.multitouch"
-21-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:19:17-71
+21-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:19:17-71
 22        android:required="false" />
-22-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:19:72-96
+22-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:19:72-96
 23    <uses-feature
-23-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:20:3-108
+23-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:20:3-108
 24        android:name="android.hardware.touchscreen.multitouch.distinct"
-24-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:20:17-80
+24-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:20:17-80
 25        android:required="false" />
-25-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:20:81-105
+25-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:20:81-105
 26
 27    <uses-permission android:name="android.permission.CAMERA" />
-27-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:21:3-63
-27-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:21:20-60
+27-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:21:3-63
+27-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:21:20-60
 28
 29    <uses-feature
-29-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:22:3-85
+29-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:22:3-85
 30        android:name="android.hardware.camera.ar"
-30-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:22:17-58
+30-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:22:17-58
 31        android:required="true" />
-31-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:22:59-82
+31-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:22:59-82
 32
 33    <application>
-33-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:4:3-15:17
+33-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:4:3-15:17
 34        <activity
-34-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:5:5-8:16
+34-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:5:5-8:16
 35            android:name="com.unity3d.player.UnityPlayerActivity"
-35-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:5:15-68
+35-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:5:15-68
 36            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density"
-36-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:5:182-363
+36-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:5:182-363
 37            android:hardwareAccelerated="false"
-37-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:5:364-399
+37-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:5:364-399
 38            android:launchMode="singleTask"
-38-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:5:150-181
+38-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:5:150-181
 39            android:screenOrientation="fullSensor"
-39-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:5:111-149
+39-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:5:111-149
 40            android:theme="@style/UnityThemeSelector" >
-40-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:5:69-110
+40-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:5:69-110
 41            <meta-data
-41-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:6:7-82
+41-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:6:7-82
 42                android:name="unityplayer.UnityActivity"
-42-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:6:18-58
+42-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:6:18-58
 43                android:value="true" />
-43-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:6:59-79
+43-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:6:59-79
 44            <meta-data
-44-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:7:7-78
+44-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:7:7-78
 45                android:name="android.notch_support"
-45-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:7:18-54
+45-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:7:18-54
 46                android:value="true" />
-46-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:7:55-75
+46-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:7:55-75
 47        </activity>
 48
 49        <meta-data
-49-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:9:5-69
+49-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:9:5-69
 50            android:name="unity.splash-mode"
-50-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:9:16-48
+50-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:9:16-48
 51            android:value="0" />
-51-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:9:49-66
+51-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:9:49-66
 52        <meta-data
-52-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:10:5-75
+52-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:10:5-75
 53            android:name="unity.splash-enable"
-53-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:10:16-50
+53-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:10:16-50
 54            android:value="False" />
-54-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:10:51-72
+54-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:10:51-72
 55        <meta-data
-55-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:11:5-81
+55-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:11:5-81
 56            android:name="notch.config"
-56-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:11:16-43
+56-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:11:16-43
 57            android:value="portrait|landscape" />
-57-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:11:44-78
+57-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:11:44-78
 58        <meta-data
-58-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:12:5-101
+58-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:12:5-101
 59            android:name="unity.build-id"
-59-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:12:16-45
+59-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:12:16-45
 60            android:value="5e920f61-5bef-418a-8875-bec9c19cec63" />
-60-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:12:46-98
+60-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:12:46-98
 61        <meta-data
-61-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:13:5-88
+61-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:13:5-88
 62            android:name="unityplayer.SkipPermissionsDialog"
-62-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:13:16-64
+62-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:13:16-64
 63            android:value="true" />
-63-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:13:65-85
+63-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:13:65-85
 64        <meta-data
-64-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:14:5-77
+64-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:14:5-77
 65            android:name="com.google.ar.core"
-65-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:14:16-49
+65-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:14:16-49
 66            android:value="required" />
-66-->C:\Users\iansd\AndroidStudioProjects\AR-Gift-App\unityLibrary\src\main\AndroidManifest.xml:14:50-74
+66-->/Users/logan/Desktop/CS65/AR-Gift-App-wUI/unityLibrary/src/main/AndroidManifest.xml:14:50-74
 67    </application>
 68
 69</manifest>
