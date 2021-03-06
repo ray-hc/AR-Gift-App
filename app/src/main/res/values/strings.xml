@@ -17,6 +17,7 @@
     <string name="received_gifts_title">Received</string>
     <string name="friends_list_title">Friends</string>
     <string name="requests_list_title">Friend Requests</string>
+    <string name="user_search">Search for friend by name or by email</string>
     <string name="to">To:</string>
     <string name="from">From:</string>
 
