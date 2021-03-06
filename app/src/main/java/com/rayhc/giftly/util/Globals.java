@@ -17,4 +17,10 @@ public class Globals {
     public static final String SENT_MAP_KEY = "SENT GIFT MAP";
     public static final String REC_MAP_KEY = "RECEIVED GIFT MAP";
     public static final String GOT_GIFTS_KEY = "GOT GIFTS";
+
+    // Gift Types
+    public static final String BDAY = "Birthday";
+    public static final String XMAS = "Christmas";
+    public static final String OTHER = "Other";
+    public static final String[] GIFT_TYPE_ARRAY = {BDAY, XMAS, OTHER};
 }

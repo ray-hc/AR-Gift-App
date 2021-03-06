@@ -106,7 +106,7 @@ public class HomeFragment extends Fragment {
             });
         }
 
-        if(giftsRecieved != null || true){ // added || true for testing.
+        if(giftsRecieved != null){ // added || true for testing.
             //populate the received gift list view
             ArrayList<String> receivedGiftMessages = new ArrayList<>();
             //receivedGiftMessages.addAll(giftsRecieved.keySet()); commenting out for testing
@@ -132,8 +132,8 @@ public class HomeFragment extends Fragment {
              */
         }
 
-        //ListUtils.setDynamicHeight(recievedGifts); not sure what these do? - ray.
-        //ListUtils.setDynamicHeight(sentGifts);
+        ListUtils.setDynamicHeight(recievedGifts);
+        ListUtils.setDynamicHeight(sentGifts);
 
         //give them on click listeners
 

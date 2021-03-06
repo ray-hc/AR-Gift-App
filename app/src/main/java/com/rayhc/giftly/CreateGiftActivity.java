@@ -39,11 +39,11 @@ public class CreateGiftActivity extends AppCompatActivity {
     private EditText messageInput;
     private ListView linksList;
     private Spinner giftTypeSpinner;
-    private static final String[] GIFT_TYPE_ARRAY = {"Normal", "Birthday", "Christmas"};
+
     private static final HashMap<String, Integer> GIFT_TYPE_MAP = new HashMap<String, Integer>(){{
-        put("Normal", 0);
-        put("Birthday", 1);
-        put("Christmas", 2);
+        put(Globals.OTHER, 0);
+        put(Globals.BDAY, 1);
+        put(Globals.XMAS, 2);
     }};
 
     //gift
@@ -132,7 +132,7 @@ public class CreateGiftActivity extends AppCompatActivity {
         //set up spinner
         giftTypeSpinner = findViewById(R.id.gift_type_spinner);
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
-                (this, android.R.layout.simple_spinner_item, GIFT_TYPE_ARRAY);
+                (this, android.R.layout.simple_spinner_item, Globals.GIFT_TYPE_ARRAY);
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         giftTypeSpinner.setAdapter(spinnerArrayAdapter);
         giftTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

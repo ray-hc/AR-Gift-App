@@ -76,6 +76,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             navId = R.id.nav_home;
         }
 
+        Log.d(Globals.TAG, "Created!");
+
         // get first run info
         if(prefs == null) prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         Log.d("LPC", "is prefs null?: "+(prefs==null));
@@ -176,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     protected void onDestroy() {
-        Log.d("LPC", "onDestroy: set pref to true");
+        Log.d("debug", "onDestroy: set pref to true");
         SharedPreferences.Editor edit = prefs.edit();
         edit.putBoolean("isFirstRun", Boolean.TRUE);
         edit.apply();
