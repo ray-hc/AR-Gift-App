@@ -12,9 +12,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="NameInFunFont"
+        android:text="@string/app_name"
         android:textColor="#FFFFFF"
-        android:textSize="36sp"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -34,26 +34,26 @@
             style="@style/header"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-medium"
             android:text="@string/send_gift_title"
             app:layout_constraintEnd_toStartOf="@+id/presentImg"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/newGiftSubtitle"
-            style="@style/body"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/create_gift_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="#FFFFFF"
             android:text="@string/send_gift_subtitle"
+            app:cornerRadius="13dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/newGiftTitle" />
 
         <ImageView
             android:id="@+id/presentImg"
-            android:layout_width="67dp"
-            android:layout_height="62dp"
+            android:layout_width="70dp"
+            android:layout_height="90dp"
             android:layout_marginStart="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -156,11 +156,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        android:id="@+id/create_gift_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CREATE GIFT"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
