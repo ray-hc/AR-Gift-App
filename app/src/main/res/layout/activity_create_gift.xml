@@ -185,7 +185,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:text="@string/num_of_pics_added"
+                android:text="@string/media_added"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/picIcon"
                 app:layout_constraintTop_toTopOf="parent"

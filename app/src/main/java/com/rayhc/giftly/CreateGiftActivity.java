@@ -30,6 +30,10 @@ import com.rayhc.giftly.util.Globals;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.rayhc.giftly.util.Globals.GOT_GIFTS_KEY;
+import static com.rayhc.giftly.util.Globals.REC_MAP_KEY;
+import static com.rayhc.giftly.util.Globals.SENT_MAP_KEY;
+
 public class CreateGiftActivity extends AppCompatActivity {
 
     //widgets
@@ -200,7 +204,7 @@ public class CreateGiftActivity extends AppCompatActivity {
             for (String label : linkNames) {
                 displayMap.put(newGift.getLinks().get(label), label);
             }
-            linksList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
+            linksList.setAdapter(new ArrayAdapter<String>(this, R.layout.link_entry,
                     new ArrayList<>(displayMap.keySet())));
             linksList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -212,11 +216,13 @@ public class CreateGiftActivity extends AppCompatActivity {
                     //go to ViewContents if opening a gift, else go to LinkActivity
                     if (fromOpen) intent = new Intent(getApplicationContext(), ViewContentsActivity.class);
                     else intent = new Intent(getApplicationContext(), LinkActivity.class);
+
                     intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
                     intent.putExtra(Globals.FILE_LABEL_KEY, displayMap.get(label));
                     intent.putExtra(Globals.FROM_REVIEW_KEY, true);
-                    intent.putExtra("SENT GIFT MAP", sentGiftMap);
-                    intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
+                    intent.putExtra(SENT_MAP_KEY, sentGiftMap);
+                    intent.putExtra(REC_MAP_KEY, receivedGiftMap);
+
                     startActivity(intent);
                 }
             });
@@ -229,18 +235,19 @@ public class CreateGiftActivity extends AppCompatActivity {
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             intent.putExtra("FRIEND NAME", recipientName);
             intent.putExtra("FRIEND ID", recipientID);
-            intent.putExtra("SENT GIFT MAP", sentGiftMap);
-            intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
+            intent.putExtra(SENT_MAP_KEY, sentGiftMap);
+            intent.putExtra(REC_MAP_KEY, receivedGiftMap);
             startActivity(intent);
         });
 
         //set up review button
-        if (newGift.getContentType() == null || newGift.getContentType().size() == 0)
+        if (newGift.getContentType() == null || newGift.getContentType().size() == 0) {
             reviewButton.setEnabled(false);
+            reviewLabel.setText(getString(R.string.media_added, 0));
+        }
         else {
-
-            String text = "Click to review/edit your gift's " + newGift.getContentType().size() + " media files";
-            reviewButton.setText(text);
+            reviewButton.setEnabled(true);
+            reviewLabel.setText(getString(R.string.media_added, newGift.getContentType().size()));
         }
         reviewButton.setOnClickListener(v1 ->  {
             Intent intent;
@@ -251,8 +258,8 @@ public class CreateGiftActivity extends AppCompatActivity {
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             intent.putExtra("FRIEND NAME", recipientName);
             intent.putExtra("FRIEND ID", recipientID);
-            intent.putExtra("SENT GIFT MAP", sentGiftMap);
-            intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
+            intent.putExtra(SENT_MAP_KEY, sentGiftMap);
+            intent.putExtra(REC_MAP_KEY, receivedGiftMap);
             startActivity(intent);
         });
 
@@ -262,8 +269,8 @@ public class CreateGiftActivity extends AppCompatActivity {
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             intent.putExtra("FRIEND NAME", recipientName);
             intent.putExtra("FRIEND ID", recipientID);
-            intent.putExtra("SENT GIFT MAP", sentGiftMap);
-            intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
+            intent.putExtra(SENT_MAP_KEY, sentGiftMap);
+            intent.putExtra(REC_MAP_KEY, receivedGiftMap);
             startActivity(intent);
         });
 
@@ -272,8 +279,8 @@ public class CreateGiftActivity extends AppCompatActivity {
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             intent.putExtra("FRIEND NAME", recipientName);
             intent.putExtra("FRIEND ID", recipientID);
-            intent.putExtra("SENT GIFT MAP", sentGiftMap);
-            intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
+            intent.putExtra(SENT_MAP_KEY, sentGiftMap);
+            intent.putExtra(REC_MAP_KEY, receivedGiftMap);
             startActivity(intent);
         });
 
@@ -285,8 +292,8 @@ public class CreateGiftActivity extends AppCompatActivity {
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             intent.putExtra("FROM USER ID", mUserId);
             intent.putExtra("TO USER ID", recipientID);
-            intent.putExtra("SENT GIFT MAP", sentGiftMap);
-            intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
+            intent.putExtra(SENT_MAP_KEY, sentGiftMap);
+            intent.putExtra(REC_MAP_KEY, receivedGiftMap);
             startActivity(intent);
         });
 
@@ -297,8 +304,8 @@ public class CreateGiftActivity extends AppCompatActivity {
             intent.putExtra("USER ID", mUserId);
             intent.putExtra("FRIEND NAME", recipientName);
             intent.putExtra("FRIEND ID", recipientID);
-            intent.putExtra("SENT GIFT MAP", sentGiftMap);
-            intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
+            intent.putExtra(SENT_MAP_KEY, sentGiftMap);
+            intent.putExtra(REC_MAP_KEY, receivedGiftMap);
             startActivity(intent);
         });
     }
@@ -307,9 +314,9 @@ public class CreateGiftActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("GOT GIFTS", true);
-        intent.putExtra("SENT GIFT MAP", sentGiftMap);
-        intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
+        intent.putExtra(GOT_GIFTS_KEY, true);
+        intent.putExtra(SENT_MAP_KEY, sentGiftMap);
+        intent.putExtra(REC_MAP_KEY, receivedGiftMap);
 //        intent.putExtra("USER ID", mUserId);
 //        intent.putExtra("GET GIFTS", true);
         startActivity(intent);
