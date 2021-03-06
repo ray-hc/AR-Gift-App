@@ -59,7 +59,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private boolean firstRun = true;
-    SharedPreferences prefs;
+    private SharedPreferences prefs;
+    private SharedPreferences.Editor editor;
+    private Startup startup;
+
 
     private Gift mGift;
 
@@ -79,9 +82,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Log.d(Globals.TAG, "Created!");
 
         // get first run info
-        prefs = this.getPreferences(MODE_PRIVATE);
+        Startup startup = (Startup) getApplication();
 //        Log.d("LPC", "is prefs null?: "+(prefs==null));
-//        firstRun = prefs.getBoolean("isFirstRun", true);
+//        prefs = this.getSharedPreferences("PREFERENCES", MODE_PRIVATE);
+//        editor = prefs.edit();
+        firstRun = startup.getFirstRun();
         Log.d("LPC", "is first run? "+firstRun);
 
         // define fragments
@@ -112,6 +117,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
             bundle.putSerializable(SENT_MAP_KEY, startIntent.getSerializableExtra(SENT_MAP_KEY));
             bundle.putSerializable(REC_MAP_KEY, startIntent.getSerializableExtra(REC_MAP_KEY));
+            if(startIntent.getBooleanExtra("NEED REFRESH", false))
+                bundle.putBoolean("NEED REFRESH", true);
             homeFragment.setArguments(bundle);
             navId = R.id.nav_home;
         }
@@ -144,13 +151,21 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 //go to download splash
                 if(firstRun) {
                     Log.d("LPC", "run in firstRun");
-                    SharedPreferences.Editor edit = prefs.edit();
-                    edit.putBoolean("isFirstRun", Boolean.FALSE);
-                    edit.apply();
+//                    editor.putBoolean("isFirstRun", Boolean.FALSE);
+//                    editor.apply();
+                    startup.setFistRun(false);
+                    Log.d("LPC", "first run is now: "+startup.getFirstRun());
                     Intent intent = new Intent(this, DownloadSplashActivity.class);
                     intent.putExtra("USER ID", mFirebaseUser.getUid());
                     intent.putExtra("GET GIFTS", true);
                     startActivity(intent);
+                } else {
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(SENT_MAP_KEY, startIntent.getSerializableExtra(SENT_MAP_KEY));
+                    bundle.putSerializable(REC_MAP_KEY, startIntent.getSerializableExtra(REC_MAP_KEY));
+//                    if(startIntent.getBooleanExtra("NEED REFRESH", false))
+//                        bundle.putBoolean("NEED REFRESH", true);
+                    homeFragment.setArguments(bundle);
                 }
             }
             navId = R.id.nav_home;
@@ -178,10 +193,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     protected void onDestroy() {
-        Log.d("debug", "onDestroy: set pref to true");
-        SharedPreferences.Editor edit = prefs.edit();
-        edit.putBoolean("isFirstRun", Boolean.TRUE);
-        edit.apply();
+//        editor.putBoolean("isFirstRun", Boolean.TRUE);
+//        editor.apply();
+        startup.setFistRun(true);
+        Log.d("LPC", "first run is now: "+startup.getFirstRun());
         super.onDestroy();
     }
 
@@ -233,17 +248,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private void onAuthSuccess(FirebaseUser currentUser) {
         String userId = currentUser.getUid();
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = sharedPref.edit();
 
         editor.putString(Globals.USER_ID_KEY, currentUser.getUid());
         editor.apply();
 
         //go to download splash
         if(firstRun) {
-            SharedPreferences.Editor edit = prefs.edit();
-            edit.putBoolean("isFirstRun", Boolean.FALSE);
-            edit.apply();
+//            editor.putBoolean("isFirstRun", Boolean.FALSE);
+//            editor.apply();
+            startup.setFistRun(false);
             Log.d("LPC", "run in first run in auth success");
             Intent intent = new Intent(this, DownloadSplashActivity.class);
             intent.putExtra("USER ID", userId);

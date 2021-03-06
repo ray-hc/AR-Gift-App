@@ -12,6 +12,7 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:name=".Startup"
         android:theme="@style/Theme.Giftly">
         <activity android:name=".CreateGiftActivity"></activity>
         <activity android:name=".EditContentsActivity" />

@@ -1,6 +1,7 @@
 package com.rayhc.giftly;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -43,8 +44,10 @@ public class DownloadSplashActivity extends AppCompatActivity {
     private StorageReference storageRef;
     private FirebaseStorage mStorage;
 
-    private String recipientName, recipientID, hashValue, userID;
-    private HashMap<String, String> friendMap;
+    private String recipientName, recipientID, hashValue, userID, giftHash, label;
+    private HashMap<String, String> friendMap, sentGiftMap, receivedGiftMap;
+    private boolean fromOpen, fromReceive;
+
 
 
     private Gift mGift;
@@ -66,6 +69,12 @@ public class DownloadSplashActivity extends AppCompatActivity {
         recipientName = startIntent.getStringExtra("FRIEND NAME");
         recipientID = startIntent.getStringExtra("FRIEND ID");
         userID = startIntent.getStringExtra("USER ID");
+        fromOpen = startIntent.getBooleanExtra("FROM OPEN", false);
+        giftHash = startIntent.getStringExtra("HASH VALUE");
+        sentGiftMap = (HashMap) startIntent.getSerializableExtra("SENT GIFT MAP");
+        receivedGiftMap =(HashMap) startIntent.getSerializableExtra("RECEIVED GIFT MAP");
+        label = startIntent.getStringExtra("LABEL");
+        fromReceive = startIntent.getBooleanExtra("FROM RECEIVED", false);
         //if its getting friends
         if(startIntent.getBooleanExtra("GET FRIENDS", false)){
             friendMap = new HashMap<>();
@@ -83,9 +92,9 @@ public class DownloadSplashActivity extends AppCompatActivity {
         //if its getting sent & received gifts
         else if(startIntent.getBooleanExtra("GET GIFTS", false)){
             Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra(GOT_GIFTS_KEY, true);
             GetSentGiftsThread sentGiftsThread = new GetSentGiftsThread(intent);
             sentGiftsThread.start();
+
         }
         //if its getting a gift
         else{
@@ -94,13 +103,8 @@ public class DownloadSplashActivity extends AppCompatActivity {
             Log.d("LPC", "getting gift w hash: "+hashValue);
             Log.d("LPC", "running gift downloader thread: from open? "+startIntent.getBooleanExtra("FROM OPEN", false));
 
-            Intent intent = new Intent(this, CreateGiftActivity.class);
-            intent.putExtra("FROM OPEN", startIntent.getBooleanExtra("FROM OPEN", false));
-            intent.putExtra("HASH VALUE", startIntent.getStringExtra("HASH VALUE"));
-            intent.putExtra("SENT GIFT MAP", startIntent.getSerializableExtra("SENT GIFT MAP"));
-            intent.putExtra("RECEIVED GIFT MAP", startIntent.getSerializableExtra("RECEIVED GIFT MAP"));
-            intent.putExtra("LABEL", startIntent.getStringExtra("LABEL"));
-            GiftDownloaderThread giftDownloaderThread = new GiftDownloaderThread(intent);
+
+            GiftDownloaderThread giftDownloaderThread = new GiftDownloaderThread();
             giftDownloaderThread.start();
         }
 
@@ -115,20 +119,34 @@ public class DownloadSplashActivity extends AppCompatActivity {
         private Gift loadedGift;
         private Query query;
         private Intent intent;
-        private boolean isReceived;
+        private boolean isReceived, wasOpened;
         String friendName;
 
-        public GiftDownloaderThread(Intent intent){
-            this.intent = intent;
+        public GiftDownloaderThread(){
         }
 
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
+                //TODO: change the 'else' to the AR activity
+                if(wasOpened) intent = new Intent(getApplicationContext(), CreateGiftActivity.class);
+                else intent = new Intent(getApplicationContext(), CreateGiftActivity.class);
+                intent.putExtra("OPENED GIFT", loadedGift);
+                intent.putExtra("FROM OPEN", true);
+                intent.putExtra("HASH VALUE", hashValue);
+                intent.putExtra("SENT GIFT MAP", sentGiftMap);
+                intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
+                intent.putExtra("LABEL", label);
                 intent.putExtra(Globals.CURR_GIFT_KEY, loadedGift);
                 Log.d("LPC", "runnable gift download get friend name: "+friendName);
                 intent.putExtra("FRIEND NAME", friendName);
                 intent.putExtra("IS RECEIVED", isReceived);
+                intent.putExtra("WAS OPENED", wasOpened);
+                if(!wasOpened) {
+                    Log.d("LPC", "marking gift as opened in db from get gift thread");
+                    MarkOpenedThread markOpenedThread = new MarkOpenedThread(intent, hashValue);
+                    markOpenedThread.start();
+                }
                 startActivity(intent);
             }
         };
@@ -154,9 +172,9 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     Log.d("LPC", "snapshot: " + snapshot.getValue());
                     if (snapshot.exists()) {
                         loadedGift = snapshot.child(hashValue).getValue(Gift.class);
+                        if(fromReceive) wasOpened = loadedGift.isOpened();
+                        else wasOpened = true;
                         Log.d("LPC", "time loaded gift created "+loadedGift.getTimeCreated());
-                        intent.putExtra("OPENED GIFT", loadedGift);
-                        intent.putExtra("FROM OPEN", true);
                         if(loadedGift.getSender().equals(userID)) getFriendName(loadedGift.getReceiver());
                         else {
                             getFriendName(loadedGift.getSender());
@@ -200,6 +218,39 @@ public class DownloadSplashActivity extends AppCompatActivity {
             });
         }
     }
+
+    /**
+     * Thread to mark a gift as opened
+     */
+    public class MarkOpenedThread extends Thread{
+        private Intent intent;
+        private String giftHash;
+        public MarkOpenedThread(Intent intent, String giftHash){
+            this.intent = intent;
+            this.giftHash = giftHash;
+        }
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                startActivity(intent);
+            }
+        };
+
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        @Override
+        public void run() {
+            super.run();
+            mDatabase.child("gifts").child(giftHash).child("opened").setValue(true,
+                    new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                            handler.post(runnable);
+                        }
+                    });
+        }
+    }
     /**
      * Populate the spinner with this user's friends names
      */
@@ -235,13 +286,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     User newUser = new User();
                     if(snapshot.exists()){
                         newUser = UserManager.snapshotToUser(snapshot, userID);
-                        //DUMMY CODE
-//                        HashMap<String, String> dummyMap = new HashMap<>();
-//                        //karim and ian
-////                        dummyMap.put("pszb1aJGa1YZ5LZBascG7xfbMSI2", "pszb1aJGa1YZ5LZBascG7xfbMSI2");
-////                        dummyMap.put("2XORnShjizLqK2UZwJb87Z8oi8L2", "2XORnShjizLqK2UZwJb87Z8oi8L2");
-//                        newUser.setFriends(dummyMap);
-//                        Log.d("LPC", "set my friends to :"+newUser.getFriends().toString());
                         //get the number of friends this user has
                         numFriends = newUser.getFriends().keySet().size();
                         Log.d("LPC", "num friends: "+numFriends);
@@ -483,6 +527,9 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String message = (String) snapshot.child(hash).child("message").getValue();
+                        boolean opened = (boolean) snapshot.child(hash).child("opened").getValue();
+                        if(opened) message += "OLD";
+                        else message += "NEW";
                         String displayText = giftMsgMap.get(hash)+"|"+message;
 //                        giftMessages.add(message);
                         giftMsgMap.put(hash, displayText);

@@ -62,7 +62,7 @@ public class CreateGiftActivity extends AppCompatActivity {
     String mUserId;
 
     //from open stuff
-    private boolean fromOpen;
+    private boolean fromOpen, wasOpened;
     private String otherName;
 
     //recipient stuff
@@ -101,7 +101,9 @@ public class CreateGiftActivity extends AppCompatActivity {
             newGift.getHashValue();
             newGift.setContentType(new HashMap<>());
             newGift.setLinks(new HashMap<>());
+            wasOpened = true;
         }
+
 
         //get possible recipient user data
         if (extras != null && extras.getStringExtra("FRIEND NAME") != null &&
@@ -114,6 +116,7 @@ public class CreateGiftActivity extends AppCompatActivity {
         //from open data
         if (extras != null && extras.getBooleanExtra("FROM OPEN", false)) {
             fromOpen = true;
+            wasOpened = extras.getBooleanExtra("WAS OPENED", false);
             Log.d("LPC", "from open is true");
             otherName = extras.getStringExtra("OTHER NAME");
         }
@@ -176,6 +179,7 @@ public class CreateGiftActivity extends AppCompatActivity {
             spinnerCard.setVisibility(View.GONE);
             createGiftTitle.setText("View Gift");
         }
+        Log.d("LPC", "was this gift opened before?: "+wasOpened);
 
         //set up message input
         if (newGift.getMessage() != null) messageInput.setText(newGift.getMessage());
@@ -322,6 +326,7 @@ public class CreateGiftActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent = new Intent(this, MainActivity.class);
+        if(!wasOpened) intent.putExtra("NEED REFRESH", true);
         intent.putExtra(GOT_GIFTS_KEY, true);
         intent.putExtra(SENT_MAP_KEY, sentGiftMap);
         intent.putExtra(REC_MAP_KEY, receivedGiftMap);

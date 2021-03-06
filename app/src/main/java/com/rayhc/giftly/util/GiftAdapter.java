@@ -75,6 +75,8 @@ public class GiftAdapter extends ArrayAdapter<String> {
             String[] giftTitleSplit = giftTitle.split("\\|");
             Log.d("LPC", "gift title: "+giftTitle+", at pos: "+pos);
 
+
+            //TODO: truncate last 3 characters in giftTitleSplit[1]
             TextView entryTitle = view.findViewById(R.id.sender_info);
             if(giftTitleSplit.length ==2) entryTitle.setText(giftTitleSplit[0]+" "+giftTitleSplit[1]);
             else entryTitle.setText(giftTitleSplit[0]);

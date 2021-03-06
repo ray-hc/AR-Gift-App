@@ -59,6 +59,14 @@ public class HomeFragment extends Fragment {
             Log.d("LPC", "home frag: sent gift map from bundle content: "+giftsSent.toString());
             giftsRecieved = (HashMap<String, String>) extras.getSerializable("RECEIVED GIFT MAP");
         }
+        //refresh if it needs to
+        if(extras != null && extras.getBoolean("NEED REFRESH", false)){
+            Intent intent = new Intent(getContext(), DownloadSplashActivity.class);
+            intent.putExtra("GET GIFTS", true);
+            intent.putExtra("USER ID", mFirebaseUser.getUid());
+            startActivity(intent);
+        }
+
     }
 
     public View onCreateView(LayoutInflater layoutInflater,
@@ -132,6 +140,7 @@ public class HomeFragment extends Fragment {
                 Intent intent;
                 intent = new Intent(getContext(), DownloadSplashActivity.class);
                 intent.putExtra("HASH VALUE", giftsRecieved.get(label));
+                intent.putExtra("FROM RECEIVED", true);
                 intent.putExtra("FROM OPEN", true);
                 intent.putExtra("SENT GIFT MAP",giftsSent);
                 intent.putExtra("USER ID", mFirebaseUser.getUid());
