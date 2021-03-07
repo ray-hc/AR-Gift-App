@@ -228,6 +228,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private void onAuthSuccess(FirebaseUser currentUser) {
         String userId = currentUser.getUid();
 
+        prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         editor = prefs.edit();
         editor.putString(Globals.USER_ID_KEY, currentUser.getUid());
         editor.apply();
