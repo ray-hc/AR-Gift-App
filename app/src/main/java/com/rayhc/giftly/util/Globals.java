@@ -23,4 +23,8 @@ public class Globals {
     public static final String XMAS = "Christmas";
     public static final String OTHER = "Other";
     public static final String[] GIFT_TYPE_ARRAY = {BDAY, XMAS, OTHER};
+
+    // List adapter:
+    public static final String NEW_GIFT = "NEW";
+    public static final String OLD_GIFT = "OLD";
 }

@@ -77,14 +77,30 @@ public class GiftAdapter extends ArrayAdapter<String> {
 
 
             //TODO: truncate last 3 characters in giftTitleSplit[1]
-            TextView entryTitle = view.findViewById(R.id.sender_info);
-            if(giftTitleSplit.length ==2) entryTitle.setText(giftTitleSplit[0]+" "+giftTitleSplit[1]);
-            else entryTitle.setText(giftTitleSplit[0]);
+            TextView senderTitle = view.findViewById(R.id.sender_info);
+            TextView msgTitle = view.findViewById(R.id.message_info);
+
+            if(giftTitleSplit.length ==2) {
+                senderTitle.setText(giftTitleSplit[0]);
+                msgTitle.setText(giftTitleSplit[1]);
+            }
+            else msgTitle.setText(giftTitleSplit[0]);
 
             ImageView imageView = view.findViewById(R.id.gift_icon);
             imageView.setImageResource(
                     colors.get(pos)
             );
+
+            // Replace opened gift images with confetti :)
+            if (giftTitleSplit.length == 2 && giftTitleSplit[1].endsWith(Globals.OLD_GIFT)) {
+                    imageView.setImageResource(R.drawable.confetti);
+                    msgTitle.setText(giftTitleSplit[1].substring(
+                            0, giftTitleSplit[1].length() - Globals.OLD_GIFT.length()));
+            } else if (giftTitleSplit.length == 2 && giftTitleSplit[1].endsWith(Globals.NEW_GIFT)) {
+                msgTitle.setText(giftTitleSplit[1].substring(
+                        0, giftTitleSplit[1].length() - Globals.OLD_GIFT.length()));
+            }
+
         }
         return view;
     }

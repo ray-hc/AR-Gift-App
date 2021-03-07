@@ -93,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintGuide_begin="20dp"
-                app:layout_constraintGuide_percent="0.6" />
+                app:layout_constraintGuide_percent="0.64" />
 
             <TextView
                 android:id="@+id/sentGiftsTitle"
@@ -119,8 +119,9 @@
                 android:layout_height="match_parent"
                 android:layout_marginTop="8dp"
                 android:text="You haven't sent any gifts yet"
-                app:layout_constraintTop_toBottomOf="@id/sentGiftsTitle"
-                tools:layout_editor_absoluteX="10dp" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/sentGiftsTitle" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -143,7 +144,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintGuide_begin="20dp"
-                app:layout_constraintGuide_percent="0.6" />
+                app:layout_constraintGuide_percent="0.64" />
 
             <TextView
                 android:id="@+id/recGiftsTitle"
@@ -169,8 +170,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="You have no unopened gifts"
-                app:layout_constraintTop_toBottomOf="@id/recGiftsTitle"
-                tools:layout_editor_absoluteX="10dp" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recGiftsTitle" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
