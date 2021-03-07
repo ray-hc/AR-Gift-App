@@ -143,10 +143,10 @@ public class UploadingSplashActivity extends AppCompatActivity {
                     if(snapshot.exists()){
                         toUser = UserManager.snapshotToUser(snapshot, toID);
                         saveGift.setReceiver(toID);
-                        Log.d("LPC", "sendGift: gift sender: "+mGift.getSender());
-                        Log.d("LPC", "sendGift: gift time create: "+mGift.getTimeCreated());
-                        fromUser.addSentGifts(mGift);
-                        toUser.addReceivedGifts(mGift);
+                        Log.d("LPC", "sendGift: gift sender: "+saveGift.getSender());
+                        Log.d("LPC", "sendGift: gift time create: "+saveGift.getTimeCreated());
+                        fromUser.addSentGifts(saveGift);
+                        toUser.addReceivedGifts(saveGift);
                         User finalToUser = toUser;
                         new Thread() {
                             public void run(){
@@ -235,7 +235,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
                 //make passable strings in form "To: *name* - *message*"
                 Log.d("LPC", "sent gift msg map: " + giftMsgMap.toString());
                 for (String hash : giftMsgMap.keySet()) {
-                    String label = "To: "+giftMsgMap.get(hash);
+                    String label = giftMsgMap.get(hash);
                     //put in map label -> gift hash
                     sentGiftMap.put(label, hash);
                 }
@@ -305,7 +305,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String message = (String) snapshot.child(hash).child("message").getValue();
-                        String displayText = giftMsgMap.get(hash)+" - "+message;
+                        String displayText = giftMsgMap.get(hash)+"|"+message;
 //                        giftMessages.add(message);
                         giftMsgMap.put(hash, displayText);
                         Log.d("LPC", "getting gift with hash: "+hash+" with message: "+message);
@@ -343,7 +343,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
                 //make passable strings in form "To: *name* - *message*"
                 Log.d("LPC", "received gift msg map: " + giftMsgMap.toString());
                 for (String hash : giftMsgMap.keySet()) {
-                    String label = "From: "+giftMsgMap.get(hash);
+                    String label = giftMsgMap.get(hash);
                     //put in map label -> gift hash
                     receivedGiftsMap.put(label, hash);
                 }
@@ -412,7 +412,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String message = (String) snapshot.child(hash).child("message").getValue();
-                        String displayText = giftMsgMap.get(hash)+" - "+message;
+                        String displayText = giftMsgMap.get(hash)+"|"+message;
                         giftMsgMap.put(hash, displayText);
                         Log.d("LPC", "getting gift with hash: "+hash+" with message: "+message);
                         handler.post(runnable);

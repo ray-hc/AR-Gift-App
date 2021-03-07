@@ -14,13 +14,18 @@
         android:layout_weight="1"/>
 
     <Button
+        android:id="@+id/remove_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:cornerRadius="13dp"
-        android:id="@+id/remove_button"
-        android:text="Remove"
-        android:textColor="@color/blackish"
+        android:background="@drawable/card"
+        android:backgroundTint="@color/purple_200"
         android:fontFamily="sans-serif"
-        android:textSize="14dp" />
+        android:letterSpacing="0.09"
+        android:minHeight="30dip"
+        android:text="@string/remove_button"
+        android:textColor="@color/blackish"
+        android:textSize="14sp"
+        app:cornerRadius="13dp"
+        app:iconPadding="0dp" />
 
 </LinearLayout>

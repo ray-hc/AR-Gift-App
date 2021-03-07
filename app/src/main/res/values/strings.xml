@@ -19,11 +19,14 @@
     <string name="received_gifts_title">Received</string>
     <string name="friends_list_title">Friends</string>
     <string name="requests_list_title">Friend Requests</string>
+    <string name="user_search">Search for friend by name or by email</string>
     <string name="to">To:</string>
     <string name="from">From:</string>
 
+    <string name="remove_button">Remove</string>
+
     <!-- Create Gift stuff -->
-    <string name="num_of_pics_added">You\'ve added %1$d media files to this gift.</string>
+    <string name="media_added">You\'ve added %1$d media files to this gift.</string>
     <string name="review_button">Review</string>
     <string name="create_gift_title">Create Gift</string>
 </resources>

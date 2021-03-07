@@ -34,6 +34,7 @@ public class GiftAdapter extends ArrayAdapter<String> {
         packageName = context.getPackageName();
         res = context.getResources();
         this.giftTitles = giftTitles;
+        Log.d("LPC", "gift titles in adapter "+giftTitles);
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         // make a randomized list of the color options.
@@ -46,7 +47,7 @@ public class GiftAdapter extends ArrayAdapter<String> {
         Collections.shuffle(colors);
 
         //
-        for (int i = 0; i < giftTitles.size() - colors.size(); i++) {
+        for (int i = 0; i <= (giftTitles.size() - colors.size())+2; i++) {
             colors.add(colors.get(i % colors.size()));
         }
 
@@ -71,14 +72,35 @@ public class GiftAdapter extends ArrayAdapter<String> {
         if (convertView == null) { // if not already cached
             view = inflater.inflate(R.layout.single_gift, null); // make a new view
             String giftTitle = getItem(pos);
+            String[] giftTitleSplit = giftTitle.split("\\|");
+            Log.d("LPC", "gift title: "+giftTitle+", at pos: "+pos);
 
-            TextView entryTitle = view.findViewById(R.id.sender_info);
-            entryTitle.setText(giftTitle);
+
+            //TODO: truncate last 3 characters in giftTitleSplit[1]
+            TextView senderTitle = view.findViewById(R.id.sender_info);
+            TextView msgTitle = view.findViewById(R.id.message_info);
+
+            if(giftTitleSplit.length ==2) {
+                senderTitle.setText(giftTitleSplit[0]);
+                msgTitle.setText(giftTitleSplit[1]);
+            }
+            else msgTitle.setText(giftTitleSplit[0]);
 
             ImageView imageView = view.findViewById(R.id.gift_icon);
             imageView.setImageResource(
                     colors.get(pos)
             );
+
+            // Replace opened gift images with confetti :)
+            if (giftTitleSplit.length == 2 && giftTitleSplit[1].endsWith(Globals.OLD_GIFT)) {
+                    imageView.setImageResource(R.drawable.confetti);
+                    msgTitle.setText(giftTitleSplit[1].substring(
+                            0, giftTitleSplit[1].length() - Globals.OLD_GIFT.length()));
+            } else if (giftTitleSplit.length == 2 && giftTitleSplit[1].endsWith(Globals.NEW_GIFT)) {
+                msgTitle.setText(giftTitleSplit[1].substring(
+                        0, giftTitleSplit[1].length() - Globals.OLD_GIFT.length()));
+            }
+
         }
         return view;
     }

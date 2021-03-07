@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.VideoView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.rayhc.giftly.util.Gift;
 import com.rayhc.giftly.util.Globals;
 
@@ -24,22 +26,24 @@ import java.util.HashMap;
 public class EditContentsActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_PICK_FROM_GALLERY = 2;
 
-    private HashMap<String, String> contentMap;
+    private HashMap<String, String> contentMap, sentGiftMap, receivedGiftMap;
     private Gift mGift;
     private Uri currentData;
     private String friendName, friendID, mFileLabel;
     int currIndex = 0;
 
 
+
     private Button mChooseButton, mSaveButton, mCancelButton, mDeleteButton, mNextButton, mPreviousButton;
     private ImageView mImageView;
     private VideoView mVideoView;
 
-    /*
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_contents);
+
+
         //widgets
         mChooseButton = (Button) findViewById(R.id.contents_choose_button);
         mSaveButton = (Button) findViewById(R.id.contents_save_button);
@@ -58,6 +62,8 @@ public class EditContentsActivity extends AppCompatActivity {
         if(currIndex == contentMap.size()-1) mNextButton.setEnabled(false);
         friendName = startIntent.getStringExtra("FRIEND NAME");
         friendID = startIntent.getStringExtra("FRIEND ID");
+        sentGiftMap = (HashMap) startIntent.getSerializableExtra("SENT GIFT MAP");
+        receivedGiftMap = (HashMap) startIntent.getSerializableExtra("RECEIVED GIFT MAP");
 
         ArrayList<String> keyList = new ArrayList<>(contentMap.keySet());
         handleMedia(keyList);
@@ -131,7 +137,7 @@ public class EditContentsActivity extends AppCompatActivity {
      */
 
     //*******BUTTON CALLBACKS*******//
-    /*
+
     public void onChoose() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         if(mFileLabel.startsWith("image")) intent.setType("image/*");
@@ -141,7 +147,7 @@ public class EditContentsActivity extends AppCompatActivity {
 
     /**
      * Update the content type of the gift with an image and its URI
-     *//*
+     */
     public void onSave() {
         String key;
         if(currentData != null) {
@@ -158,6 +164,8 @@ public class EditContentsActivity extends AppCompatActivity {
         intent.putExtra("MAKING GIFT", true);
         intent.putExtra("FRIEND NAME", friendName);
         intent.putExtra("FRIEND ID", friendID);
+        intent.putExtra("SENT GIFT MAP", sentGiftMap);
+        intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
         startActivity(intent);
 
     }
@@ -165,7 +173,7 @@ public class EditContentsActivity extends AppCompatActivity {
     /**
      * Remove the chosen image from the gifts contents
      */
-    /*
+
     public void onDelete(){
         Intent intent = new Intent(this, CreateGiftActivity.class);
         mGift.getContentType().remove(mFileLabel);
@@ -173,6 +181,8 @@ public class EditContentsActivity extends AppCompatActivity {
         intent.putExtra("MAKING GIFT", true);
         intent.putExtra("FRIEND NAME", friendName);
         intent.putExtra("FRIEND ID", friendID);
+        intent.putExtra("SENT GIFT MAP", sentGiftMap);
+        intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
         startActivity(intent);
 
     }
@@ -193,7 +203,7 @@ public class EditContentsActivity extends AppCompatActivity {
 
     //******ON ACTIVITY RESULT******/
 
-    /*
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -211,5 +221,5 @@ public class EditContentsActivity extends AppCompatActivity {
             }
         }
     }
-    */
+
 }

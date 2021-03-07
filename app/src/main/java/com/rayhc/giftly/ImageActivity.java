@@ -19,6 +19,7 @@ import com.rayhc.giftly.util.Gift;
 import com.rayhc.giftly.util.Globals;
 
 import java.util.Date;
+import java.util.HashMap;
 
 public class ImageActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_PICK_FROM_GALLERY = 2;
@@ -36,6 +37,7 @@ public class ImageActivity extends AppCompatActivity {
     private Uri currentData;
 
     private String friendName, friendID;
+    private HashMap<String, String> sentGiftMap, receivedGiftMap;
 
     //from review
     private boolean mFromReview;
@@ -59,6 +61,8 @@ public class ImageActivity extends AppCompatActivity {
         mFileLabel = startIntent.getStringExtra(Globals.FILE_LABEL_KEY);
         friendName = startIntent.getStringExtra("FRIEND NAME");
         friendID = startIntent.getStringExtra("FRIEND ID");
+        sentGiftMap = (HashMap) startIntent.getSerializableExtra("SENT GIFT MAP");
+        receivedGiftMap = (HashMap) startIntent.getSerializableExtra("RECEIVED GIFT MAP");
 
         //wire button and image view
         mChooseButton = (Button) findViewById(R.id.image_choose_button);
@@ -139,6 +143,8 @@ public class ImageActivity extends AppCompatActivity {
         intent.putExtra("MAKING GIFT", true);
         intent.putExtra("FRIEND NAME", friendName);
         intent.putExtra("FRIEND ID", friendID);
+        intent.putExtra("SENT GIFT MAP", sentGiftMap);
+        intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
         startActivity(intent);
 
     }
@@ -153,6 +159,8 @@ public class ImageActivity extends AppCompatActivity {
         intent.putExtra("MAKING GIFT", true);
         intent.putExtra("FRIEND NAME", friendName);
         intent.putExtra("FRIEND ID", friendID);
+        intent.putExtra("SENT GIFT MAP", sentGiftMap);
+        intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
         startActivity(intent);
 
     }

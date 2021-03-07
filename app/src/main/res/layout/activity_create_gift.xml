@@ -8,7 +8,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/card_gradient_yellow"
+        android:background="@drawable/gradient_yellow"
         android:orientation="vertical">
         <!--RECIPIENT-->
 
@@ -25,6 +25,14 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/gift_pink" />
 
+
+        <TextView
+            android:id="@+id/createGiftTitle"
+            style="@style/title2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/create_gift_title"
+            android:textColor="@color/blackish" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/toCard"
@@ -73,7 +81,7 @@
             style="@style/plainCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="#8BC34A"
+            android:backgroundTint="@color/pink"
             android:paddingTop="6dp"
             android:paddingBottom="6dp">
 
@@ -127,7 +135,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Enter a message (optional): "
+                android:hint="Enter a message (required): "
+                android:imeOptions="actionDone"
                 android:inputType="text"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/messageTitle" />
@@ -170,13 +179,13 @@
                 app:srcCompat="@drawable/pic" />
 
             <TextView
-                android:id="@+id/mediaInfo"
+                android:id="@+id/review_label"
                 style="@style/header3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:text="@string/num_of_pics_added"
+                android:text="@string/media_added"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/picIcon"
                 app:layout_constraintTop_toTopOf="parent"
@@ -191,7 +200,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/picIcon"
-                app:layout_constraintTop_toBottomOf="@+id/mediaInfo"
+                app:layout_constraintTop_toBottomOf="@+id/review_label"
                 app:layout_constraintVertical_bias="0.0" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
