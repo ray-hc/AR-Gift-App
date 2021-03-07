@@ -71,8 +71,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent di = new Intent(this, DemoStartUnityActivity.class);
-        startActivity(di);
+        //Intent di = new Intent(this, DemoStartUnityActivity.class);
+        //startActivity(di);
 
 
         // get id to restore state if needed
