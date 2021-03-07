@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -33,10 +32,6 @@ import com.rayhc.giftly.util.ListUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import static com.rayhc.giftly.util.Globals.GOT_GIFTS_KEY;
-import static com.rayhc.giftly.util.Globals.REC_MAP_KEY;
-import static com.rayhc.giftly.util.Globals.SENT_MAP_KEY;
 
 public class CreateGiftActivity extends AppCompatActivity {
 
@@ -212,12 +207,21 @@ public class CreateGiftActivity extends AppCompatActivity {
         //set up review button
         if (newGift.getContentType() == null || newGift.getContentType().size() == 0) {
             reviewButton.setEnabled(false);
-            reviewLabel.setText(getString(R.string.media_added, 0));
+            if (fromOpen) {
+                reviewLabel.setText(getString(R.string.has_media, 0));
+            } else {
+                reviewLabel.setText(getString(R.string.media_added, 0));
+            }
         }
         else {
             reviewButton.setEnabled(true);
-            reviewLabel.setText(getString(R.string.media_added, newGift.getContentType().size()));
+            if (fromOpen) {
+                reviewLabel.setText(getString(R.string.has_media, newGift.getContentType().size()));
+            } else {
+                reviewLabel.setText(getString(R.string.media_added, newGift.getContentType().size()));
+            }
         }
+
         reviewButton.setOnClickListener(v1 ->  {
             Intent intent;
             if (fromOpen) {

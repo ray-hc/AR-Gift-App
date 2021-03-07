@@ -69,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="nobody yet!"
+                android:text="@string/no_recipient"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="@+id/toTitle"
                 app:layout_constraintStart_toEndOf="@+id/toTitle" />
@@ -135,7 +135,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Enter a message (required): "
+                android:hint="@string/required"
                 android:imeOptions="actionDone"
                 android:inputType="text"
                 app:layout_constraintStart_toStartOf="parent"
@@ -199,10 +199,10 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:text="@string/media_added"
+                android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/picIcon"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:textAlignment="center" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <Button
                 android:id="@+id/review_contents_button"
@@ -214,8 +214,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/picIcon"
-                app:layout_constraintTop_toBottomOf="@+id/review_label"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toBottomOf="@+id/review_label" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -228,42 +227,46 @@
 
             <ImageButton
                 android:id="@+id/video_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:background="@drawable/circle_button"
-                android:scaleType="centerCrop"
+                android:padding="8dp"
+                android:elevation="4dp"
+                android:scaleType="centerInside"
                 app:layout_constraintEnd_toStartOf="@+id/image_button"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@android:drawable/ic_menu_slideshow" />
+                app:srcCompat="@drawable/vid_icon"
+                tools:scaleType="centerInside" />
 
             <ImageButton
                 android:id="@+id/image_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/circle_button"
+                android:elevation="4dp"
+                android:padding="8dp"
                 android:scaleType="centerCrop"
                 app:layout_constraintEnd_toStartOf="@+id/link_button"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/video_button"
                 app:layout_constraintTop_toTopOf="@+id/video_button"
-                app:srcCompat="@android:drawable/ic_menu_gallery" />
+                app:srcCompat="@drawable/pic_icon" />
 
             <ImageButton
                 android:id="@+id/link_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:background="@drawable/circle_button"
+                android:padding="8dp"
+                android:elevation="4dp"
                 android:scaleType="centerCrop"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/image_button"
                 app:layout_constraintTop_toTopOf="@+id/video_button"
-                app:srcCompat="@android:drawable/ic_menu_gallery" />
+                app:srcCompat="@drawable/link_icon" />
 
             <Button
                 android:id="@+id/send_button"
