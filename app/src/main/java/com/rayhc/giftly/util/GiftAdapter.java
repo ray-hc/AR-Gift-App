@@ -73,7 +73,7 @@ public class GiftAdapter extends ArrayAdapter<String> {
 
 
             //TODO: truncate last 3 characters in giftTitleSplit[1]
-            TextView senderTitle = view.findViewById(R.id.link_url);
+            TextView senderTitle = view.findViewById(R.id.sender_info);
             TextView msgTitle = view.findViewById(R.id.message_info);
 
             if(giftTitleSplit.length ==2) {
@@ -82,7 +82,7 @@ public class GiftAdapter extends ArrayAdapter<String> {
             }
             else msgTitle.setText(giftTitleSplit[0]);
 
-            ImageView imageView = view.findViewById(R.id.link_icon);
+            ImageView imageView = view.findViewById(R.id.gift_icon);
             imageView.setImageResource(
                     colors.get(pos)
             );

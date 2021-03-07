@@ -10,7 +10,7 @@
     android:paddingBottom="8dp">
 
     <ImageView
-        android:id="@+id/link_icon"
+        android:id="@+id/gift_icon"
         style="@style/miniGift"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -28,20 +28,21 @@
         android:layout_marginBottom="8dp"
         android:ellipsize="end"
         android:singleLine="true"
-        app:layout_constraintBottom_toBottomOf="@+id/link_icon"
-        app:layout_constraintEnd_toStartOf="@+id/link_url"
-        app:layout_constraintStart_toEndOf="@+id/link_icon" />
+        app:layout_constraintBottom_toBottomOf="@+id/gift_icon"
+        app:layout_constraintEnd_toStartOf="@+id/sender_info"
+        app:layout_constraintStart_toEndOf="@+id/gift_icon" />
 
     <TextView
-        android:id="@+id/link_url"
+        android:id="@+id/sender_info"
         style="@style/header3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="2dp"
         android:layout_marginBottom="8dp"
-        android:singleLine="false"
+        android:ellipsize="start"
+        android:singleLine="true"
         android:textColor="@color/dark_grey"
-        app:layout_constraintBottom_toBottomOf="@+id/link_icon"
+        app:layout_constraintBottom_toBottomOf="@+id/gift_icon"
         app:layout_constraintEnd_toStartOf="@+id/arrowClick"
         app:layout_constraintStart_toStartOf="@+id/guideline2" />
 
@@ -52,7 +53,7 @@
         android:layout_height="10dp"
         android:alpha="0.6"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/link_icon" />
+        app:layout_constraintTop_toTopOf="@+id/gift_icon" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"

@@ -107,11 +107,11 @@ public class LinkActivity extends AppCompatActivity {
         try {
             link = fixUpLink(link);
             new URL(link);
-            String key = "link_"+Globals.sdf.format(System.currentTimeMillis());
+            String key = "link_" + Globals.sdf.format(System.currentTimeMillis());
             mGift.getLinks().put(key, link);
             //delete the old link if its a replacement
 
-            if(mFileLabel != null) mGift.getLinks().remove(mFileLabel);
+            if (mFileLabel != null) mGift.getLinks().remove(mFileLabel);
             Log.d("LPC", "set gift link to: " + link);
             Intent intent = new Intent(this, CreateGiftActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
@@ -122,6 +122,7 @@ public class LinkActivity extends AppCompatActivity {
         } catch (MalformedURLException e) {
             showErrorDialog();
         }
+    }
 
     private String fixUpLink(String link) {
 
