@@ -316,7 +316,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
      */
     public class GetSentGiftsThread extends Thread{
         private Intent intent;
-        private int numSentGifts;
+        private int numSentGifts = 0;
         private ArrayList<String> giftRecipientNames = new ArrayList<>();
         private HashMap<String, String> giftMsgMap = new HashMap<>();
         private ArrayList<String> giftHashes = new ArrayList<>();
@@ -425,7 +425,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
      */
     public class GetReceivedGiftsThread extends Thread{
         private Intent intent;
-        private int numReceivedGifts;
+        private int numReceivedGifts = 0;
         private ArrayList<String> giftSenderNames = new ArrayList<>();
         private HashMap<String, String> giftMsgMap = new HashMap<>();
         private ArrayList<String> giftHashes = new ArrayList<>();
