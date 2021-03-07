@@ -520,7 +520,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
                         String message = (String) snapshot.child(hash).child("message").getValue();
                         boolean opened = false;
                         if(snapshot.child(hash).child("opened").getValue() != null)
-                            boolean opened = (boolean) snapshot.child(hash).child("opened").getValue();
+                            opened = (boolean) snapshot.child(hash).child("opened").getValue();
                         if(opened) message += "OLD";
                         else message += "NEW";
                         String displayText = giftMsgMap.get(hash)+"|"+message;
