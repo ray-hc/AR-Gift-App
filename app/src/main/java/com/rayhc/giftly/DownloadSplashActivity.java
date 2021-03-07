@@ -71,8 +71,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
         userID = startIntent.getStringExtra("USER ID");
         fromOpen = startIntent.getBooleanExtra("FROM OPEN", false);
         giftHash = startIntent.getStringExtra("HASH VALUE");
-        sentGiftMap = (HashMap) startIntent.getSerializableExtra("SENT GIFT MAP");
-        receivedGiftMap =(HashMap) startIntent.getSerializableExtra("RECEIVED GIFT MAP");
         label = startIntent.getStringExtra("LABEL");
         fromReceive = startIntent.getBooleanExtra("FROM RECEIVED", false);
         //if its getting friends
@@ -83,8 +81,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
             intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
             intent.putExtra("FRIEND NAME", recipientName);
             intent.putExtra("FRIEND ID", recipientID);
-            intent.putExtra(SENT_MAP_KEY, startIntent.getSerializableExtra(SENT_MAP_KEY));
-            intent.putExtra(REC_MAP_KEY, startIntent.getSerializableExtra(REC_MAP_KEY));
             GetFriendsThread getFriendsThread = new GetFriendsThread(intent);
             getFriendsThread.start();
 
@@ -101,7 +97,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
             Log.d("LPC", "running gift downloader thread");
             hashValue = startIntent.getStringExtra("HASH VALUE");
             Log.d("LPC", "getting gift w hash: "+hashValue);
-            Log.d("LPC", "running gift downloader thread: from open? "+startIntent.getBooleanExtra("FROM OPEN", false));
+            Log.d("LPC", "running gift downloader thread: from open? "+ fromOpen);
 
 
             GiftDownloaderThread giftDownloaderThread = new GiftDownloaderThread();
@@ -134,8 +130,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
                 intent.putExtra("OPENED GIFT", loadedGift);
                 intent.putExtra("FROM OPEN", true);
                 intent.putExtra("HASH VALUE", hashValue);
-                intent.putExtra("SENT GIFT MAP", sentGiftMap);
-                intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
                 intent.putExtra("LABEL", label);
                 intent.putExtra(Globals.CURR_GIFT_KEY, loadedGift);
                 Log.d("LPC", "runnable gift download get friend name: "+friendName);
@@ -200,7 +194,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
-//                    Log.d("LPC", "snapshot: " + snapshot.getValue());
                     User user;
                     if (snapshot.exists()) {
                         user = snapshot.child(id).getValue(User.class);
@@ -323,7 +316,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
         private Intent intent;
         private int numSentGifts;
         private ArrayList<String> giftRecipientNames = new ArrayList<>();
-        //        private ArrayList<String> giftMessages = new ArrayList<>();
         private HashMap<String, String> giftMsgMap = new HashMap<>();
         private ArrayList<String> giftHashes = new ArrayList<>();
         private HashMap<String, String> sentGiftMap = new HashMap<>();
@@ -341,11 +333,8 @@ public class DownloadSplashActivity extends AppCompatActivity {
                 }
                 //make passable strings in form "To: *name* - *message*"
                 Log.d("LPC", "sent gift msg map: " + giftMsgMap.toString());
-//                ArrayList<String> msgList = new ArrayList<>(giftMsgMap.keySet());
                 for (String hash : giftMsgMap.keySet()) {
                     String label = giftMsgMap.get(hash);
-//                    if (giftMessages.get(i) == null) label += giftRecipientNames.get(i);
-//                    else label += (giftRecipientNames.get(i) + " - " + giftMessages.get(i));
                     //put in map label -> gift hash
                     sentGiftMap.put(label, hash);
                 }
@@ -418,7 +407,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String message = (String) snapshot.child(hash).child("message").getValue();
                         String displayText = giftMsgMap.get(hash)+"|"+message;
-//                        giftMessages.add(message);
                         giftMsgMap.put(hash, displayText);
                         Log.d("LPC", "getting gift with hash: "+hash+" with message: "+message);
                         handler.post(runnable);
@@ -437,7 +425,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
         private Intent intent;
         private int numReceivedGifts;
         private ArrayList<String> giftSenderNames = new ArrayList<>();
-        //        private ArrayList<String> giftMessages = new ArrayList<>();
         private HashMap<String, String> giftMsgMap = new HashMap<>();
         private ArrayList<String> giftHashes = new ArrayList<>();
         private HashMap<String, String> receivedGiftsMap = new HashMap<>();
@@ -455,16 +442,14 @@ public class DownloadSplashActivity extends AppCompatActivity {
                 }
                 //make passable strings in form "To: *name* - *message*"
                 Log.d("LPC", "received gift msg map: " + giftMsgMap.toString());
-//                ArrayList<String> msgList = new ArrayList<>(giftMsgMap.keySet());
                 for (String hash : giftMsgMap.keySet()) {
                     String label = giftMsgMap.get(hash);
-//                    if (giftMessages.get(i) == null) label += giftRecipientNames.get(i);
-//                    else label += (giftRecipientNames.get(i) + " - " + giftMessages.get(i));
                     //put in map label -> gift hash
                     receivedGiftsMap.put(label, hash);
                 }
 
                 intent.putExtra(Globals.REC_MAP_KEY, receivedGiftsMap);
+                intent.putExtra("GOT GIFTS", true);
                 Log.d("LPC", "thread done-received gift map: " + receivedGiftsMap.toString());
                 startActivity(intent);
             }
@@ -531,7 +516,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
                         if(opened) message += "OLD";
                         else message += "NEW";
                         String displayText = giftMsgMap.get(hash)+"|"+message;
-//                        giftMessages.add(message);
                         giftMsgMap.put(hash, displayText);
                         Log.d("LPC", "getting gift with hash: "+hash+" with message: "+message);
                         handler.post(runnable);

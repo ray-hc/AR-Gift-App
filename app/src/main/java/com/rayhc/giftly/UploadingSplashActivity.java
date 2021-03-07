@@ -412,6 +412,9 @@ public class UploadingSplashActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String message = (String) snapshot.child(hash).child("message").getValue();
+                        boolean opened = (boolean) snapshot.child(hash).child("opened").getValue();
+                        if(opened) message += "OLD";
+                        else message += "NEW";
                         String displayText = giftMsgMap.get(hash)+"|"+message;
                         giftMsgMap.put(hash, displayText);
                         Log.d("LPC", "getting gift with hash: "+hash+" with message: "+message);

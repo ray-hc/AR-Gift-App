@@ -26,7 +26,7 @@ import java.util.HashMap;
 public class EditContentsActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_PICK_FROM_GALLERY = 2;
 
-    private HashMap<String, String> contentMap, sentGiftMap, receivedGiftMap;
+    private HashMap<String, String> contentMap;
     private Gift mGift;
     private Uri currentData;
     private String friendName, friendID, mFileLabel;
@@ -62,8 +62,6 @@ public class EditContentsActivity extends AppCompatActivity {
         if(currIndex == contentMap.size()-1) mNextButton.setEnabled(false);
         friendName = startIntent.getStringExtra("FRIEND NAME");
         friendID = startIntent.getStringExtra("FRIEND ID");
-        sentGiftMap = (HashMap) startIntent.getSerializableExtra("SENT GIFT MAP");
-        receivedGiftMap = (HashMap) startIntent.getSerializableExtra("RECEIVED GIFT MAP");
 
         ArrayList<String> keyList = new ArrayList<>(contentMap.keySet());
         handleMedia(keyList);
@@ -132,7 +130,6 @@ public class EditContentsActivity extends AppCompatActivity {
 
     /**
      * Go to uploading splash screen on save button
-     * <p>
      * Keep a class reference to the URI which gets altered on every successful image selection
      */
 
@@ -164,8 +161,6 @@ public class EditContentsActivity extends AppCompatActivity {
         intent.putExtra("MAKING GIFT", true);
         intent.putExtra("FRIEND NAME", friendName);
         intent.putExtra("FRIEND ID", friendID);
-        intent.putExtra("SENT GIFT MAP", sentGiftMap);
-        intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
         startActivity(intent);
 
     }
@@ -181,8 +176,6 @@ public class EditContentsActivity extends AppCompatActivity {
         intent.putExtra("MAKING GIFT", true);
         intent.putExtra("FRIEND NAME", friendName);
         intent.putExtra("FRIEND ID", friendID);
-        intent.putExtra("SENT GIFT MAP", sentGiftMap);
-        intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
         startActivity(intent);
 
     }

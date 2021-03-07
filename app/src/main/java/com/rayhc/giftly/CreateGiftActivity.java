@@ -41,7 +41,7 @@ public class CreateGiftActivity extends AppCompatActivity {
 
     //widgets
     private TextView recipientLabel, reviewLabel,toTitle, createGiftTitle;
-    private Button sendButton, chooseFriendButton, reviewButton;
+    private Button sendButton, chooseFriendButton, reviewButton, closeButton;
     private ImageButton linkButton, imageButton, videoButton;
     private EditText messageInput;
     private ListView linksList;
@@ -57,15 +57,13 @@ public class CreateGiftActivity extends AppCompatActivity {
 
     //gift
     private Gift newGift;
-    private HashMap<String, String> sentGiftMap;
-    private HashMap<String, String> receivedGiftMap;
 
     //user id
     SharedPreferences mSharedPref;
     String mUserId;
 
     //from open stuff
-    private boolean fromOpen, wasOpened;
+    private boolean fromOpen, wasOpened = true;
     private String otherName;
 
     //recipient stuff
@@ -93,7 +91,6 @@ public class CreateGiftActivity extends AppCompatActivity {
             newGift = (Gift) extras.getSerializableExtra(Globals.CURR_GIFT_KEY);
             Log.d("LPC", "create frag: got gift from bundle");
             Log.d("LPC", "got gift: " + newGift.toString());
-//            Log.d("LPC", "create frag: gift from bundle content: "+newGift.getContentType().toString());
         }
         //otherwise make a new gift
         else {
@@ -124,11 +121,6 @@ public class CreateGiftActivity extends AppCompatActivity {
             otherName = extras.getStringExtra("OTHER NAME");
         }
 
-        sentGiftMap = (HashMap) extras.getSerializableExtra("SENT GIFT MAP");
-        receivedGiftMap = (HashMap) extras.getSerializableExtra("RECEIVED GIFT MAP");
-        Log.d("LPC", "crete gift sent map: "+sentGiftMap.toString());
-
-
         //wire in widgets
         linkButton = findViewById(R.id.link_button);
         imageButton = findViewById(R.id.image_button);
@@ -142,6 +134,7 @@ public class CreateGiftActivity extends AppCompatActivity {
         recipientLabel = findViewById(R.id.recipient);
         reviewLabel = findViewById(R.id.review_label);
         reviewButton = findViewById(R.id.review_contents_button);
+        closeButton = findViewById(R.id.close_button);
         messageInput = findViewById(R.id.message_input);
         toTitle = findViewById(R.id.toTitle);
         createGiftTitle = findViewById(R.id.createGiftTitle);
@@ -202,9 +195,9 @@ public class CreateGiftActivity extends AppCompatActivity {
                     Log.d("LPC", "set gift message to: " + newGift.getMessage());
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                    return true; // consume.
+                    return true;
                 }
-                return false; // pass on to other listeners.
+                return false;
             }
         });
 
@@ -240,8 +233,6 @@ public class CreateGiftActivity extends AppCompatActivity {
                     intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
                     intent.putExtra(Globals.FILE_LABEL_KEY, displayMap.get(label));
                     intent.putExtra(Globals.FROM_REVIEW_KEY, true);
-                    intent.putExtra(SENT_MAP_KEY, sentGiftMap);
-                    intent.putExtra(REC_MAP_KEY, receivedGiftMap);
 
                     startActivity(intent);
                 }
@@ -258,8 +249,6 @@ public class CreateGiftActivity extends AppCompatActivity {
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             intent.putExtra("FRIEND NAME", recipientName);
             intent.putExtra("FRIEND ID", recipientID);
-            intent.putExtra(SENT_MAP_KEY, sentGiftMap);
-            intent.putExtra(REC_MAP_KEY, receivedGiftMap);
             startActivity(intent);
         });
 
@@ -281,8 +270,6 @@ public class CreateGiftActivity extends AppCompatActivity {
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             intent.putExtra("FRIEND NAME", recipientName);
             intent.putExtra("FRIEND ID", recipientID);
-            intent.putExtra(SENT_MAP_KEY, sentGiftMap);
-            intent.putExtra(REC_MAP_KEY, receivedGiftMap);
             startActivity(intent);
         });
 
@@ -292,8 +279,6 @@ public class CreateGiftActivity extends AppCompatActivity {
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             intent.putExtra("FRIEND NAME", recipientName);
             intent.putExtra("FRIEND ID", recipientID);
-            intent.putExtra(SENT_MAP_KEY, sentGiftMap);
-            intent.putExtra(REC_MAP_KEY, receivedGiftMap);
             startActivity(intent);
         });
 
@@ -302,8 +287,6 @@ public class CreateGiftActivity extends AppCompatActivity {
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             intent.putExtra("FRIEND NAME", recipientName);
             intent.putExtra("FRIEND ID", recipientID);
-            intent.putExtra(SENT_MAP_KEY, sentGiftMap);
-            intent.putExtra(REC_MAP_KEY, receivedGiftMap);
             startActivity(intent);
         });
 
@@ -315,8 +298,6 @@ public class CreateGiftActivity extends AppCompatActivity {
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             intent.putExtra("FROM USER ID", mUserId);
             intent.putExtra("TO USER ID", recipientID);
-            intent.putExtra(SENT_MAP_KEY, sentGiftMap);
-            intent.putExtra(REC_MAP_KEY, receivedGiftMap);
             startActivity(intent);
         });
 
@@ -327,9 +308,11 @@ public class CreateGiftActivity extends AppCompatActivity {
             intent.putExtra("USER ID", mUserId);
             intent.putExtra("FRIEND NAME", recipientName);
             intent.putExtra("FRIEND ID", recipientID);
-            intent.putExtra(SENT_MAP_KEY, sentGiftMap);
-            intent.putExtra(REC_MAP_KEY, receivedGiftMap);
             startActivity(intent);
+        });
+
+        closeButton.setOnClickListener(v16 ->{
+            onBackPressed();
         });
     }
 
@@ -337,12 +320,9 @@ public class CreateGiftActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent = new Intent(this, MainActivity.class);
+        Log.d("LPC", "on back pressed: was opened? "+wasOpened);
         if(!wasOpened) intent.putExtra("NEED REFRESH", true);
-        intent.putExtra(GOT_GIFTS_KEY, true);
-        intent.putExtra(SENT_MAP_KEY, sentGiftMap);
-        intent.putExtra(REC_MAP_KEY, receivedGiftMap);
-//        intent.putExtra("USER ID", mUserId);
-//        intent.putExtra("GET GIFTS", true);
+        intent.putExtra("GOT GIFTS", true);
         startActivity(intent);
     }
 }

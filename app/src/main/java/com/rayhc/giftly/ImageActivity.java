@@ -37,7 +37,6 @@ public class ImageActivity extends AppCompatActivity {
     private Uri currentData;
 
     private String friendName, friendID;
-    private HashMap<String, String> sentGiftMap, receivedGiftMap;
 
     //from review
     private boolean mFromReview;
@@ -61,8 +60,6 @@ public class ImageActivity extends AppCompatActivity {
         mFileLabel = startIntent.getStringExtra(Globals.FILE_LABEL_KEY);
         friendName = startIntent.getStringExtra("FRIEND NAME");
         friendID = startIntent.getStringExtra("FRIEND ID");
-        sentGiftMap = (HashMap) startIntent.getSerializableExtra("SENT GIFT MAP");
-        receivedGiftMap = (HashMap) startIntent.getSerializableExtra("RECEIVED GIFT MAP");
 
         //wire button and image view
         mChooseButton = (Button) findViewById(R.id.image_choose_button);
@@ -118,7 +115,6 @@ public class ImageActivity extends AppCompatActivity {
 
     /**
      * Go to uploading splash screen on save button
-     * <p>
      * Keep a class reference to the URI which gets altered on every successful image selection
      */
 
@@ -143,8 +139,6 @@ public class ImageActivity extends AppCompatActivity {
         intent.putExtra("MAKING GIFT", true);
         intent.putExtra("FRIEND NAME", friendName);
         intent.putExtra("FRIEND ID", friendID);
-        intent.putExtra("SENT GIFT MAP", sentGiftMap);
-        intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
         startActivity(intent);
 
     }
@@ -159,8 +153,6 @@ public class ImageActivity extends AppCompatActivity {
         intent.putExtra("MAKING GIFT", true);
         intent.putExtra("FRIEND NAME", friendName);
         intent.putExtra("FRIEND ID", friendID);
-        intent.putExtra("SENT GIFT MAP", sentGiftMap);
-        intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
         startActivity(intent);
 
     }
