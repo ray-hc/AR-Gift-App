@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,9 +37,11 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
         super.onCreate(savedInstanceState);
 
         String cmdLine = updateUnityCommandLineArguments(getIntent().getStringExtra("unity"));
-        getIntent().putExtra("unity", cmdLine);
+        Intent intent = getIntent();
+        intent.putExtra("unity", cmdLine);
 
         mUnityPlayer = new UnityPlayer(this, this);
+        //mUnityPlayer.newIntent(intent);
         setContentView(mUnityPlayer);
         mUnityPlayer.requestFocus();
     }
@@ -59,6 +62,7 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
         // the last sent intent. The clients access this through a JNI api that allows them
         // to get the intent set on launch. To update that after launch we have to manually
         // replace the intent with the one caught here.
+        Log.d("iandebug", "intent from unityplayeractivity: " + intent);
         setIntent(intent);
         mUnityPlayer.newIntent(intent);
     }
