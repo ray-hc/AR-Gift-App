@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -32,7 +33,6 @@ public class LinkActivity extends AppCompatActivity {
     private Gift mGift;
 
     private String friendName, friendID;
-    private HashMap<String, String> sentGiftMap, receivedGiftMap;
 
     //from review
     private boolean mFromReview;
@@ -46,13 +46,10 @@ public class LinkActivity extends AppCompatActivity {
         Intent startIntent = getIntent();
         mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
         Log.d("LPC", "onCreate: saved gift: " + mGift.toString());
-
         mFromReview = startIntent.getBooleanExtra(Globals.FROM_REVIEW_KEY, false);
         mFileLabel = startIntent.getStringExtra(Globals.FILE_LABEL_KEY);
         friendName = startIntent.getStringExtra("FRIEND NAME");
         friendID = startIntent.getStringExtra("FRIEND ID");
-        sentGiftMap = (HashMap) startIntent.getSerializableExtra("SENT GIFT MAP");
-        receivedGiftMap = (HashMap) startIntent.getSerializableExtra("RECEIVED GIFT MAP");
 
         //wire button and edit text
         mSaveButton = (Button) findViewById(R.id.choose_link_save_button);
@@ -86,12 +83,9 @@ public class LinkActivity extends AppCompatActivity {
         //handle if from the review activity
         if(startIntent.getBooleanExtra(Globals.FROM_REVIEW_KEY, false)){
             String label = startIntent.getStringExtra(Globals.FILE_LABEL_KEY);
-//            String filePath = gift.getContentType().get(label);
-//            Log.d("LPC", "video activity file path: "+filePath);
             mSaveButton.setEnabled(true);
             mDeleteButton.setVisibility(View.VISIBLE);
             mEditText.setText("");
-//            Log.d("LPC", "review uri: "+ Uri.parse(mGift.getContentType().get(mFileLabel)));
             mEditText.setText(mGift.getLinks().get(mFileLabel));
         }
 
@@ -109,48 +103,43 @@ public class LinkActivity extends AppCompatActivity {
      * Or replace it if replacing
      */
     public void onSave() {
-//        String key = "link_" + Globals.sdf.format(new Date(System.currentTimeMillis()));
         String link = mEditText.getText().toString();
         try {
             link = fixUpLink(link);
-            Log.d(Globals.TAG, link);
             new URL(link);
-            String key = "link_"+Globals.sdf.format(System.currentTimeMillis());
+            String key = "link_" + Globals.sdf.format(System.currentTimeMillis());
             mGift.getLinks().put(key, link);
             //delete the old link if its a replacement
 
-            if(mFileLabel != null) mGift.getLinks().remove(mFileLabel);
+            if (mFileLabel != null) mGift.getLinks().remove(mFileLabel);
             Log.d("LPC", "set gift link to: " + link);
             Intent intent = new Intent(this, CreateGiftActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
             intent.putExtra("MAKING GIFT", true);
             intent.putExtra("FRIEND NAME", friendName);
             intent.putExtra("FRIEND ID", friendID);
-            intent.putExtra(SENT_MAP_KEY, sentGiftMap);
-            intent.putExtra(REC_MAP_KEY, receivedGiftMap);
             startActivity(intent);
         } catch (MalformedURLException e) {
             showErrorDialog();
-            Log.d(TAG, link+"");
         }
-
     }
 
     private String fixUpLink(String link) {
 
         String linkToRtrn = link;
+        String[] linkParts = link.split(Pattern.quote("."));
 
-        if (link.split(".").length == 2) {
-            linkToRtrn = "www." + linkToRtrn;
-        } else {
-            Log.d("rhc",link.split(".").length+" - length.");
-        }
         if (!link.contains("http://") && !link.contains("https://")) {
-            linkToRtrn = "https://" + linkToRtrn;
+            if (linkParts.length == 2) {
+                Log.d("rhc", "link size 2!");
+                linkToRtrn = "http://www." + linkToRtrn;
+            } else {
+                Log.d("rhc", "link size not 2!");
+                linkToRtrn = "http://" + linkToRtrn;
+            }
         }
-        return link;
+        return linkToRtrn;
     }
-
     /**
      * Remove the chosen link from the gifts contents
      */
@@ -161,8 +150,6 @@ public class LinkActivity extends AppCompatActivity {
         intent.putExtra("MAKING GIFT", true);
         intent.putExtra("FRIEND NAME", friendName);
         intent.putExtra("FRIEND ID", friendID);
-        intent.putExtra("SENT GIFT MAP", sentGiftMap);
-        intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
         startActivity(intent);
     }
 

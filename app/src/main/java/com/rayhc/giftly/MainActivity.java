@@ -85,10 +85,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Log.d(Globals.TAG, "Created!");
 
         // get first run info
-        Startup startup = (Startup) getApplication();
-//        Log.d("LPC", "is prefs null?: "+(prefs==null));
-//        prefs = this.getSharedPreferences("PREFERENCES", MODE_PRIVATE);
-//        editor = prefs.edit();
+        startup = (Startup) getApplication();
         firstRun = startup.getFirstRun();
         Log.d("LPC", "is first run? "+firstRun);
 
@@ -107,41 +104,28 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         //check permissions
         checkPermissions();
 
-        //determine if we've gotten gifts yet
+        //determine if we've gotten gifts
         Intent startIntent = getIntent();
-        if(startIntent.getBooleanExtra(GOT_GIFTS_KEY, false)){
-            HashMap<String, String> sentGiftsMap, receivedGiftsMap;
-            sentGiftsMap = (HashMap<String, String>)startIntent.getSerializableExtra(SENT_MAP_KEY);
-            receivedGiftsMap = (HashMap<String, String>)startIntent.getSerializableExtra(REC_MAP_KEY);
-            Log.d("LPC", "sent gifts map in main activity: "+sentGiftsMap.toString());
-            Log.d("LPC", "received gifts map in main activity: "+receivedGiftsMap.toString());
-            //homeFragment = new HomeFragment(); <-- I don't think needed bc created new fragment on line 87.
-            Bundle bundle = new Bundle();
+        Log.d("LPC", "GOT GITS? "+startIntent.getBooleanExtra("GOT GIFTS", false));
+        if(startIntent.getBooleanExtra("GOT GIFTS", false)){
+            if(startIntent.getSerializableExtra(Globals.SENT_MAP_KEY) != null){
+                startup.setSentGiftMap((HashMap<String, String>)startIntent.getSerializableExtra(Globals.SENT_MAP_KEY));
+                Log.d("LPC", "startup sent gift map from got gifts: "+startup.getSentGiftMap().toString());
 
-            bundle.putSerializable(SENT_MAP_KEY, startIntent.getSerializableExtra(SENT_MAP_KEY));
-            bundle.putSerializable(REC_MAP_KEY, startIntent.getSerializableExtra(REC_MAP_KEY));
-            if(startIntent.getBooleanExtra("NEED REFRESH", false))
+            }
+            if(startIntent.getSerializableExtra(Globals.REC_MAP_KEY) != null) {
+                startup.setReceivedGiftMap((HashMap<String, String>) startIntent.getSerializableExtra(Globals.REC_MAP_KEY));
+                Log.d("LPC", "startup received gift map from got gifts: " + startup.getReceivedGiftMap().toString());
+            }
+
+            Bundle bundle = new Bundle();
+            if(startIntent.getBooleanExtra("NEED REFRESH", false)) {
+                Log.d("LPC", "onCreate: need refresh");
                 bundle.putBoolean("NEED REFRESH", true);
+            }
             homeFragment.setArguments(bundle);
             navId = R.id.nav_home;
         }
-//        //go to create gift fragment
-//        else if(startIntent.getBooleanExtra("MAKING GIFT", false)){
-//            createGiftFragment = new CreateGiftFragment();
-//            Bundle bundle = new Bundle();
-//
-//            bundle.putString("FRIEND NAME", startIntent.getStringExtra("FRIEND NAME"));
-//            bundle.putString("FRIEND ID", startIntent.getStringExtra("FRIEND ID"));
-//
-//
-//            mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
-//            Log.d("LPC", "container activity got gift: " + mGift.toString());
-//            bundle.putSerializable(Globals.CURR_GIFT_KEY, mGift);
-//
-//            createGiftFragment.setArguments(bundle);
-//
-//            navId = R.id.nav_create_gift;
-//        }
 
         else{
             if(mFirebaseUser == null){
@@ -154,21 +138,24 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 //go to download splash
                 if(firstRun) {
                     Log.d("LPC", "run in firstRun");
-//                    editor.putBoolean("isFirstRun", Boolean.FALSE);
-//                    editor.apply();
                     startup.setFistRun(false);
                     Log.d("LPC", "first run is now: "+startup.getFirstRun());
                     Intent intent = new Intent(this, DownloadSplashActivity.class);
                     intent.putExtra("USER ID", mFirebaseUser.getUid());
                     intent.putExtra("GET GIFTS", true);
                     startActivity(intent);
-                } else {
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable(SENT_MAP_KEY, startIntent.getSerializableExtra(SENT_MAP_KEY));
-                    bundle.putSerializable(REC_MAP_KEY, startIntent.getSerializableExtra(REC_MAP_KEY));
-//                    if(startIntent.getBooleanExtra("NEED REFRESH", false))
-//                        bundle.putBoolean("NEED REFRESH", true);
-                    homeFragment.setArguments(bundle);
+                }
+                //sent a gift and needs to adjust lists
+                else {
+                    if(startIntent.getSerializableExtra(Globals.SENT_MAP_KEY) != null){
+                        startup.setSentGiftMap((HashMap<String, String>)startIntent.getSerializableExtra(Globals.SENT_MAP_KEY));
+                        Log.d("LPC", "startup sent gift map from got gifts: "+startup.getSentGiftMap().toString());
+
+                    }
+                    if(startIntent.getSerializableExtra(Globals.REC_MAP_KEY) != null) {
+                        startup.setReceivedGiftMap((HashMap<String, String>) startIntent.getSerializableExtra(Globals.REC_MAP_KEY));
+                        Log.d("LPC", "startup received gift map from got gifts: " + startup.getReceivedGiftMap().toString());
+                    }
                 }
             }
             navId = R.id.nav_home;
@@ -196,8 +183,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     protected void onDestroy() {
-//        editor.putBoolean("isFirstRun", Boolean.TRUE);
-//        editor.apply();
         startup.setFistRun(true);
         Log.d("LPC", "first run is now: "+startup.getFirstRun());
         super.onDestroy();
@@ -222,14 +207,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         item.setChecked(true);
         navId = item.getItemId();
 
-        //needs to update the gift lists on home, if home selected
-//        if(navId == R.id.nav_home){
-////            Intent intent = new Intent(this, DownloadSplashActivity.class);
-////            intent.putExtra("USER ID", mFirebaseUser.getUid());
-////            intent.putExtra("GET GIFTS", true);
-////            startActivity(intent);
-//        }
-//        else {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -237,7 +214,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }
         }, 250);
 
-//        }
 
         return true;
     }
@@ -252,13 +228,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private void onAuthSuccess(FirebaseUser currentUser) {
         String userId = currentUser.getUid();
 
+        editor = prefs.edit();
         editor.putString(Globals.USER_ID_KEY, currentUser.getUid());
         editor.apply();
 
         //go to download splash
         if(firstRun) {
-//            editor.putBoolean("isFirstRun", Boolean.FALSE);
-//            editor.apply();
             startup.setFistRun(false);
             Log.d("LPC", "run in first run in auth success");
             Intent intent = new Intent(this, DownloadSplashActivity.class);

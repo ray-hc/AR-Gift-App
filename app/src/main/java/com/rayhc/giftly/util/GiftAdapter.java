@@ -42,16 +42,12 @@ public class GiftAdapter extends ArrayAdapter<String> {
 
         for (int drawId : GIFT_COLORS) {
             colors.add(drawId);
-            Log.d(Globals.TAG, ""+drawId);
         }
         Collections.shuffle(colors);
 
-        //
         for (int i = 0; i <= (giftTitles.size() - colors.size())+2; i++) {
             colors.add(colors.get(i % colors.size()));
         }
-
-        Log.d(Globals.TAG, colors.size()+" is size of colors");
     }
 
     public int getCount() {

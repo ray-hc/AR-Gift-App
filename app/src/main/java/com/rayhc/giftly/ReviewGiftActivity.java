@@ -38,8 +38,6 @@ public class ReviewGiftActivity extends AppCompatActivity {
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
 
-    private HashMap<String, String> sentGiftMap, receivedGiftMap;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +59,6 @@ public class ReviewGiftActivity extends AppCompatActivity {
         //get gift object
         Intent startIntent = getIntent();
         gift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
-        sentGiftMap = (HashMap) startIntent.getSerializableExtra("SENT GIFT MAP");
-        receivedGiftMap = (HashMap) startIntent.getSerializableExtra("RECEIVED GIFT MAP");
-
         fromOpen = startIntent.getBooleanExtra("FROM OPEN", false);
         if(fromOpen && gift.getMessage() != null) {
             mMessageView.setVisibility(View.VISIBLE);
@@ -91,8 +86,6 @@ public class ReviewGiftActivity extends AppCompatActivity {
                         intent.putExtra(Globals.FILE_LABEL_KEY, label);
                         intent.putExtra("FROM OPEN", startIntent.getBooleanExtra("FROM OPEN", false));
                         intent.putExtra(Globals.FROM_REVIEW_KEY, true);
-                        intent.putExtra("SENT GIFT MAP", sentGiftMap);
-                        intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
                         startActivity(intent);
                     }
                     //go to ViewContents if opening a gift, else go to VideoActivity
@@ -103,8 +96,6 @@ public class ReviewGiftActivity extends AppCompatActivity {
                         intent.putExtra(Globals.FILE_LABEL_KEY, label);
                         intent.putExtra("FROM OPEN", startIntent.getBooleanExtra("FROM OPEN", false));
                         intent.putExtra(Globals.FROM_REVIEW_KEY, true);
-                        intent.putExtra("SENT GIFT MAP", sentGiftMap);
-                        intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
                         startActivity(intent);
                     }
 
@@ -132,8 +123,6 @@ public class ReviewGiftActivity extends AppCompatActivity {
                     intent.putExtra(Globals.CURR_GIFT_KEY, gift);
                     intent.putExtra(Globals.FILE_LABEL_KEY, label);
                     intent.putExtra(Globals.FROM_REVIEW_KEY, true);
-                    intent.putExtra("SENT GIFT MAP", sentGiftMap);
-                    intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
                     startActivity(intent);
                 }
             });
@@ -153,8 +142,6 @@ public class ReviewGiftActivity extends AppCompatActivity {
             Intent intent = new Intent(this, DownloadSplashActivity.class);
             intent.putExtra("USER ID", mFirebaseUser.getUid());
             intent.putExtra("GET GIFTS", true);
-            intent.putExtra("SENT GIFT MAP", sentGiftMap);
-            intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
             startActivity(intent);
         }
     }
