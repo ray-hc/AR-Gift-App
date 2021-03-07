@@ -20,6 +20,7 @@
         <activity android:name=".ChooseFriendActivity" />
         <activity android:name=".DownloadSplashActivity" />
         <activity android:name=".ReviewGiftActivity" />
+        <activity android:name=".CustomUnityPlayerActivity" />
         <activity android:name=".UploadingSplashActivity" />
         <activity android:name=".FindFriendsActivity" />
         <activity

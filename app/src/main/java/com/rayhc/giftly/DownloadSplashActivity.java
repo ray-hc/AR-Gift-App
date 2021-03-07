@@ -101,7 +101,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
             Log.d("LPC", "getting gift w hash: "+hashValue);
             Log.d("LPC", "running gift downloader thread: from open? "+ fromOpen);
 
-
             GiftDownloaderThread giftDownloaderThread = new GiftDownloaderThread();
             giftDownloaderThread.start();
         }
@@ -126,13 +125,10 @@ public class DownloadSplashActivity extends AppCompatActivity {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
-                intent.putExtra("sceneType",0);
-                startActivity(intent);
-
                 //TODO: change the 'else' to the AR activity
                 if(wasOpened) intent = new Intent(getApplicationContext(), CreateGiftActivity.class);
-                else intent = new Intent(getApplicationContext(), CreateGiftActivity.class);
+                else intent = new Intent(getApplicationContext(), CustomUnityPlayerActivity.class);
+                intent.putExtra("sceneType", loadedGift.getGiftType());
                 intent.putExtra("OPENED GIFT", loadedGift);
                 intent.putExtra("FROM OPEN", true);
                 intent.putExtra("HASH VALUE", hashValue);
