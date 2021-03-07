@@ -8,6 +8,7 @@ import androidx.preference.PreferenceManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -47,7 +48,7 @@ public class CreateGiftActivity extends AppCompatActivity {
     private ListView linksList;
     private Spinner giftTypeSpinner;
     private ConstraintLayout spinnerCard;
-    private View linkCard;
+    private View linkCard, editButtons;
 
     private static final HashMap<String, Integer> GIFT_TYPE_MAP = new HashMap<String, Integer>(){{
         put(Globals.OTHER, 0);
@@ -80,7 +81,6 @@ public class CreateGiftActivity extends AppCompatActivity {
         mSharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         mUserId = mSharedPref.getString("userId", null);
         Log.d("LPC", "create gift - user id: " + mUserId);
-
 
         //reference to DB
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -121,52 +121,14 @@ public class CreateGiftActivity extends AppCompatActivity {
             otherName = extras.getStringExtra("OTHER NAME");
         }
 
-        //wire in widgets
-        linkButton = findViewById(R.id.link_button);
-        imageButton = findViewById(R.id.image_button);
-        videoButton = findViewById(R.id.video_button);
-        sendButton = findViewById(R.id.send_button);
-        chooseFriendButton = findViewById(R.id.choose_recipient_button);
-        sendButton.setEnabled(newGift.getMessage() != null && recipientID != null &&
-                (newGift.getContentType().size() != 0 || newGift.getLinks().size() != 0));
-        linksList = findViewById(R.id.linkList);
-        linkCard = findViewById(R.id.linkCard);
-        recipientLabel = findViewById(R.id.recipient);
-        reviewLabel = findViewById(R.id.review_label);
-        reviewButton = findViewById(R.id.review_contents_button);
-        closeButton = findViewById(R.id.close_button);
-        messageInput = findViewById(R.id.message_input);
-        toTitle = findViewById(R.id.toTitle);
-        createGiftTitle = findViewById(R.id.createGiftTitle);
-        spinnerCard = findViewById(R.id.spinnerCard);
-
-        //set up spinner
-        giftTypeSpinner = findViewById(R.id.gift_type_spinner);
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
-                (this, android.R.layout.simple_spinner_item, Globals.GIFT_TYPE_ARRAY);
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-        giftTypeSpinner.setAdapter(spinnerArrayAdapter);
-        giftTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedItem = parent.getItemAtPosition(position).toString();
-                newGift.setGiftType(GIFT_TYPE_MAP.get(selectedItem));
-            }
-
-            //TODO: to close the onItemSelected
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        wireInWidgets();
+        setUpSpinner();
 
         //handle if from open
         if (fromOpen) {
             //hide editing buttons
-            linkButton.setEnabled(false);
-            imageButton.setEnabled(false);
-            videoButton.setEnabled(false);
-            sendButton.setVisibility(View.INVISIBLE);
+            editButtons.setVisibility(View.GONE);
             chooseFriendButton.setVisibility(View.INVISIBLE);
-            sendButton.setVisibility(View.INVISIBLE);
 
             //turn off message input & recipient
             messageInput.setFocusable(false);
@@ -180,25 +142,22 @@ public class CreateGiftActivity extends AppCompatActivity {
 
         //set up message input
         if (newGift.getMessage() != null) messageInput.setText(newGift.getMessage());
-        messageInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                String input;
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    input = v.getText().toString();
-                    newGift.setMessage(input);
-                    if (input.length() == 0) sendButton.setEnabled(false);
-                    if (recipientID != null &&
-                            (newGift.getContentType().size() != 0 || newGift.getLinks().size() != 0)
-                            && input.length() > 0)
-                        sendButton.setEnabled(true);
-                    Log.d("LPC", "set gift message to: " + newGift.getMessage());
-                    InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                    return true;
-                }
-                return false;
+        messageInput.setOnEditorActionListener((v, actionId, event) -> {
+            String input;
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                input = v.getText().toString();
+                newGift.setMessage(input);
+                if (input.length() == 0) sendButton.setEnabled(false);
+                if (recipientID != null &&
+                        (newGift.getContentType().size() != 0 || newGift.getLinks().size() != 0)
+                        && input.length() > 0)
+                    sendButton.setEnabled(true);
+                Log.d("LPC", "set gift message to: " + newGift.getMessage());
+                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                return true;
             }
+            return false;
         });
 
         //set up the recipient label
@@ -219,23 +178,21 @@ public class CreateGiftActivity extends AppCompatActivity {
             linksList.setAdapter(new LinkAdapter(this, 0, new ArrayList<>(displayMap.keySet())));
             ListUtils.setDynamicHeight(linksList);
 
-            linksList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String label = (String) parent.getItemAtPosition(position);
-                    Log.d("LPC", "link list view position click label: " + label);
-                    Log.d("LPC", "link list clicked link key: " + displayMap.get(label));
-                    Intent intent;
-                    //go to ViewContents if opening a gift, else go to LinkActivity
-                    if (fromOpen) intent = new Intent(getApplicationContext(), ViewContentsActivity.class);
-                    else intent = new Intent(getApplicationContext(), LinkActivity.class);
-
+            linksList.setOnItemClickListener((parent, view, position, id) -> {
+                String label = (String) parent.getItemAtPosition(position);
+                Intent intent;
+                //open link if opening a gift, else go to LinkActivity
+                if (fromOpen) { // open link
+                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse(label));
+                    startActivity(intent);
+                }
+                else {
+                    intent = new Intent(getApplicationContext(), LinkActivity.class);
                     intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
                     intent.putExtra(Globals.FILE_LABEL_KEY, displayMap.get(label));
                     intent.putExtra(Globals.FROM_REVIEW_KEY, true);
-
-                    startActivity(intent);
                 }
+                startActivity(intent);
             });
         } else {
             Log.d(Globals.TAG, "linkcard mia");
@@ -272,7 +229,6 @@ public class CreateGiftActivity extends AppCompatActivity {
             intent.putExtra("FRIEND ID", recipientID);
             startActivity(intent);
         });
-
 
         imageButton.setOnClickListener(v1 -> {
             Intent intent = new Intent(this, ImageActivity.class);
@@ -314,6 +270,53 @@ public class CreateGiftActivity extends AppCompatActivity {
         closeButton.setOnClickListener(v16 ->{
             onBackPressed();
         });
+    }
+
+    // Set up spinner item.
+    private void setUpSpinner() {
+        //set up spinner
+        giftTypeSpinner = findViewById(R.id.gift_type_spinner);
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
+                (this, android.R.layout.simple_spinner_item, Globals.GIFT_TYPE_ARRAY);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        giftTypeSpinner.setAdapter(spinnerArrayAdapter);
+        giftTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedItem = parent.getItemAtPosition(position).toString();
+                newGift.setGiftType(GIFT_TYPE_MAP.get(selectedItem));
+            }
+
+            //TODO: to close the onItemSelected
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    // Make references to Layout items.
+    private void wireInWidgets() {
+        linkButton = findViewById(R.id.link_button);
+        imageButton = findViewById(R.id.image_button);
+        videoButton = findViewById(R.id.video_button);
+
+        sendButton = findViewById(R.id.send_button);
+        chooseFriendButton = findViewById(R.id.choose_recipient_button);
+        sendButton.setEnabled(newGift.getMessage() != null && recipientID != null &&
+                (newGift.getContentType().size() != 0 || newGift.getLinks().size() != 0));
+
+        linksList = findViewById(R.id.linkList);
+        linkCard = findViewById(R.id.linkCard);
+
+        editButtons = findViewById(R.id.editButtons);
+        recipientLabel = findViewById(R.id.recipient);
+        reviewLabel = findViewById(R.id.review_label);
+        reviewButton = findViewById(R.id.review_contents_button);
+        closeButton = findViewById(R.id.close_button);
+        messageInput = findViewById(R.id.message_input);
+
+        toTitle = findViewById(R.id.toTitle);
+        createGiftTitle = findViewById(R.id.createGiftTitle);
+        spinnerCard = findViewById(R.id.spinnerCard);
     }
 
     @Override

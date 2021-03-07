@@ -26,6 +26,7 @@
     <string name="remove_button">Remove</string>
 
     <!-- Create Gift stuff -->
+    <string name="required">(Required)</string>
     <string name="media_added">You\'ve added %1$d media files to this gift.</string>
     <string name="review_button">Review</string>
     <string name="create_gift_title">Create Gift</string>
