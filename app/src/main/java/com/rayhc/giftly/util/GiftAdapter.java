@@ -42,16 +42,12 @@ public class GiftAdapter extends ArrayAdapter<String> {
 
         for (int drawId : GIFT_COLORS) {
             colors.add(drawId);
-            Log.d(Globals.TAG, ""+drawId);
         }
         Collections.shuffle(colors);
 
-        //
         for (int i = 0; i <= (giftTitles.size() - colors.size())+2; i++) {
             colors.add(colors.get(i % colors.size()));
         }
-
-        Log.d(Globals.TAG, colors.size()+" is size of colors");
     }
 
     public int getCount() {
@@ -77,7 +73,7 @@ public class GiftAdapter extends ArrayAdapter<String> {
 
 
             //TODO: truncate last 3 characters in giftTitleSplit[1]
-            TextView senderTitle = view.findViewById(R.id.sender_info);
+            TextView senderTitle = view.findViewById(R.id.link_url);
             TextView msgTitle = view.findViewById(R.id.message_info);
 
             if(giftTitleSplit.length ==2) {
@@ -86,7 +82,7 @@ public class GiftAdapter extends ArrayAdapter<String> {
             }
             else msgTitle.setText(giftTitleSplit[0]);
 
-            ImageView imageView = view.findViewById(R.id.gift_icon);
+            ImageView imageView = view.findViewById(R.id.link_icon);
             imageView.setImageResource(
                     colors.get(pos)
             );

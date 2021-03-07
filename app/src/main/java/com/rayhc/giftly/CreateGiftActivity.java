@@ -27,6 +27,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.rayhc.giftly.util.Gift;
 import com.rayhc.giftly.util.Globals;
+import com.rayhc.giftly.util.LinkAdapter;
+import com.rayhc.giftly.util.ListUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +47,7 @@ public class CreateGiftActivity extends AppCompatActivity {
     private ListView linksList;
     private Spinner giftTypeSpinner;
     private ConstraintLayout spinnerCard;
+    private View linkCard;
 
     private static final HashMap<String, Integer> GIFT_TYPE_MAP = new HashMap<String, Integer>(){{
         put(Globals.OTHER, 0);
@@ -135,6 +138,7 @@ public class CreateGiftActivity extends AppCompatActivity {
         sendButton.setEnabled(newGift.getMessage() != null && recipientID != null &&
                 (newGift.getContentType().size() != 0 || newGift.getLinks().size() != 0));
         linksList = findViewById(R.id.linkList);
+        linkCard = findViewById(R.id.linkCard);
         recipientLabel = findViewById(R.id.recipient);
         reviewLabel = findViewById(R.id.review_label);
         reviewButton = findViewById(R.id.review_contents_button);
@@ -208,7 +212,10 @@ public class CreateGiftActivity extends AppCompatActivity {
         if (recipientName != null) recipientLabel.setText(recipientName);
 
         //set up links list view
-        if (newGift.getLinks() != null) {
+        if (newGift.getLinks() != null && newGift.getLinks().size() > 0) {
+            linkCard.setVisibility(View.VISIBLE);
+            Log.d(Globals.TAG, newGift.getLinks().size()+"");
+
             Log.d("LPC", "from download splash - links : " + newGift.getLinks().toString());
             ArrayList<String> linkNames = new ArrayList<>();
             linkNames.addAll(newGift.getLinks().keySet());
@@ -216,8 +223,9 @@ public class CreateGiftActivity extends AppCompatActivity {
             for (String label : linkNames) {
                 displayMap.put(newGift.getLinks().get(label), label);
             }
-            linksList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
-                    new ArrayList<>(displayMap.keySet())));
+            linksList.setAdapter(new LinkAdapter(this, 0, new ArrayList<>(displayMap.keySet())));
+            ListUtils.setDynamicHeight(linksList);
+
             linksList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -238,6 +246,9 @@ public class CreateGiftActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
+        } else {
+            Log.d(Globals.TAG, "linkcard mia");
+            linkCard.setVisibility(View.GONE);
         }
 
 

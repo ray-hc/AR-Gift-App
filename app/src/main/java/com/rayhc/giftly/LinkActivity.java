@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -139,16 +140,18 @@ public class LinkActivity extends AppCompatActivity {
     private String fixUpLink(String link) {
 
         String linkToRtrn = link;
+        String[] linkParts = link.split(Pattern.quote("."));
 
-        if (link.split(".").length == 2) {
-            linkToRtrn = "www." + linkToRtrn;
-        } else {
-            Log.d("rhc",link.split(".").length+" - length.");
-        }
         if (!link.contains("http://") && !link.contains("https://")) {
-            linkToRtrn = "https://" + linkToRtrn;
+            if (linkParts.length == 2) {
+                Log.d("rhc", "link size 2!");
+                linkToRtrn = "http://www." + linkToRtrn;
+            } else {
+                Log.d("rhc", "link size not 2!");
+                linkToRtrn = "http://" + linkToRtrn;
+            }
         }
-        return link;
+        return linkToRtrn;
     }
 
     /**
@@ -161,8 +164,8 @@ public class LinkActivity extends AppCompatActivity {
         intent.putExtra("MAKING GIFT", true);
         intent.putExtra("FRIEND NAME", friendName);
         intent.putExtra("FRIEND ID", friendID);
-        intent.putExtra("SENT GIFT MAP", sentGiftMap);
-        intent.putExtra("RECEIVED GIFT MAP", receivedGiftMap);
+        intent.putExtra(SENT_MAP_KEY, sentGiftMap);
+        intent.putExtra(REC_MAP_KEY, receivedGiftMap);
         startActivity(intent);
     }
 
