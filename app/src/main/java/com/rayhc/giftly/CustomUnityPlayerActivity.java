@@ -15,6 +15,7 @@ import android.os.Process;
 
 import com.unity3d.player.IUnityPlayerLifecycleEvents;
 import com.unity3d.player.UnityPlayer;
+import com.unity3d.player.UnityPlayerActivity;
 
 public class CustomUnityPlayerActivity extends Activity implements IUnityPlayerLifecycleEvents
 {
@@ -41,7 +42,7 @@ public class CustomUnityPlayerActivity extends Activity implements IUnityPlayerL
         String cmdLine = updateUnityCommandLineArguments(getIntent().getStringExtra("unity"));
         getIntent().putExtra("unity", cmdLine);
 
-        mUnityPlayer = new UnityPlayer(this, this);
+        mUnityPlayer = new UnityPlayer(new UnityPlayerActivity(), this);
         setContentView(mUnityPlayer);
         mUnityPlayer.requestFocus();
     }
@@ -69,9 +70,6 @@ public class CustomUnityPlayerActivity extends Activity implements IUnityPlayerL
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        this.finish();
     }
 
     // Quit Unity

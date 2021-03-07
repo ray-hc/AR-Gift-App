@@ -127,7 +127,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
             public void run() {
                 //TODO: change the 'else' to the AR activity
                 if(wasOpened) intent = new Intent(getApplicationContext(), CreateGiftActivity.class);
-                else intent = new Intent(getApplicationContext(), CustomUnityPlayerActivity.class);
+                else intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
                 intent.putExtra("sceneType", loadedGift.getGiftType());
                 intent.putExtra("OPENED GIFT", loadedGift);
                 intent.putExtra("FROM OPEN", true);
