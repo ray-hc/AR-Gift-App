@@ -77,33 +77,6 @@ public class FriendsFragment extends Fragment {
         return view;
     }
 
-    // To send a friend request
-    public void addFriend(String addedFriendEmail) {
-        Thread thread = new Thread(new Runnable() {
-            private User user;
-
-            @Override
-            public void run() {
-                try {
-                    List<User> list = UserManager.searchUsersByEmail(addedFriendEmail);
-                    user = list.get(0);
-                    Log.d("iandebug", "" + list.size());
-                    Log.d("iandebug", "" + list.get(0).getUserId());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                if (user != null){
-                    UserManager.sendFriendRequest(activityUser, user.getUserId());
-                }
-                else{
-                }
-
-            }
-        });
-        thread.start();
-    }
-
     public void getUserFromDB() {
         GetFriendsListThread thread = new GetFriendsListThread();
         thread.start();

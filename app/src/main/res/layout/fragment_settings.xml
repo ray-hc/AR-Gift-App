@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_yellow"
+    android:background="@drawable/gradient_purp_pink"
     android:elevation="3dp"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
@@ -14,27 +14,66 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="10dp">
 
         <TextView
-            android:id="@+id/textView2"
+            style="@style/title2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="onLogoutClicked"
-            android:paddingLeft="30dp"
+            android:layout_marginTop="20dp"
             android:text="Settings"
-            android:textSize="36sp" />
+            android:textColor="#FFFFFF"
+            android:textSize="36sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/header2"
+            android:text="Name:"/>
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            style="@style/header3"
+            android:text=""/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/header2"
+            android:text="Email:"/>
+
+        <TextView
+            android:id="@+id/tv_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            style="@style/header3"
+            android:text=""/>
 
         <Button
             android:id="@+id/button2"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="30dp"
-            android:onClick="onLogoutClicked"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/card"
+            android:backgroundTint="@color/purple_200"
+            android:fontFamily="sans-serif"
+            android:letterSpacing="0.09"
+            android:minHeight="30dip"
             android:text="Logout"
-            app:strokeColor="#FFFFFF" />
+            android:textColor="@color/blackish"
+            android:textSize="14sp"
+            app:cornerRadius="13dp"
+            android:onClick="onLogoutClicked"
+            android:layout_gravity="center_horizontal"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
