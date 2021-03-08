@@ -429,5 +429,8 @@ public class UploadingSplashActivity extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    public void onBackPressed() {
+        Log.d("LPC", "onBackPressed: in upload");
+    }
 }
