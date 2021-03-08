@@ -41,13 +41,15 @@ public class GiftAdapter extends ArrayAdapter<String> {
         // make a randomized list of the color options.
         colors = new ArrayList<>();
 
+        //a brute fix for occasional OOB errors - Logan
         for (int drawId : GIFT_COLORS) {
             colors.add(drawId);
         }
+
         Collections.shuffle(colors);
 
-        for (int i = 0; i <= (giftTitles.size() - colors.size())+2; i++) {
-            colors.add(colors.get(i % colors.size()));
+        for (int i = 0; i < (giftTitles.size()); i++) {
+            colors.add(GIFT_COLORS[i%(Math.min(GIFT_COLORS.length, giftTitles.size()))]);
         }
     }
 
