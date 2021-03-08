@@ -188,6 +188,8 @@ public class CreateGiftActivity extends AppCompatActivity {
                     intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
                     intent.putExtra(Globals.FILE_LABEL_KEY, displayMap.get(label));
                     intent.putExtra(Globals.FROM_REVIEW_KEY, true);
+                    intent.putExtra("FRIEND NAME", recipientName);
+                    intent.putExtra("FRIEND ID", recipientID);
                 }
                 startActivity(intent);
             });
@@ -199,6 +201,7 @@ public class CreateGiftActivity extends AppCompatActivity {
 
         //click listeners for adding contents to the gift
         linkButton.setOnClickListener(v12 -> {
+            if(messageInput.getText().toString() != null) newGift.setMessage(messageInput.getText().toString());
             Intent intent = new Intent(this, LinkActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             intent.putExtra("FRIEND NAME", recipientName);
@@ -225,6 +228,7 @@ public class CreateGiftActivity extends AppCompatActivity {
         }
 
         reviewButton.setOnClickListener(v1 ->  {
+            if(messageInput.getText().toString() != null) newGift.setMessage(messageInput.getText().toString());
             Intent intent;
             if (fromOpen) {
                 intent = new Intent(this, ViewContentsActivity.class);
@@ -237,6 +241,7 @@ public class CreateGiftActivity extends AppCompatActivity {
         });
 
         imageButton.setOnClickListener(v1 -> {
+            if(messageInput.getText().toString() != null) newGift.setMessage(messageInput.getText().toString());
             Intent intent = new Intent(this, ImageActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             intent.putExtra("FRIEND NAME", recipientName);
@@ -245,6 +250,7 @@ public class CreateGiftActivity extends AppCompatActivity {
         });
 
         videoButton.setOnClickListener(v13 -> {
+            if(messageInput.getText().toString() != null) newGift.setMessage(messageInput.getText().toString());
             Intent intent = new Intent(this, VideoActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             intent.putExtra("FRIEND NAME", recipientName);
@@ -254,6 +260,7 @@ public class CreateGiftActivity extends AppCompatActivity {
 
 
         sendButton.setOnClickListener(v14 -> {
+            if(messageInput.getText().toString() != null) newGift.setMessage(messageInput.getText().toString());
             Intent intent = new Intent(this, UploadingSplashActivity.class);
             //set the message of the gift
             newGift.setMessage(messageInput.getText().toString());
@@ -264,6 +271,7 @@ public class CreateGiftActivity extends AppCompatActivity {
         });
 
         chooseFriendButton.setOnClickListener(v15 -> {
+            if(messageInput.getText().toString() != null) newGift.setMessage(messageInput.getText().toString());
             Intent intent = new Intent(this, DownloadSplashActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             intent.putExtra("GET FRIENDS", true);
