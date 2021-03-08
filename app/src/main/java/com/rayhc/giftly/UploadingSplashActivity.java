@@ -239,7 +239,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
                     //put in map label -> gift hash
                     sentGiftMap.put(label, hash);
                 }
-                intent.putExtra(Globals.SENT_MAP_KEY, sentGiftMap);
+                intent.putExtra("SENT GIFT MAP", sentGiftMap);
                 Log.d("LPC", "thread done - sent gift map: " + sentGiftMap.toString());
                 GetReceivedGiftsThread getReceivedGiftsThread = new GetReceivedGiftsThread(intent);
                 getReceivedGiftsThread.start();
@@ -306,6 +306,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String message = (String) snapshot.child(hash).child("message").getValue();
                         String displayText = giftMsgMap.get(hash)+"|"+message;
+//                        giftMessages.add(message);
                         giftMsgMap.put(hash, displayText);
                         Log.d("LPC", "getting gift with hash: "+hash+" with message: "+message);
                         handler.post(runnable);
@@ -347,9 +348,8 @@ public class UploadingSplashActivity extends AppCompatActivity {
                     receivedGiftsMap.put(label, hash);
                 }
 
-                intent.putExtra(Globals.REC_MAP_KEY, receivedGiftsMap);
+                intent.putExtra("RECEIVED GIFT MAP", receivedGiftsMap);
                 Log.d("LPC", "thread done-received gift map: " + receivedGiftsMap.toString());
-                //TODO: if going to move ot one file, this needs a flag
                 intent.putExtra("SENT GIFT", true);
                 startActivity(intent);
             }
