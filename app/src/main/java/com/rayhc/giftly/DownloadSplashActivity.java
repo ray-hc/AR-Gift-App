@@ -550,4 +550,9 @@ public class DownloadSplashActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    @Override
+    public void onBackPressed() {
+        Log.d("LPC", "onBackPressed: in upload");
+    }
 }
