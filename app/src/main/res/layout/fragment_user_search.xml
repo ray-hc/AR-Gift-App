@@ -20,12 +20,15 @@
 
             <EditText
                 android:id="@+id/editTextTextPersonName"
+                style="@style/header2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/white"
                 android:ems="10"
                 android:hint="Search for friend by name or by email"
-                style="@style/header2"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:padding="10dp"
+                android:textColor="@color/blackish" />
 
         </LinearLayout>
 
