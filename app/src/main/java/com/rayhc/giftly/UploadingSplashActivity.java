@@ -215,7 +215,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
      */
     public class GetSentGiftsThread extends Thread{
         private Intent intent;
-        private int numSentGifts;
+        private int numSentGifts = 0;
         private ArrayList<String> giftRecipientNames = new ArrayList<>();
         private HashMap<String, String> giftMsgMap = new HashMap<>();
         private ArrayList<String> giftHashes = new ArrayList<>();
@@ -323,7 +323,7 @@ public class UploadingSplashActivity extends AppCompatActivity {
      */
     public class GetReceivedGiftsThread extends Thread{
         private Intent intent;
-        private int numReceivedGifts;
+        private int numReceivedGifts = 0;
         private ArrayList<String> giftSenderNames = new ArrayList<>();
         private HashMap<String, String> giftMsgMap = new HashMap<>();
         private ArrayList<String> giftHashes = new ArrayList<>();
@@ -412,7 +412,9 @@ public class UploadingSplashActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String message = (String) snapshot.child(hash).child("message").getValue();
-                        boolean opened = (boolean) snapshot.child(hash).child("opened").getValue();
+                        boolean opened = false;
+                        if(snapshot.child(hash).child("opened").getValue() != null)
+                            opened = (boolean) snapshot.child(hash).child("opened").getValue();
                         if(opened) message += "OLD";
                         else message += "NEW";
                         String displayText = giftMsgMap.get(hash)+"|"+message;

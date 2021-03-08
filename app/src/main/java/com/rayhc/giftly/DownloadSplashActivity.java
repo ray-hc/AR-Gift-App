@@ -129,7 +129,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
                 if(wasOpened) intent = new Intent(getApplicationContext(), CreateGiftActivity.class);
                 else intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
                 intent.putExtra("sceneType", loadedGift.getGiftType());
-                intent.putExtra("OPENED GIFT", loadedGift);
+//                intent.putExtra("OPENED GIFT", loadedGift);
                 intent.putExtra("FROM OPEN", true);
                 intent.putExtra("HASH VALUE", hashValue);
                 intent.putExtra("LABEL", label);
