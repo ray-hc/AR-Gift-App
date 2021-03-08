@@ -121,7 +121,9 @@ public class HomeFragment extends Fragment {
         if(giftsSent != null){
             ArrayList<String> sentGiftMessages = new ArrayList<>();
             sentGiftMessages.addAll(giftsSent.keySet());
-            sentGifts.setAdapter(new GiftAdapter(getActivity(), 0, sentGiftMessages));
+            GiftAdapter sentGiftsAdapter = new GiftAdapter(getActivity(), 0, sentGiftMessages);
+            sentGiftsAdapter.hideArrow(true);
+            sentGifts.setAdapter(sentGiftsAdapter);
 //            sentGifts.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, sentGiftMessages));
 
             //commenting out to remove responsiveness - Logan

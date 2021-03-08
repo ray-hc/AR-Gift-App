@@ -57,7 +57,7 @@
             <ListView
                 android:id="@+id/requests_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginTop="8dp"
                 android:text="You have no friend requests"
                 app:layout_constraintTop_toBottomOf="@id/requests"
@@ -70,27 +70,28 @@
             style="@style/plainCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="100dp">
+            android:backgroundTint="@color/pink">
 
             <TextView
                 android:id="@+id/friends"
                 style="@style/header2"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/friends_list_title"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ListView
                 android:id="@+id/friends_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginTop="8dp"
-                android:text="Add friends to send a gift!"
-                app:layout_constraintTop_toBottomOf="@id/friends"
-                tools:layout_editor_absoluteX="10dp" />
-
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/friends" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </LinearLayout>
 

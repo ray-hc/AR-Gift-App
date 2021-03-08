@@ -74,9 +74,6 @@ public class FriendsFragment extends Fragment {
 
         getUserFromDB();
 
-        ListUtils.setDynamicHeight(friendsListView);
-        ListUtils.setDynamicHeight(requestsListView);
-
         return view;
     }
 
@@ -130,6 +127,9 @@ public class FriendsFragment extends Fragment {
 
                 friendsListView.setAdapter(friendsListAdapter);
                 requestsListView.setAdapter(requestsListAdapter);
+
+                ListUtils.setDynamicHeight(friendsListView);
+                ListUtils.setDynamicHeight(requestsListView);
 
                 Log.d("kitani", "Adapters Set");
             }

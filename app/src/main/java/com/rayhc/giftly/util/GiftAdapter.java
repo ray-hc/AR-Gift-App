@@ -27,6 +27,7 @@ public class GiftAdapter extends ArrayAdapter<String> {
     ArrayList<Integer> colors;
     ArrayList<String> giftTitles;
     LayoutInflater inflater;
+    boolean hideArrowTrue;
 
     public GiftAdapter(@NonNull Context context, int rInt, ArrayList<String> giftTitles) {
         super(context, rInt, giftTitles);
@@ -48,6 +49,11 @@ public class GiftAdapter extends ArrayAdapter<String> {
         for (int i = 0; i <= (giftTitles.size() - colors.size())+2; i++) {
             colors.add(colors.get(i % colors.size()));
         }
+    }
+
+    public void hideArrow(boolean val) {
+        hideArrowTrue = val;
+        Log.d("rhc","arrow hid");
     }
 
     public int getCount() {
@@ -97,6 +103,10 @@ public class GiftAdapter extends ArrayAdapter<String> {
                         0, giftTitleSplit[1].length() - Globals.OLD_GIFT.length()));
             }
 
+            if (hideArrowTrue) {
+                View arrow = view.findViewById(R.id.arrowClick);
+                arrow.setVisibility(View.INVISIBLE);
+            }
         }
         return view;
     }
