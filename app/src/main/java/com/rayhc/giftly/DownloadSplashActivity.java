@@ -157,7 +157,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
 
 
         public void getGift(){
-            query = mDatabase.child("gifts").orderByChild(hashValue);
+            query = mDatabase.child("gifts").child(hashValue);
 
             //listener for the newly added Gift's query based on the input pin
             //put its link at the top
@@ -167,7 +167,12 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
                     Log.d("LPC", "snapshot: " + snapshot.getValue());
                     if (snapshot.exists()) {
-                        loadedGift = snapshot.child(hashValue).getValue(Gift.class);
+                        loadedGift = snapshot.getValue(Gift.class);
+                        //TODO: I think this will stop senders from being shown gift contents upon recipient open
+                        if(loadedGift.getSender().equals(userID)) {
+                            Log.d("LPC", "i sent this gift");
+                            return;
+                        }
                         if(fromReceive) wasOpened = loadedGift.isOpened();
                         else wasOpened = true;
                         Log.d("LPC", "time loaded gift created "+loadedGift.getTimeCreated());

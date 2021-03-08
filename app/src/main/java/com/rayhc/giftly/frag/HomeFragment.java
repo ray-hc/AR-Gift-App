@@ -123,20 +123,22 @@ public class HomeFragment extends Fragment {
             sentGiftMessages.addAll(giftsSent.keySet());
             sentGifts.setAdapter(new GiftAdapter(getActivity(), 0, sentGiftMessages));
 //            sentGifts.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, sentGiftMessages));
-            sentGifts.setOnItemClickListener((parent, view, position, id) -> {
-                String label = (String) parent.getItemAtPosition(position);
-                Log.d("LPC", "get hash: "+giftsSent.get(label));
-                //download the gift
-                Intent intent;
-                intent = new Intent(getContext(), DownloadSplashActivity.class);
-                intent.putExtra("HASH VALUE", giftsSent.get(label));
-                intent.putExtra("FROM OPEN", true);
-//                intent.putExtra("SENT GIFT MAP",giftsSent);
-                intent.putExtra("USER ID", mFirebaseUser.getUid());
-//                intent.putExtra("RECEIVED GIFT MAP",giftsRecieved);
-                Log.d("LPC", "getting gift w hash: "+giftsSent.get(label));
-                startActivity(intent);
-            });
+
+            //commenting out to remove responsiveness - Logan
+//            sentGifts.setOnItemClickListener((parent, view, position, id) -> {
+//                String label = (String) parent.getItemAtPosition(position);
+//                Log.d("LPC", "get hash: "+giftsSent.get(label));
+//                //download the gift
+//                Intent intent;
+//                intent = new Intent(getContext(), DownloadSplashActivity.class);
+//                intent.putExtra("HASH VALUE", giftsSent.get(label));
+//                intent.putExtra("FROM OPEN", true);
+////                intent.putExtra("SENT GIFT MAP",giftsSent);
+//                intent.putExtra("USER ID", mFirebaseUser.getUid());
+////                intent.putExtra("RECEIVED GIFT MAP",giftsRecieved);
+//                Log.d("LPC", "getting gift w hash: "+giftsSent.get(label));
+//                startActivity(intent);
+//            });
         }
 
         if(giftsReceived != null){ // added || true for testing.

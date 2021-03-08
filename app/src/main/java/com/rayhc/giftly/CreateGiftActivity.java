@@ -46,10 +46,11 @@ public class CreateGiftActivity extends AppCompatActivity {
     private View linkCard, editButtons;
 
     private static final HashMap<String, Integer> GIFT_TYPE_MAP = new HashMap<String, Integer>(){{
-        put(Globals.OTHER, 0);
-        put(Globals.BDAY, 1);
-        put(Globals.XMAS, 2);
+        put(Globals.BDAY, 0);
+        put(Globals.XMAS, 1);
+        put(Globals.OTHER, 2);
     }};
+
 
     //gift
     private Gift newGift;
@@ -96,6 +97,7 @@ public class CreateGiftActivity extends AppCompatActivity {
             newGift.getHashValue();
             newGift.setContentType(new HashMap<>());
             newGift.setLinks(new HashMap<>());
+            newGift.setGiftType(-1);
             wasOpened = true;
         }
 
@@ -284,6 +286,7 @@ public class CreateGiftActivity extends AppCompatActivity {
                 (this, android.R.layout.simple_spinner_item, Globals.GIFT_TYPE_ARRAY);
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         giftTypeSpinner.setAdapter(spinnerArrayAdapter);
+        if(newGift.getGiftType() != -1) giftTypeSpinner.setSelection(newGift.getGiftType());
         giftTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedItem = parent.getItemAtPosition(position).toString();
@@ -328,7 +331,9 @@ public class CreateGiftActivity extends AppCompatActivity {
         super.onBackPressed();
         Intent intent = new Intent(this, MainActivity.class);
         Log.d("LPC", "on back pressed: was opened? "+wasOpened);
-        if(!wasOpened) intent.putExtra("NEED REFRESH", true);
+
+        //added refresh on activity close no matter what - Logan
+        intent.putExtra("NEED REFRESH", true);
         intent.putExtra("GOT GIFTS", true);
         startActivity(intent);
     }
