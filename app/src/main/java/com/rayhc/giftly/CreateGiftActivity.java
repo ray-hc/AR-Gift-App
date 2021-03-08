@@ -328,7 +328,9 @@ public class CreateGiftActivity extends AppCompatActivity {
         super.onBackPressed();
         Intent intent = new Intent(this, MainActivity.class);
         Log.d("LPC", "on back pressed: was opened? "+wasOpened);
-        if(!wasOpened) intent.putExtra("NEED REFRESH", true);
+
+        //added refresh on activity close no matter what - Logan
+        intent.putExtra("NEED REFRESH", true);
         intent.putExtra("GOT GIFTS", true);
         startActivity(intent);
     }
