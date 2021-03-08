@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -111,6 +113,10 @@ public class UserSearchFragment extends Fragment {
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                 if(currentUser != null){
                                     UserManager.sendFriendRequest(currentUser, users.get(position).getUserId());
+                                    Toast toast = Toast.makeText(getContext(), "Sent friend request to " + users.get(position).getName(), Toast.LENGTH_SHORT);
+                                    toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 0);
+                                    toast.show();
+
                                     users.remove(position);
                                     replaceAdapter();
                                 }

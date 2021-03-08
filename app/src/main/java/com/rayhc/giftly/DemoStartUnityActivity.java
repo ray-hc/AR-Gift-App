@@ -15,7 +15,7 @@ public class DemoStartUnityActivity extends AppCompatActivity {
         setContentView(R.layout.activity_demo_start_unity);
 
         Intent intent = new Intent(this, UnityPlayerActivity.class);
-        intent.putExtra("sceneType", 0);
+        intent.putExtra("sceneType",0);
         startActivity(intent);
     }
 }

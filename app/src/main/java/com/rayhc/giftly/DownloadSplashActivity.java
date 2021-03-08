@@ -23,6 +23,8 @@ import com.rayhc.giftly.util.Gift;
 import com.rayhc.giftly.util.Globals;
 import com.rayhc.giftly.util.UserManager;
 import com.rayhc.giftly.util.User;
+import com.unity3d.player.UnityPlayer;
+import com.unity3d.player.UnityPlayerActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -99,7 +101,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
             Log.d("LPC", "getting gift w hash: "+hashValue);
             Log.d("LPC", "running gift downloader thread: from open? "+ fromOpen);
 
-
             GiftDownloaderThread giftDownloaderThread = new GiftDownloaderThread();
             giftDownloaderThread.start();
         }
@@ -126,7 +127,8 @@ public class DownloadSplashActivity extends AppCompatActivity {
             public void run() {
                 //TODO: change the 'else' to the AR activity
                 if(wasOpened) intent = new Intent(getApplicationContext(), CreateGiftActivity.class);
-                else intent = new Intent(getApplicationContext(), CreateGiftActivity.class);
+                else intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
+                intent.putExtra("sceneType", loadedGift.getGiftType());
                 intent.putExtra("OPENED GIFT", loadedGift);
                 intent.putExtra("FROM OPEN", true);
                 intent.putExtra("HASH VALUE", hashValue);
@@ -155,7 +157,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
 
 
         public void getGift(){
-            query = mDatabase.child("gifts").orderByChild(hashValue);
+            query = mDatabase.child("gifts").child(hashValue);
 
             //listener for the newly added Gift's query based on the input pin
             //put its link at the top
@@ -165,7 +167,12 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
                     Log.d("LPC", "snapshot: " + snapshot.getValue());
                     if (snapshot.exists()) {
-                        loadedGift = snapshot.child(hashValue).getValue(Gift.class);
+                        loadedGift = snapshot.getValue(Gift.class);
+                        //TODO: I think this will stop senders from being shown gift contents upon recipient open
+                        if(loadedGift.getSender().equals(userID)) {
+                            Log.d("LPC", "i sent this gift");
+                            return;
+                        }
                         if(fromReceive) wasOpened = loadedGift.isOpened();
                         else wasOpened = true;
                         Log.d("LPC", "time loaded gift created "+loadedGift.getTimeCreated());
@@ -314,7 +321,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
      */
     public class GetSentGiftsThread extends Thread{
         private Intent intent;
-        private int numSentGifts;
+        private int numSentGifts = 0;
         private ArrayList<String> giftRecipientNames = new ArrayList<>();
         private HashMap<String, String> giftMsgMap = new HashMap<>();
         private ArrayList<String> giftHashes = new ArrayList<>();
@@ -423,7 +430,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
      */
     public class GetReceivedGiftsThread extends Thread{
         private Intent intent;
-        private int numReceivedGifts;
+        private int numReceivedGifts = 0;
         private ArrayList<String> giftSenderNames = new ArrayList<>();
         private HashMap<String, String> giftMsgMap = new HashMap<>();
         private ArrayList<String> giftHashes = new ArrayList<>();
@@ -512,7 +519,9 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String message = (String) snapshot.child(hash).child("message").getValue();
-                        boolean opened = (boolean) snapshot.child(hash).child("opened").getValue();
+                        boolean opened = false;
+                        if(snapshot.child(hash).child("opened").getValue() != null)
+                            opened = (boolean) snapshot.child(hash).child("opened").getValue();
                         if(opened) message += "OLD";
                         else message += "NEW";
                         String displayText = giftMsgMap.get(hash)+"|"+message;

@@ -12,6 +12,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +32,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.rayhc.giftly.frag.FriendsFragment;
 import com.rayhc.giftly.frag.HomeFragment;
+import com.rayhc.giftly.frag.SettingsFragment;
 import com.rayhc.giftly.util.Gift;
 import com.rayhc.giftly.util.Globals;
 import com.rayhc.giftly.util.UserManager;
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private FriendsFragment friendsFragment;
     private HomeFragment homeFragment;
+    private SettingsFragment settingsFragment;
 
     private int navId;
 
@@ -70,6 +74,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Intent di = new Intent(this, DemoStartUnityActivity.class);
+        //startActivity(di);
 
         // get id to restore state if needed
         if (savedInstanceState != null) {
@@ -89,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         // define fragments
         friendsFragment = new FriendsFragment();
         homeFragment = new HomeFragment();
+        settingsFragment = new SettingsFragment();
 
         // get navigation
         BottomNavigationView navigationView = findViewById(R.id.bottomNavigationView);
@@ -158,6 +166,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             navId = R.id.nav_home;
         }
 
+        if(mFirebaseUser == null){
+//            Toast.makeText(this, "You need to login to continue", Toast.LENGTH_SHORT).show();
+//            ExitLogoutActivity.exitApplication(this);
+        }
         navigateToFragment(navId);
     }
 
@@ -167,7 +179,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build(),
-                new AuthUI.IdpConfig.PhoneBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build());
         // Create and launch sign-in intent
         startActivityForResult(
@@ -194,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, homeFragment, "HomeFragment").commit();
         }
         else if (navId == R.id.nav_settings){
-//            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, createGiftFragment, "CreateGiftFragment").commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout,settingsFragment, "SettingsFragment").commit();
         }
     }
 
@@ -225,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private void onAuthSuccess(FirebaseUser currentUser) {
         String userId = currentUser.getUid();
 
+        prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         editor = prefs.edit();
         editor.putString(Globals.USER_ID_KEY, currentUser.getUid());
         editor.apply();
@@ -270,6 +282,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 });
             } else {
                 Log.d("iandebug", "User Login Failed");
+                Toast.makeText(this, "You need to login to continue", Toast.LENGTH_SHORT).show();
+                ExitLogoutActivity.exitApplication(this);
+//                this.finishAffinity();
             }
 
         }
@@ -314,6 +329,23 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 }
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        ExitLogoutActivity.exitApplication(this);
+    }
+
+    public void onLogoutClicked(View view){
+        Log.d("iandebug", "logout clicked");
+        SharedPreferences mSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        FirebaseAuth.getInstance().signOut();
+        editor.remove(Globals.USER_ID_KEY);
+        editor.remove("USER ID");
+        editor.commit();
+        ExitLogoutActivity.exitApplication(this);
     }
 }
 
