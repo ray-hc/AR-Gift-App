@@ -185,6 +185,8 @@ public class DownloadSplashActivity extends AppCompatActivity {
                         showErrorDialog();
                         Log.d("LPC", "snapshot doesn't exist");
                     }
+                    query.removeEventListener(this);
+                    Log.d("LPC","get gift listener was removed");
                 }
 
 
@@ -196,20 +198,21 @@ public class DownloadSplashActivity extends AppCompatActivity {
         }
 
         public void getFriendName(String id){
-            query = mDatabase.child("users").orderByChild(id);
+            query = mDatabase.child("users").child(id);
             query.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
                     User user;
                     if (snapshot.exists()) {
-                        user = snapshot.child(id).getValue(User.class);
-                        friendName = user.getName();
+                        friendName = (String) snapshot.child("name").getValue();
                         handler.post(runnable);
                     } else {
                         showErrorDialog();
                         Log.d("LPC", "snapshot doesn't exist");
                     }
+                    query.removeEventListener(this);
+                    Log.d("LPC","get friend name listener was removed");
                 }
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
