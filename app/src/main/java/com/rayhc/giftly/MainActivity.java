@@ -13,6 +13,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -165,6 +166,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             navId = R.id.nav_home;
         }
 
+        if(mFirebaseUser == null){
+//            Toast.makeText(this, "You need to login to continue", Toast.LENGTH_SHORT).show();
+//            ExitLogoutActivity.exitApplication(this);
+        }
         navigateToFragment(navId);
     }
 
@@ -277,6 +282,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 });
             } else {
                 Log.d("iandebug", "User Login Failed");
+                Toast.makeText(this, "You need to login to continue", Toast.LENGTH_SHORT).show();
+                ExitLogoutActivity.exitApplication(this);
+//                this.finishAffinity();
             }
 
         }
@@ -321,6 +329,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 }
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        ExitLogoutActivity.exitApplication(this);
     }
 
     public void onLogoutClicked(View view){
