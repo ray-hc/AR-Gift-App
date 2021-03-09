@@ -19,16 +19,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Giftly">
         <activity android:name=".AddFriendFromQRActivity"
-            android:label="Add Friend From UI">
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data   android:scheme="http" />
-                <data   android:scheme="https" />
-                <data android:host=".ianmkim.com" />
+            android:label="Add Friend">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="https"
+                    android:host="ianmkim.com"
+                    android:pathPrefix="/joyshare"/>
             </intent-filter>
-
         </activity>
         <activity android:name=".CreateGiftActivity" />
         <activity android:name=".EditContentsActivity" />
