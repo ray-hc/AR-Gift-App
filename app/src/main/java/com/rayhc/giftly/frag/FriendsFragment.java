@@ -325,7 +325,6 @@ public class FriendsFragment extends Fragment {
                                             friendsList.remove(friendName1);
                                             startup.setFriendsList(friendsList);
 
-
                                             friendsListAdapter = new MyFriendsListAdapter(context, R.layout.friend_entry, friendsList);
                                             friendsListView.setAdapter(friendsListAdapter);
                                             ListUtils.setDynamicHeight(friendsListView);
@@ -397,10 +396,11 @@ public class FriendsFragment extends Fragment {
 
                                             requestsListAdapter = new MyRequestsListAdapter(context, R.layout.friend_request_entry, requestsList);
                                             requestsListView.setAdapter(requestsListAdapter);
-
-                                            requestsListAdapter = new MyRequestsListAdapter(context, R.layout.friend_entry, requestsList);
-                                            requestsListView.setAdapter(friendsListAdapter);
                                             ListUtils.setDynamicHeight(requestsListView);
+
+                                            friendsListAdapter = new MyFriendsListAdapter(context, R.layout.friend_entry, friendsList);
+                                            friendsListView.setAdapter(friendsListAdapter);
+                                            ListUtils.setDynamicHeight(friendsListView);
                                         }
                                     }
 
