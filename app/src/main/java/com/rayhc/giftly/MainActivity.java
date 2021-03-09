@@ -35,6 +35,7 @@ import com.rayhc.giftly.frag.HomeFragment;
 import com.rayhc.giftly.frag.SettingsFragment;
 import com.rayhc.giftly.util.Gift;
 import com.rayhc.giftly.util.Globals;
+import com.rayhc.giftly.util.NotifService;
 import com.rayhc.giftly.util.UserManager;
 import com.rayhc.giftly.util.User;
 
@@ -119,6 +120,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             Log.d("LPC", "onCreate: made a new gift");
         }
         navId = R.id.nav_home;
+
+        Intent notifIntent = new Intent(getApplicationContext(), NotifService.class);
+        startService(notifIntent);
 
         navigateToFragment(navId);
     }
@@ -221,6 +225,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                             Log.d("LPC", "user exists");
                         } else activityUser = UserManager.snapshotToEmptyUser(snapshot, user);
                         onAuthSuccess(user);
+
+                        Intent notifIntent = new Intent(getApplicationContext(), NotifService.class);
+                        startService(notifIntent);
+
                     }
 
                     @Override
