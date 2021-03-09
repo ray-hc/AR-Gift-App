@@ -174,14 +174,31 @@ public class UserManager {
                         User newUser = new User();
                         if(snapshot.exists()){
                             newUser = UserManager.snapshotToUser(snapshot,toFriendUid);
-                        } newUser.addReceivedFriends(from.getUserId());
-                        db.child("users").child(from.getUserId()).setValue(from);
-                        db.child("users").child(newUser.getUserId()).setValue(newUser);
+                        } if(!newUser.getFriends().containsKey(from.getUserId()) && !newUser.getReceivedFriends().containsKey(from.getUserId())) {
+                            newUser.addReceivedFriends(from.getUserId());
+                            db.child("users").child(from.getUserId()).setValue(from);
+                            db.child("users").child(newUser.getUserId()).setValue(newUser);
+                        }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) { }
                 });
+            }
+        }.start();
+    }
+
+    public static void sendAndAcceptFriendRequest(User from, User to){
+        from.addSentFriends(to.getUserId());
+        new Thread() {
+            public void run() {
+                DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+                if (!to.getFriends().containsKey(from.getUserId()) && !to.getReceivedFriends().containsKey(from.getUserId())) {
+                    to.addFriends(from.getUserId());
+                    from.addFriends(to.getUserId());
+                    db.child("users").child(from.getUserId()).setValue(from);
+                    db.child("users").child(to.getUserId()).setValue(to);
+                }
             }
         }.start();
     }
