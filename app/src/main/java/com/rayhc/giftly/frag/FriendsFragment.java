@@ -29,7 +29,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.rayhc.giftly.CreateGiftActivity;
+import com.rayhc.giftly.DownloadSplashActivity;
 import com.rayhc.giftly.FindFriendsActivity;
+import com.rayhc.giftly.Startup;
+import com.rayhc.giftly.util.GiftAdapter;
 import com.rayhc.giftly.util.Globals;
 import com.rayhc.giftly.util.ListUtils;
 import com.rayhc.giftly.R;
@@ -37,6 +40,7 @@ import com.rayhc.giftly.util.User;
 import com.rayhc.giftly.util.UserManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class FriendsFragment extends Fragment {
@@ -51,6 +55,8 @@ public class FriendsFragment extends Fragment {
     private ListView friendsListView;
     private ListView requestsListView;
 
+    private Startup startup;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.friends_list_fragment, container, false);
@@ -59,6 +65,8 @@ public class FriendsFragment extends Fragment {
         requestsList = new ArrayList<>();
 
         context = this.getActivity().getApplicationContext();
+
+        startup = (Startup) getActivity().getApplication();
 
         Button b = view.findViewById(R.id.add_friend);
         b.setOnClickListener(new View.OnClickListener() {
@@ -71,6 +79,22 @@ public class FriendsFragment extends Fragment {
 
         friendsListView = view.findViewById(R.id.friends_list);
         requestsListView = view.findViewById(R.id.requests_list);
+
+        if(!startup.getFriendsList().isEmpty()) {
+            friendsList = new ArrayList<>();
+            friendsList = startup.getFriendsList();
+            friendsListAdapter = new MyFriendsListAdapter(context, 0, friendsList);
+            friendsListView.setAdapter(friendsListAdapter);
+            ListUtils.setDynamicHeight(friendsListView);
+        }
+
+        if(!startup.getFriendRequestsList().isEmpty()) {
+            requestsList = new ArrayList<>();
+            requestsList = startup.getFriendRequestsList();
+            requestsListAdapter = new MyRequestsListAdapter(context, R.layout.friend_request_entry, requestsList);
+            requestsListView.setAdapter(requestsListAdapter);
+            ListUtils.setDynamicHeight(requestsListView);
+        }
 
         getUserFromDB();
 
@@ -89,20 +113,27 @@ public class FriendsFragment extends Fragment {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                if((numFriends == -1 || friendsList.size()>numFriends) &&
-                        (numFriendRequests == -1 || requestsList.size()>numFriendRequests))
+                if((numFriends == -1 || friendsList.size()<numFriends) &&
+                        (numFriendRequests == -1 || requestsList.size()<numFriendRequests))
                     return;
 
                 Log.d("kitani", "Requests Added");
 
-                friendsListAdapter = new MyFriendsListAdapter(context, 0, friendsList);
-                requestsListAdapter = new MyRequestsListAdapter(context, R.layout.friend_request_entry, requestsList);
+                Log.d("CHECKING THREAD", "" + friendsList.equals(startup.getFriendsList()));
 
-                friendsListView.setAdapter(friendsListAdapter);
-                requestsListView.setAdapter(requestsListAdapter);
+                if (!friendsList.equals(startup.getFriendsList())) {
+                    startup.setFriendsList(friendsList);
+                    friendsListAdapter = new MyFriendsListAdapter(context, 0, friendsList);
+                    friendsListView.setAdapter(friendsListAdapter);
+                    ListUtils.setDynamicHeight(friendsListView);
+                }
 
-                ListUtils.setDynamicHeight(friendsListView);
-                ListUtils.setDynamicHeight(requestsListView);
+                if (!requestsList.equals(startup.getFriendRequestsList())) {
+                    startup.setFriendRequestsList(requestsList);
+                    requestsListAdapter = new MyRequestsListAdapter(context, R.layout.friend_request_entry, requestsList);
+                    requestsListView.setAdapter(requestsListAdapter);
+                    ListUtils.setDynamicHeight(requestsListView);
+                }
 
                 Log.d("kitani", "Adapters Set");
             }
@@ -112,6 +143,9 @@ public class FriendsFragment extends Fragment {
 
         @Override
         public void run() {
+            friendsList = new ArrayList<>();
+            requestsList = new ArrayList<>();
+
             DatabaseReference db = FirebaseDatabase.getInstance().getReference();
 
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -198,46 +232,49 @@ public class FriendsFragment extends Fragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             String friend = f.get(position);
 
-            convertView = inflater.inflate(R.layout.friend_entry, null);
-            Log.d(Globals.TAG, "Friend: " + friend );
+            if (convertView == null) {
+                convertView = inflater.inflate(R.layout.friend_entry, null);
+                Log.d(Globals.TAG, "Friend: " + friend);
 
-            TextView friendName = convertView.findViewById(R.id.friend);
-            friendName.setText(friend);
+                TextView friendName = convertView.findViewById(R.id.friend);
+                friendName.setText(friend);
 
-            Button remove = convertView.findViewById(R.id.remove_button);
+                Button remove = convertView.findViewById(R.id.remove_button);
 
 
-            remove.setOnClickListener(v -> {
-                Thread thread = new Thread(() -> {
-                    DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+                remove.setOnClickListener(v -> {
+                    Thread thread = new Thread(() -> {
+                        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
 
-                    if (activityUser.getFriends() != null) {
-                        for (String key : activityUser.getFriends().keySet()) {
-                            String friendID = activityUser.getFriends().get(key);
-                            Query query = db.child("users").orderByChild("userId").equalTo(friendID);
-                            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    String friendName1 = (String) snapshot.child(friendID).child("name").getValue();
+                        if (activityUser.getFriends() != null) {
+                            for (String key : activityUser.getFriends().keySet()) {
+                                String friendID = activityUser.getFriends().get(key);
+                                Query query = db.child("users").orderByChild("userId").equalTo(friendID);
+                                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        String friendName1 = (String) snapshot.child(friendID).child("name").getValue();
 
-                                    if (friend.equals(friendName1)){
-                                        UserManager.removeFriend(activityUser, friendID);
-                                        friendsList.remove(friendName1);
+                                        if (friend.equals(friendName1)) {
+                                            UserManager.removeFriend(activityUser, friendID);
+                                            friendsList.remove(friendName1);
+                                            startup.setFriendsList(friendsList);
 
-                                        friendsListAdapter = new MyFriendsListAdapter(context, R.layout.friend_entry, friendsList);
-                                        friendsListView.setAdapter(friendsListAdapter);
+                                            friendsListAdapter = new MyFriendsListAdapter(context, R.layout.friend_entry, friendsList);
+                                            friendsListView.setAdapter(friendsListAdapter);
+                                        }
                                     }
-                                }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-                                }
-                            });
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                    }
+                                });
+                            }
                         }
-                    }
+                    });
+                    thread.start();
                 });
-                thread.start();
-            });
+            }
 
             return convertView;
         }
@@ -261,82 +298,87 @@ public class FriendsFragment extends Fragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             String request = r.get(position);
 
-            convertView = inflater.inflate(R.layout.friend_request_entry, null);
-            //convertView = LayoutInflater.from(getContext()).inflate(res, parent, false);
+            if (convertView == null) {
+                convertView = inflater.inflate(R.layout.friend_request_entry, null);
 
-            TextView friendName = convertView.findViewById(R.id.friend_request);
-            friendName.setText(request);
+                TextView friendName = convertView.findViewById(R.id.friend_request);
+                friendName.setText(request);
 
-            Button add = convertView.findViewById(R.id.add_button);
-            Button decline = convertView.findViewById(R.id.decline_button);
+                Button add = convertView.findViewById(R.id.add_button);
+                Button decline = convertView.findViewById(R.id.decline_button);
 
-            add.setOnClickListener(v -> {
-                Thread thread = new Thread(() -> {
-                    DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+                add.setOnClickListener(v -> {
+                    Thread thread = new Thread(() -> {
+                        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
 
-                    if (activityUser.getReceivedFriends() != null) {
-                        for (String key : activityUser.getReceivedFriends().keySet()) {
-                            String requestID = activityUser.getReceivedFriends().get(key);
-                            Query query = db.child("users").orderByChild("userId").equalTo(requestID);
-                            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    String requestName = (String) snapshot.child(requestID).child("name").getValue();
+                        if (activityUser.getReceivedFriends() != null) {
+                            for (String key : activityUser.getReceivedFriends().keySet()) {
+                                String requestID = activityUser.getReceivedFriends().get(key);
+                                Query query = db.child("users").orderByChild("userId").equalTo(requestID);
+                                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        String requestName = (String) snapshot.child(requestID).child("name").getValue();
 
-                                    if (request.equals(requestName)){
-                                        UserManager.acceptFriendRequest(activityUser, requestID);
-                                        requestsList.remove(requestName);
-                                        friendsList.add(requestName);
+                                        if (request.equals(requestName)) {
+                                            UserManager.acceptFriendRequest(activityUser, requestID);
+                                            requestsList.remove(requestName);
+                                            friendsList.add(requestName);
 
-                                        requestsListAdapter = new MyRequestsListAdapter(context, R.layout.friend_request_entry, requestsList);
-                                        requestsListView.setAdapter(requestsListAdapter);
+                                            startup.setFriendsList(friendsList);
+                                            startup.setFriendRequestsList(requestsList);
 
-                                        friendsListAdapter = new MyFriendsListAdapter(context, R.layout.friend_entry, friendsList);
-                                        friendsListView.setAdapter(friendsListAdapter);
+                                            requestsListAdapter = new MyRequestsListAdapter(context, R.layout.friend_request_entry, requestsList);
+                                            requestsListView.setAdapter(requestsListAdapter);
+
+                                            friendsListAdapter = new MyFriendsListAdapter(context, R.layout.friend_entry, friendsList);
+                                            friendsListView.setAdapter(friendsListAdapter);
+                                        }
                                     }
-                                }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-                                }
-                            });
-                        }
-                    }
-                });
-                thread.start();
-            });
-
-            decline.setOnClickListener(v -> {
-                Thread thread = new Thread(() -> {
-                    DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-
-                    if (activityUser.getReceivedFriends() != null) {
-                        for (String key : activityUser.getReceivedFriends().keySet()) {
-                            String requestID = activityUser.getReceivedFriends().get(key);
-                            Query query = db.child("users").orderByChild("userId").equalTo(requestID);
-                            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    String requestName = (String) snapshot.child(requestID).child("name").getValue();
-
-                                    if (request.equals(requestName)){
-                                        UserManager.declineFriendRequest(activityUser, requestID);
-                                        requestsList.remove(requestName);
-
-                                        requestsListAdapter = new MyRequestsListAdapter(context, R.layout.friend_request_entry, requestsList);
-                                        requestsListView.setAdapter(requestsListAdapter);
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
                                     }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-                                }
-                            });
+                                });
+                            }
                         }
-                    }
+                    });
+                    thread.start();
                 });
-                thread.start();
-            });
+
+                decline.setOnClickListener(v -> {
+                    Thread thread = new Thread(() -> {
+                        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+
+                        if (activityUser.getReceivedFriends() != null) {
+                            for (String key : activityUser.getReceivedFriends().keySet()) {
+                                String requestID = activityUser.getReceivedFriends().get(key);
+                                Query query = db.child("users").orderByChild("userId").equalTo(requestID);
+                                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        String requestName = (String) snapshot.child(requestID).child("name").getValue();
+
+                                        if (request.equals(requestName)) {
+                                            UserManager.declineFriendRequest(activityUser, requestID);
+                                            requestsList.remove(requestName);
+                                            startup.setFriendRequestsList(requestsList);
+
+                                            requestsListAdapter = new MyRequestsListAdapter(context, R.layout.friend_request_entry, requestsList);
+                                            requestsListView.setAdapter(requestsListAdapter);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                    }
+                                });
+                            }
+                        }
+                    });
+                    thread.start();
+                });
+            }
 
             return convertView;
         }

@@ -113,7 +113,7 @@ public class HomeFragment extends Fragment {
         sentGifts = root.findViewById(R.id.inbox_gifts_sent);
 
         //if the sent gift map exists, fill it
-        if(startup.getSentGiftMap() != null) {
+        if(!startup.getSentGiftMap().isEmpty()) {
             ArrayList<String> sentGiftMessages = new ArrayList<>();
             sentGiftMessages.addAll(startup.getSentGiftMap().keySet());
             sentGiftsAdapter = new GiftAdapter(getActivity(), 0, sentGiftMessages);
@@ -123,7 +123,7 @@ public class HomeFragment extends Fragment {
         }
 
         //if the received gift exists, fill it
-        if(startup.getReceivedGiftMap() != null) {
+        if(!startup.getReceivedGiftMap().isEmpty()) {
             ArrayList<String> receivedGiftMessages = new ArrayList<>();
             receivedGiftMessages.addAll(startup.getReceivedGiftMap().keySet());
             receivedGiftsAdapter = new GiftAdapter(getActivity(), 0, receivedGiftMessages);
