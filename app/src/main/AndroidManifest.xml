@@ -18,6 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Giftly">
+        <service android:name=".util.NotifService"/>
         <activity android:name=".AddFriendFromQRActivity"
             android:label="Add Friend">
             <intent-filter>

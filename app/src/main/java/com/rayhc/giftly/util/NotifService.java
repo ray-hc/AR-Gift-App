@@ -38,16 +38,18 @@ public class NotifService extends Service {
     public static final String CHANNEL_NAME = "Joyshare";
     public static final int NOTIFICATION_ID = 1;
 
+    private boolean firstRun = true;
+
     private DatabaseReference mDatabase;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private String userID;
     private SharedPreferences sharedPref;
 
-
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d("iandebug", "service started");
         //set up firebase stuff
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -59,6 +61,33 @@ public class NotifService extends Service {
         } else {
             userID = mFirebaseUser.getUid();
         }
+
+        //build the listener for the user's received gifts
+        Query query = mDatabase.child("users").child(userID).child("receivedGifts");
+
+        //listener for the user's receivedGifts data
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
+                if(!firstRun){
+                    Log.d("LPC", "snapshot: " + snapshot.getValue());
+                    if (snapshot.exists()) {
+                        buildNotification();
+                    } else {
+                        Log.d("LPC", "snapshot doesn't exist");
+                    }
+                } else {
+                    firstRun = false;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        Log.d("iandebug","userid in service: " + userID);
         createNotificationChannel();
     }
 
@@ -67,29 +96,12 @@ public class NotifService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    @Nullable
+    @Override
     public IBinder onBind(Intent intent) {
-        //build the listener for the user's received gifts
-        Query query = mDatabase.child("users").child(userID).child("receivedGifts");
-
-        //listener for the user's receivedGifts data
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
-                Log.d("LPC", "snapshot: " + snapshot.getValue());
-                if (snapshot.exists()) {
-                    buildNotification();
-                } else {
-                    Log.d("LPC", "snapshot doesn't exist");
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
         return null;
     }
+
 
     /**
      * Create a notification channel
@@ -118,10 +130,11 @@ public class NotifService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-//                .setSmallIcon(R.drawable.notification_logo)
+                .setSmallIcon(R.drawable.gift_blue)
                 .setContentTitle(notificationTitle)
                 .setContentText(notificationText)
                 .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
