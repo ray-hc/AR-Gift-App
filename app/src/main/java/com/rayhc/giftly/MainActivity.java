@@ -112,64 +112,60 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         //determine if we've gotten gifts
         Intent startIntent = getIntent();
         Log.d("LPC", "GOT GITS? "+startIntent.getBooleanExtra("GOT GIFTS", false));
-        if(startIntent.getBooleanExtra("GOT GIFTS", false)){
-            if(startIntent.getSerializableExtra(Globals.SENT_MAP_KEY) != null){
-                startup.setSentGiftMap((HashMap<String, String>)startIntent.getSerializableExtra(Globals.SENT_MAP_KEY));
-                Log.d("LPC", "startup sent gift map from got gifts: "+startup.getSentGiftMap().toString());
-
-            }
-            if(startIntent.getSerializableExtra(Globals.REC_MAP_KEY) != null) {
-                startup.setReceivedGiftMap((HashMap<String, String>) startIntent.getSerializableExtra(Globals.REC_MAP_KEY));
-                Log.d("LPC", "startup received gift map from got gifts: " + startup.getReceivedGiftMap().toString());
-            }
-
-            Bundle bundle = new Bundle();
-            if(startIntent.getBooleanExtra("NEED REFRESH", false)) {
-                Log.d("LPC", "onCreate: need refresh");
-                bundle.putBoolean("NEED REFRESH", true);
-            }
-            homeFragment.setArguments(bundle);
-            navId = R.id.nav_home;
-        }
-
-        else{
+//        if(startIntent.getBooleanExtra("GOT GIFTS", false)){
+//            if(startIntent.getSerializableExtra(Globals.SENT_MAP_KEY) != null){
+//                startup.setSentGiftMap((HashMap<String, String>)startIntent.getSerializableExtra(Globals.SENT_MAP_KEY));
+//                Log.d("LPC", "startup sent gift map from got gifts: "+startup.getSentGiftMap().toString());
+//
+//            }
+//            if(startIntent.getSerializableExtra(Globals.REC_MAP_KEY) != null) {
+//                startup.setReceivedGiftMap((HashMap<String, String>) startIntent.getSerializableExtra(Globals.REC_MAP_KEY));
+//                Log.d("LPC", "startup received gift map from got gifts: " + startup.getReceivedGiftMap().toString());
+//            }
+//
+//            Bundle bundle = new Bundle();
+//            if(startIntent.getBooleanExtra("NEED REFRESH", false)) {
+//                Log.d("LPC", "onCreate: need refresh");
+//                bundle.putBoolean("NEED REFRESH", true);
+//            }
+//            homeFragment.setArguments(bundle);
+//        }
+//
+//        else{
             if(mFirebaseUser == null){
                 loadFirebase();
-            } else{
+            }
+//            else{
                 if(startIntent.getBooleanExtra("SENT GIFT", false)){
                     mGift = new Gift();
                     Log.d("LPC", "onCreate: made a new gift");
                 }
                 //go to download splash
-                if(firstRun) {
-                    Log.d("LPC", "run in firstRun");
-                    startup.setFistRun(false);
-                    Log.d("LPC", "first run is now: "+startup.getFirstRun());
-                    Intent intent = new Intent(this, DownloadSplashActivity.class);
-                    intent.putExtra("USER ID", mFirebaseUser.getUid());
-                    intent.putExtra("GET GIFTS", true);
-                    startActivity(intent);
-                }
-                //sent a gift and needs to adjust lists
-                else {
-                    if(startIntent.getSerializableExtra(Globals.SENT_MAP_KEY) != null){
-                        startup.setSentGiftMap((HashMap<String, String>)startIntent.getSerializableExtra(Globals.SENT_MAP_KEY));
-                        Log.d("LPC", "startup sent gift map from got gifts: "+startup.getSentGiftMap().toString());
+//                if(firstRun) {
+//                    Log.d("LPC", "run in firstRun");
+//                    startup.setFistRun(false);
+//                    Log.d("LPC", "first run is now: "+startup.getFirstRun());
+//                    Intent intent = new Intent(this, DownloadSplashActivity.class);
+//                    intent.putExtra("USER ID", mFirebaseUser.getUid());
+//                    intent.putExtra("GET GIFTS", true);
+//                    startActivity(intent);
+//                }
+//                //sent a gift and needs to adjust lists
+//                else {
+//                    if(startIntent.getSerializableExtra(Globals.SENT_MAP_KEY) != null){
+//                        startup.setSentGiftMap((HashMap<String, String>)startIntent.getSerializableExtra(Globals.SENT_MAP_KEY));
+//                        Log.d("LPC", "startup sent gift map from got gifts: "+startup.getSentGiftMap().toString());
+//
+//                    }
+//                    if(startIntent.getSerializableExtra(Globals.REC_MAP_KEY) != null) {
+//                        startup.setReceivedGiftMap((HashMap<String, String>) startIntent.getSerializableExtra(Globals.REC_MAP_KEY));
+//                        Log.d("LPC", "startup received gift map from got gifts: " + startup.getReceivedGiftMap().toString());
+//                    }
+//                }
+//            }
+//        }
+        navId = R.id.nav_home;
 
-                    }
-                    if(startIntent.getSerializableExtra(Globals.REC_MAP_KEY) != null) {
-                        startup.setReceivedGiftMap((HashMap<String, String>) startIntent.getSerializableExtra(Globals.REC_MAP_KEY));
-                        Log.d("LPC", "startup received gift map from got gifts: " + startup.getReceivedGiftMap().toString());
-                    }
-                }
-            }
-            navId = R.id.nav_home;
-        }
-
-        if(mFirebaseUser == null){
-//            Toast.makeText(this, "You need to login to continue", Toast.LENGTH_SHORT).show();
-//            ExitLogoutActivity.exitApplication(this);
-        }
         navigateToFragment(navId);
     }
 
@@ -245,10 +241,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if(firstRun) {
             startup.setFistRun(false);
             Log.d("LPC", "run in first run in auth success");
-            Intent intent = new Intent(this, DownloadSplashActivity.class);
-            intent.putExtra("USER ID", userId);
-            intent.putExtra("GET GIFTS", true);
-            startActivity(intent);
+//            Intent intent = new Intent(this, DownloadSplashActivity.class);
+//            intent.putExtra("USER ID", userId);
+//            intent.putExtra("GET GIFTS", true);
+//            startActivity(intent);
         }
     }
 
