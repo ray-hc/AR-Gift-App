@@ -27,4 +27,6 @@ public class Globals {
     // List adapter:
     public static final String NEW_GIFT = "NEW";
     public static final String OLD_GIFT = "OLD";
+
+    public static final String UPDATE_TOAST = "Updated!";
 }

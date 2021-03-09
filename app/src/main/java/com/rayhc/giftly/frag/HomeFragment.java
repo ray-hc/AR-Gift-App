@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -177,6 +178,9 @@ public class HomeFragment extends Fragment {
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast toast = Toast.makeText(getActivity(), Globals.UPDATE_TOAST, Toast.LENGTH_SHORT);
+                toast.show();
+
                 GetSentGiftsThread getSentGiftsThread1 = new GetSentGiftsThread();
                 GetReceivedGiftsThread getReceivedGiftsThread1 = new GetReceivedGiftsThread();
                 getSentGiftsThread1.start();
