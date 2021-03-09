@@ -194,9 +194,10 @@ public class UserManager {
             public void run() {
                 DatabaseReference db = FirebaseDatabase.getInstance().getReference();
                 if (!to.getFriends().containsKey(from.getUserId()) && !to.getReceivedFriends().containsKey(from.getUserId())) {
-                    to.addReceivedFriends(from.getUserId());
+                    to.addFriends(from.getUserId());
+                    from.addFriends(to.getUserId());
                     db.child("users").child(from.getUserId()).setValue(from);
-                    UserManager.acceptFriendRequest(to, from.getUserId());
+                    db.child("users").child(to.getUserId()).setValue(to);
                 }
             }
         }.start();
