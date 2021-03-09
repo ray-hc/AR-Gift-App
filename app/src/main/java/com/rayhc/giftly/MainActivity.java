@@ -135,6 +135,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
+                        .setTheme(R.style.Auth)
+                        .setLogo(R.drawable.joy_logo)
                         .build(),
                 RC_SIGN_IN);
     }
