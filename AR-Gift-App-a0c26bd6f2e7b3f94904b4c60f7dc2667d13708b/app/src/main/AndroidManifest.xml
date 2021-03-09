@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.rayhc.giftly">
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:name=".Startup"
+        android:theme="@style/Theme.Giftly">
+        <activity android:name=".CreateGiftActivity"></activity>
+        <activity android:name=".EditContentsActivity" />
+        <activity android:name=".ViewContentsActivity" />
+        <activity android:name=".ChooseFriendActivity" />
+        <activity android:name=".DownloadSplashActivity" />
+        <activity android:name=".ReviewGiftActivity" />
+        <activity android:name=".CustomUnityPlayerActivity" />
+        <activity android:name=".UploadingSplashActivity" />
+        <activity android:name=".FindFriendsActivity" />
+        <activity android:name=".ExitLogoutActivity"
+            android:theme="@android:style/Theme.NoDisplay"
+            android:autoRemoveFromRecents="true"/>
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Giftly.NoActionBar"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".DemoFirebaseActivity" />
+        <activity android:name=".LinkActivity" />
+        <activity android:name=".ImageActivity" />
+        <activity android:name=".VideoActivity" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.rayhc.giftly"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+    </application>
+
+</manifest>
