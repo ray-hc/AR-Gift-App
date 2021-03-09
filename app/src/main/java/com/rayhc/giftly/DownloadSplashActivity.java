@@ -108,7 +108,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
     public class GiftDownloaderThread extends Thread {
         private Gift loadedGift;
         private Query query;
-        private Intent intent;
         private boolean isReceived, wasOpened;
         String friendName;
 
@@ -118,10 +117,31 @@ public class DownloadSplashActivity extends AppCompatActivity {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
+                if(wasOpened){
+                    Intent intent = new Intent(getApplicationContext(), CreateGiftActivity.class);
+                    intent.putExtra("FROM OPEN", true);
+                    intent.putExtra("HASH VALUE", hashValue);
+                    intent.putExtra("LABEL", label);
+                    intent.putExtra(Globals.CURR_GIFT_KEY, loadedGift);
+                    Log.d("LPC", "runnable gift download get friend name: "+friendName);
+                    intent.putExtra("FRIEND NAME", friendName);
+                    intent.putExtra("IS RECEIVED", isReceived);
+                    intent.putExtra("WAS OPENED", wasOpened);
+                    startActivity(intent);
+                } else {
+                    Log.d("LPC", "marking gift as opened in db from get gift thread");
+                    MarkOpenedThread markOpenedThread = new MarkOpenedThread(hashValue);
+                    markOpenedThread.start();
+
+                    Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
+                    intent.putExtra("sceneType", loadedGift.getGiftType());
+                    startActivity(intent);
+                }
+
+                /*
                 //TODO: change the 'else' to the AR activity
                 if(wasOpened) intent = new Intent(getApplicationContext(), CreateGiftActivity.class);
                 else intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
-                intent.putExtra("sceneType", loadedGift.getGiftType());
 //                intent.putExtra("OPENED GIFT", loadedGift);
                 intent.putExtra("FROM OPEN", true);
                 intent.putExtra("HASH VALUE", hashValue);
@@ -137,6 +157,8 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     markOpenedThread.start();
                 }
                 startActivity(intent);
+
+                 */
             }
         };
 
@@ -217,21 +239,10 @@ public class DownloadSplashActivity extends AppCompatActivity {
      * Thread to mark a gift as opened
      */
     public class MarkOpenedThread extends Thread{
-        private Intent intent;
         private String giftHash;
-        public MarkOpenedThread(Intent intent, String giftHash){
-            this.intent = intent;
+        public MarkOpenedThread(String giftHash){
             this.giftHash = giftHash;
         }
-
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                startActivity(intent);
-            }
-        };
-
-        Handler handler = new Handler(Looper.getMainLooper());
 
         @Override
         public void run() {
@@ -239,9 +250,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
             mDatabase.child("gifts").child(giftHash).child("opened").setValue(true,
                     new DatabaseReference.CompletionListener() {
                         @Override
-                        public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                            handler.post(runnable);
-                        }
+                        public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) { }
                     });
         }
     }

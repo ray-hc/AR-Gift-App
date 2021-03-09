@@ -5,16 +5,32 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+    <uses-feature
+        android:name="android.hardware.camera.ar"
+        android:required="true" />
+
     <application
+        android:name=".Startup"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:name=".Startup"
         android:theme="@style/Theme.Giftly">
-        <activity android:name=".CreateGiftActivity"></activity>
+        <activity android:name=".AddFriendFromQRActivity"
+            android:label="Add Friend From UI">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data   android:scheme="http" />
+                <data   android:scheme="https" />
+                <data android:host=".ianmkim.com" />
+            </intent-filter>
+
+        </activity>
+        <activity android:name=".CreateGiftActivity" />
         <activity android:name=".EditContentsActivity" />
         <activity android:name=".ViewContentsActivity" />
         <activity android:name=".ChooseFriendActivity" />
@@ -23,14 +39,15 @@
         <activity android:name=".CustomUnityPlayerActivity" />
         <activity android:name=".UploadingSplashActivity" />
         <activity android:name=".FindFriendsActivity" />
-        <activity android:name=".ExitLogoutActivity"
-            android:theme="@android:style/Theme.NoDisplay"
-            android:autoRemoveFromRecents="true"/>
+        <activity
+            android:name=".ExitLogoutActivity"
+            android:autoRemoveFromRecents="true"
+            android:theme="@android:style/Theme.NoDisplay" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Giftly.NoActionBar"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Giftly.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -58,9 +75,6 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-
     </application>
-
-    <uses-feature android:name="android.hardware.camera.ar" android:required="true" />
 
 </manifest>
