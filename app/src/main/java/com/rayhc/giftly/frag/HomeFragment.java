@@ -154,10 +154,10 @@ public class HomeFragment extends Fragment {
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), DownloadSplashActivity.class);
-                intent.putExtra("GET GIFTS", true);
-                intent.putExtra("USER ID", mFirebaseUser.getUid());
-                startActivity(intent);
+                GetSentGiftsThread getSentGiftsThread1 = new GetSentGiftsThread();
+                GetReceivedGiftsThread getReceivedGiftsThread1 = new GetReceivedGiftsThread();
+                getSentGiftsThread1.start();
+                getReceivedGiftsThread1.start();
             }
         });
 
