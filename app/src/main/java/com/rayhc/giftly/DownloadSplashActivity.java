@@ -161,7 +161,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
 
             //listener for the newly added Gift's query based on the input pin
             //put its link at the top
-            query.addValueEventListener(new ValueEventListener() {
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
@@ -185,7 +185,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
                         showErrorDialog();
                         Log.d("LPC", "snapshot doesn't exist");
                     }
-                    query.removeEventListener(this);
                     Log.d("LPC","get gift listener was removed");
                 }
 
@@ -199,7 +198,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
 
         public void getFriendName(String id){
             query = mDatabase.child("users").child(id);
-            query.addValueEventListener(new ValueEventListener() {
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
@@ -211,7 +210,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
                         showErrorDialog();
                         Log.d("LPC", "snapshot doesn't exist");
                     }
-                    query.removeEventListener(this);
                     Log.d("LPC","get friend name listener was removed");
                 }
                 @Override
