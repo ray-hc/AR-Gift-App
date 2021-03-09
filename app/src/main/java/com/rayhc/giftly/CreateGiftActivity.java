@@ -212,19 +212,16 @@ public class CreateGiftActivity extends AppCompatActivity {
         //set up review button
         if (newGift.getContentType() == null || newGift.getContentType().size() == 0) {
             reviewButton.setEnabled(false);
-            if (fromOpen) {
-                reviewLabel.setText(getString(R.string.has_media, 0));
-            } else {
-                reviewLabel.setText(getString(R.string.media_added, 0));
-            }
+             reviewLabel.setText(
+                     getResources().getQuantityString(R.plurals.has_media_items, 0, 0)
+             );
         }
         else {
             reviewButton.setEnabled(true);
-            if (fromOpen) {
-                reviewLabel.setText(getString(R.string.has_media, newGift.getContentType().size()));
-            } else {
-                reviewLabel.setText(getString(R.string.media_added, newGift.getContentType().size()));
-            }
+            reviewLabel.setText(
+                        getResources().getQuantityString(R.plurals.has_media_items, newGift.getContentType().size(),
+                                newGift.getContentType().size())
+                );
         }
 
         reviewButton.setOnClickListener(v1 ->  {
