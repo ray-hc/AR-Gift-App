@@ -81,8 +81,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         // get id to restore state if needed
         if (savedInstanceState != null) {
             navId = savedInstanceState.getInt(NAV_ITEM_ID);
-        }
-        else {
+        } else {
             navId = R.id.nav_home;
         }
 
@@ -91,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         // get first run info
         startup = (Startup) getApplication();
         firstRun = startup.getFirstRun();
-        Log.d("LPC", "is first run? "+firstRun);
+        Log.d("LPC", "is first run? " + firstRun);
 
         // define fragments
         friendsFragment = new FriendsFragment();
@@ -111,59 +110,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         //determine if we've gotten gifts
         Intent startIntent = getIntent();
-        Log.d("LPC", "GOT GITS? "+startIntent.getBooleanExtra("GOT GIFTS", false));
-//        if(startIntent.getBooleanExtra("GOT GIFTS", false)){
-//            if(startIntent.getSerializableExtra(Globals.SENT_MAP_KEY) != null){
-//                startup.setSentGiftMap((HashMap<String, String>)startIntent.getSerializableExtra(Globals.SENT_MAP_KEY));
-//                Log.d("LPC", "startup sent gift map from got gifts: "+startup.getSentGiftMap().toString());
-//
-//            }
-//            if(startIntent.getSerializableExtra(Globals.REC_MAP_KEY) != null) {
-//                startup.setReceivedGiftMap((HashMap<String, String>) startIntent.getSerializableExtra(Globals.REC_MAP_KEY));
-//                Log.d("LPC", "startup received gift map from got gifts: " + startup.getReceivedGiftMap().toString());
-//            }
-//
-//            Bundle bundle = new Bundle();
-//            if(startIntent.getBooleanExtra("NEED REFRESH", false)) {
-//                Log.d("LPC", "onCreate: need refresh");
-//                bundle.putBoolean("NEED REFRESH", true);
-//            }
-//            homeFragment.setArguments(bundle);
-//        }
-//
-//        else{
-            if(mFirebaseUser == null){
-                loadFirebase();
-            }
-//            else{
-                if(startIntent.getBooleanExtra("SENT GIFT", false)){
-                    mGift = new Gift();
-                    Log.d("LPC", "onCreate: made a new gift");
-                }
-                //go to download splash
-//                if(firstRun) {
-//                    Log.d("LPC", "run in firstRun");
-//                    startup.setFistRun(false);
-//                    Log.d("LPC", "first run is now: "+startup.getFirstRun());
-//                    Intent intent = new Intent(this, DownloadSplashActivity.class);
-//                    intent.putExtra("USER ID", mFirebaseUser.getUid());
-//                    intent.putExtra("GET GIFTS", true);
-//                    startActivity(intent);
-//                }
-//                //sent a gift and needs to adjust lists
-//                else {
-//                    if(startIntent.getSerializableExtra(Globals.SENT_MAP_KEY) != null){
-//                        startup.setSentGiftMap((HashMap<String, String>)startIntent.getSerializableExtra(Globals.SENT_MAP_KEY));
-//                        Log.d("LPC", "startup sent gift map from got gifts: "+startup.getSentGiftMap().toString());
-//
-//                    }
-//                    if(startIntent.getSerializableExtra(Globals.REC_MAP_KEY) != null) {
-//                        startup.setReceivedGiftMap((HashMap<String, String>) startIntent.getSerializableExtra(Globals.REC_MAP_KEY));
-//                        Log.d("LPC", "startup received gift map from got gifts: " + startup.getReceivedGiftMap().toString());
-//                    }
-//                }
-//            }
-//        }
+        Log.d("LPC", "GOT GITS? " + startIntent.getBooleanExtra("GOT GIFTS", false));
+        if (mFirebaseUser == null) {
+            loadFirebase();
+        }
+        if (startIntent.getBooleanExtra("SENT GIFT", false)) {
+            mGift = new Gift();
+            Log.d("LPC", "onCreate: made a new gift");
+        }
         navId = R.id.nav_home;
 
         navigateToFragment(navId);
@@ -188,20 +142,18 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     protected void onDestroy() {
         startup.setFistRun(true);
-        Log.d("LPC", "first run is now: "+startup.getFirstRun());
+        Log.d("LPC", "first run is now: " + startup.getFirstRun());
         super.onDestroy();
     }
 
     // creates fragment if chosen
     public void navigateToFragment(int navId) {
-        if (navId == R.id.nav_friends_list){
+        if (navId == R.id.nav_friends_list) {
             getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, friendsFragment, "FriendsFragment").commit();
-        }
-        else if (navId == R.id.nav_home){
+        } else if (navId == R.id.nav_home) {
             getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, homeFragment, "HomeFragment").commit();
-        }
-        else if (navId == R.id.nav_settings){
-            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout,settingsFragment, "SettingsFragment").commit();
+        } else if (navId == R.id.nav_settings) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, settingsFragment, "SettingsFragment").commit();
         }
     }
 
@@ -238,13 +190,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         editor.apply();
 
         //go to download splash
-        if(firstRun) {
+        if (firstRun) {
             startup.setFistRun(false);
             Log.d("LPC", "run in first run in auth success");
-//            Intent intent = new Intent(this, DownloadSplashActivity.class);
-//            intent.putExtra("USER ID", userId);
-//            intent.putExtra("GET GIFTS", true);
-//            startActivity(intent);
         }
     }
 
@@ -261,14 +209,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 Query query = db.child("users").orderByChild("userId").equalTo(user.getUid());
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot){
-                        Log.d("LPC", "does data snap exist?: "+snapshot.exists());
-                        if(snapshot.exists()){
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Log.d("LPC", "does data snap exist?: " + snapshot.exists());
+                        if (snapshot.exists()) {
                             Log.d("LPC", "snapshot exists");
                             activityUser = UserManager.snapshotToUser(snapshot, user.getUid());
                             Log.d("LPC", "user exists");
-                        }
-                        else activityUser = UserManager.snapshotToEmptyUser(snapshot, user);
+                        } else activityUser = UserManager.snapshotToEmptyUser(snapshot, user);
                         onAuthSuccess(user);
                     }
 
@@ -280,7 +227,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 Log.d("iandebug", "User Login Failed");
                 Toast.makeText(this, "You need to login to continue", Toast.LENGTH_SHORT).show();
                 ExitLogoutActivity.exitApplication(this);
-//                this.finishAffinity();
             }
 
         }
@@ -303,8 +249,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
-        }else if (grantResults[0] == PackageManager.PERMISSION_DENIED ){
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     //Show an explanation to the user *asynchronously*
@@ -320,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                         }
                     });
                     requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-                }else{
+                } else {
                     //Never ask again and handle your app without permission.
                 }
             }
@@ -333,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         ExitLogoutActivity.exitApplication(this);
     }
 
-    public void onLogoutClicked(View view){
+    public void onLogoutClicked(View view) {
         Log.d("iandebug", "logout clicked");
         SharedPreferences mSharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = mSharedPref.edit();

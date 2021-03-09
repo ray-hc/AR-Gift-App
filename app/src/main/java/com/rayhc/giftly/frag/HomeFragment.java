@@ -41,8 +41,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class HomeFragment extends Fragment {
-    private HashMap<String, String> giftsReceived;
-    private HashMap<String, String> giftsSent;
     private ListView recievedGifts;
     private ListView sentGifts;
 
@@ -145,8 +143,6 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), CreateGiftActivity.class);
-                intent.putExtra("SENT GIFT MAP", giftsSent);
-                intent.putExtra("RECEIVED GIFT MAP", giftsReceived);
                 startActivity(intent);
             }
         });
@@ -160,62 +156,6 @@ public class HomeFragment extends Fragment {
                 getReceivedGiftsThread1.start();
             }
         });
-
-        //populate the sent gift list view
-//        if(giftsSent != null){
-//            ArrayList<String> sentGiftMessages = new ArrayList<>();
-//            sentGiftMessages.addAll(giftsSent.keySet());
-//            sentGiftsAdapter = new GiftAdapter(getActivity(), 0, sentGiftMessages);
-//            sentGiftsAdapter.hideArrow(true);
-//            sentGifts.setAdapter(sentGiftsAdapter);
-////            sentGifts.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, sentGiftMessages));
-//
-//            //commenting out to remove responsiveness - Logan
-////            sentGifts.setOnItemClickListener((parent, view, position, id) -> {
-////                String label = (String) parent.getItemAtPosition(position);
-////                Log.d("LPC", "get hash: "+giftsSent.get(label));
-////                //download the gift
-////                Intent intent;
-////                intent = new Intent(getContext(), DownloadSplashActivity.class);
-////                intent.putExtra("HASH VALUE", giftsSent.get(label));
-////                intent.putExtra("FROM OPEN", true);
-//////                intent.putExtra("SENT GIFT MAP",giftsSent);
-////                intent.putExtra("USER ID", mFirebaseUser.getUid());
-//////                intent.putExtra("RECEIVED GIFT MAP",giftsRecieved);
-////                Log.d("LPC", "getting gift w hash: "+giftsSent.get(label));
-////                startActivity(intent);
-////            });
-//        }
-
-//        if(giftsReceived != null){ // added || true for testing.
-//            //populate the received gift list view
-//            ArrayList<String> receivedGiftMessages = new ArrayList<>();
-//            receivedGiftMessages.addAll(giftsReceived.keySet());
-//
-//            receivedGiftsAdapter = new GiftAdapter(getActivity(), 0, receivedGiftMessages);
-//
-//            recievedGifts.setAdapter(receivedGiftsAdapter);
-//
-//            // put back for testing:
-//            recievedGifts.setOnItemClickListener((parent, view, position, id) -> {
-//                String label = (String) parent.getItemAtPosition(position);
-//                //download the gift
-//                Intent intent;
-//                intent = new Intent(getContext(), DownloadSplashActivity.class);
-//                intent.putExtra("HASH VALUE", giftsReceived.get(label));
-//                intent.putExtra("FROM RECEIVED", true);
-//                intent.putExtra("FROM OPEN", true);
-////                intent.putExtra("SENT GIFT MAP",giftsSent);
-//                intent.putExtra("USER ID", mFirebaseUser.getUid());
-////                intent.putExtra("RECEIVED GIFT MAP",giftsRecieved);
-//                Log.d("LPC", "getting gift w hash: "+giftsReceived.get(label));
-//                startActivity(intent);
-//            });
-//
-//        }
-
-//        ListUtils.setDynamicHeight(sentGifts);
-//        ListUtils.setDynamicHeight(recievedGifts);
 
 
         return root;
