@@ -46,8 +46,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
     private StorageReference storageRef;
     private FirebaseStorage mStorage;
 
-    private String recipientName, recipientID, hashValue, userID, giftHash, label;
-    private HashMap<String, String> friendMap, sentGiftMap, receivedGiftMap;
+    private String recipientName, recipientID, userID, giftHash, label;
     private boolean fromOpen, fromReceive;
 
 
@@ -77,7 +76,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
         fromReceive = startIntent.getBooleanExtra("FROM RECEIVED", false);
         //if its getting friends
         if(startIntent.getBooleanExtra("GET FRIENDS", false)){
-            friendMap = new HashMap<>();
 
             Intent intent = new Intent(this, ChooseFriendActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
@@ -90,8 +88,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
         //if its getting a gift
         else{
             Log.d("LPC", "running gift downloader thread");
-            hashValue = startIntent.getStringExtra("HASH VALUE");
-            Log.d("LPC", "getting gift w hash: "+hashValue);
+            Log.d("LPC", "getting gift w hash: "+giftHash);
             Log.d("LPC", "running gift downloader thread: from open? "+ fromOpen);
 
             GiftDownloaderThread giftDownloaderThread = new GiftDownloaderThread();
@@ -118,13 +115,12 @@ public class DownloadSplashActivity extends AppCompatActivity {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                //TODO: change the 'else' to the AR activity
                 if(wasOpened) intent = new Intent(getApplicationContext(), CreateGiftActivity.class);
                 else intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
+                //pass relevant gift data
                 intent.putExtra("sceneType", loadedGift.getGiftType());
-//                intent.putExtra("OPENED GIFT", loadedGift);
                 intent.putExtra("FROM OPEN", true);
-                intent.putExtra("HASH VALUE", hashValue);
+                intent.putExtra("HASH VALUE", giftHash);
                 intent.putExtra("LABEL", label);
                 intent.putExtra(Globals.CURR_GIFT_KEY, loadedGift);
                 Log.d("LPC", "runnable gift download get friend name: "+friendName);
@@ -132,8 +128,8 @@ public class DownloadSplashActivity extends AppCompatActivity {
                 intent.putExtra("IS RECEIVED", isReceived);
                 intent.putExtra("WAS OPENED", wasOpened);
                 if(!wasOpened) {
-                    Log.d("LPC", "marking gift as opened in db from get gift thread");
-                    MarkOpenedThread markOpenedThread = new MarkOpenedThread(intent, hashValue);
+                    //if the gift wasn't previously opened, mark it opened in the db
+                    MarkOpenedThread markOpenedThread = new MarkOpenedThread(intent, giftHash);
                     markOpenedThread.start();
                 }
                 startActivity(intent);
@@ -149,11 +145,13 @@ public class DownloadSplashActivity extends AppCompatActivity {
         }
 
 
+        /**
+         * Get the chosen gift object from the db
+         */
         public void getGift(){
-            query = mDatabase.child("gifts").child(hashValue);
+            query = mDatabase.child("gifts").child(giftHash);
 
-            //listener for the newly added Gift's query based on the input pin
-            //put its link at the top
+            //listener for the chosen Gift's query
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -161,19 +159,16 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     Log.d("LPC", "snapshot: " + snapshot.getValue());
                     if (snapshot.exists()) {
                         loadedGift = snapshot.getValue(Gift.class);
-                        //TODO: I think this will stop senders from being shown gift contents upon recipient open
+                        //prevent changes on the sender side
                         if(loadedGift.getSender().equals(userID)) {
                             Log.d("LPC", "i sent this gift");
                             return;
                         }
                         if(fromReceive) wasOpened = loadedGift.isOpened();
                         else wasOpened = true;
-                        Log.d("LPC", "time loaded gift created "+loadedGift.getTimeCreated());
-                        if(loadedGift.getSender().equals(userID)) getFriendName(loadedGift.getReceiver());
-                        else {
-                            getFriendName(loadedGift.getSender());
-                            isReceived = true;
-                        }
+                        //get the gifts sender
+                        getFriendName(loadedGift.getSender());
+                        isReceived = true;
                     } else {
                         showErrorDialog();
                         Log.d("LPC", "snapshot doesn't exist");
@@ -189,13 +184,15 @@ public class DownloadSplashActivity extends AppCompatActivity {
             });
         }
 
+        /**
+         * Get the chosen gifts sender
+         */
         public void getFriendName(String id){
             query = mDatabase.child("users").child(id);
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
-                    User user;
                     if (snapshot.exists()) {
                         friendName = (String) snapshot.child("name").getValue();
                         handler.post(runnable);
@@ -249,8 +246,9 @@ public class DownloadSplashActivity extends AppCompatActivity {
      * Populate the spinner with this user's friends names
      */
     public class GetFriendsThread extends Thread{
+        private HashMap<String, String>  friendMap = new HashMap<>();
         private Intent intent;
-        private int numFriends = 0;
+        private int numFriends = -1;
 
         public GetFriendsThread(Intent intent){
             this.intent = intent;
@@ -260,7 +258,8 @@ public class DownloadSplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 Log.d("LPC", "in runnable - size of friend map: "+friendMap.size());
-                if(numFriends == -1 || friendMap.size()>numFriends) return;
+                //check for strange bound errors
+                if(numFriends == -1 || friendMap.size()<numFriends) return;
                 intent.putExtra("FRIEND MAP", friendMap);
                 Log.d("LPC", "in runnable - friend map "+friendMap.toString());
                 startActivity(intent);
@@ -273,6 +272,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
         @Override
         public void run() {
             super.run();
+            //first get all of the current users friend's id's
             Query query = mDatabase.child("users").orderByChild("userId").equalTo(userID);
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -283,9 +283,11 @@ public class DownloadSplashActivity extends AppCompatActivity {
                         //get the number of friends this user has
                         numFriends = newUser.getFriends().keySet().size();
                         Log.d("LPC", "num friends: "+numFriends);
+                        //if the user has no friend :(, we can call the runnable to go back
                         if(numFriends == 0){
                             handler.post(runnable);
                         }
+                        //grt each friend's screen name
                         for(String key: newUser.getFriends().keySet()){
                             String friendID = newUser.getFriends().get(key);
                             Query query = mDatabase.child("users").orderByChild("userId").equalTo(friendID);
@@ -293,6 +295,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                     String friendName = (String) snapshot.child(friendID).child("name").getValue();
+                                    //store each friend's screen name in form name -> userID
                                     friendMap.put(friendName, friendID);
                                     handler.post(runnable);
                                 }

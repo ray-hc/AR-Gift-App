@@ -153,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if (navId == R.id.nav_friends_list) {
             getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, friendsFragment, "FriendsFragment").commit();
         } else if (navId == R.id.nav_home) {
+            homeFragment = new HomeFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, homeFragment, "HomeFragment").commit();
         } else if (navId == R.id.nav_settings) {
             getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, settingsFragment, "SettingsFragment").commit();
@@ -195,6 +196,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if (firstRun) {
             startup.setFistRun(false);
             Log.d("LPC", "run in first run in auth success");
+            navigateToFragment(R.id.nav_home);
         }
     }
 
