@@ -1,6 +1,7 @@
 package com.rayhc.giftly.frag;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -17,7 +18,9 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
+import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,6 +31,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.rayhc.giftly.CreateGiftActivity;
 import com.rayhc.giftly.DownloadSplashActivity;
+import com.rayhc.giftly.MainActivity;
 import com.rayhc.giftly.R;
 import com.rayhc.giftly.Startup;
 import com.rayhc.giftly.util.Gift;
@@ -38,7 +42,11 @@ import com.rayhc.giftly.util.User;
 import com.rayhc.giftly.util.UserManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 public class HomeFragment extends Fragment {
     private ListView recievedGifts;
@@ -59,6 +67,9 @@ public class HomeFragment extends Fragment {
 
     private Startup startup;
 
+    private SharedPreferences mSharedPref;
+
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +79,12 @@ public class HomeFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
-        userID = mFirebaseUser.getUid();
+        if(mFirebaseUser == null) {
+            mSharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            userID = mSharedPref.getString("userId", null);
+        } else {
+            userID = mFirebaseUser.getUid();
+        }
 
 
         startup = (Startup) getActivity().getApplication();

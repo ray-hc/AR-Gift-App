@@ -48,7 +48,7 @@ import static com.rayhc.giftly.util.Globals.SENT_MAP_KEY;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
     public static final String NAV_ITEM_ID = "NAV_ITEM_ID";
-    private static final int RC_SIGN_IN = 123;
+    public static final int RC_SIGN_IN = 123;
 
     private User activityUser;
 

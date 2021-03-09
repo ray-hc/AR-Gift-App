@@ -58,6 +58,9 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
     </application>
+
+    <uses-feature android:name="android.hardware.camera.ar" android:required="true" />
 
 </manifest>
