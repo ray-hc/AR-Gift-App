@@ -51,6 +51,7 @@ import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 public class HomeFragment extends Fragment {
     private ListView recievedGifts;
     private ListView sentGifts;
+    private View recCard, sentCard, nothingYet;
 
     //create gift button
     private Button createGiftButton;
@@ -111,6 +112,9 @@ public class HomeFragment extends Fragment {
         //wire lists
         recievedGifts = root.findViewById(R.id.inbox_gifts_recieved);
         sentGifts = root.findViewById(R.id.inbox_gifts_sent);
+        nothingYet = root.findViewById(R.id.nothing_yet);
+        recCard = root.findViewById(R.id.recGifts);
+        sentCard = root.findViewById(R.id.sentGifts);
 
         //if the sent gift map exists, fill it
         if(!startup.getSentGiftMap().isEmpty()) {
@@ -120,6 +124,8 @@ public class HomeFragment extends Fragment {
             sentGiftsAdapter.hideArrow(true);
             sentGifts.setAdapter(sentGiftsAdapter);
             ListUtils.setDynamicHeight(sentGifts);
+        } else {
+            sentCard.setVisibility(View.GONE);
         }
 
         //if the received gift exists, fill it
@@ -141,6 +147,11 @@ public class HomeFragment extends Fragment {
                 startActivity(intent);
             });
             ListUtils.setDynamicHeight(recievedGifts);
+            nothingYet.setVisibility(View.GONE);
+            recCard.setVisibility(View.VISIBLE);
+        } else {
+            nothingYet.setVisibility(View.VISIBLE);
+            recCard.setVisibility(View.GONE);
         }
 
         //run sent gifts thread
@@ -206,7 +217,7 @@ public class HomeFragment extends Fragment {
                 }
                 Log.d("LPC", "thread done - sent gift map: " + sentGiftMap.toString());
                 Log.d("LPC", "has the sent gift map changed: "+(!sentGiftMap.equals(startup.getSentGiftMap())));
-                if(!sentGiftMap.equals(startup.getSentGiftMap())){
+                if(!sentGiftMap.equals(startup.getSentGiftMap())) {
                     startup.setSentGiftMap(sentGiftMap);
                     //set the adapter
                     ArrayList<String> sentGiftMessages = new ArrayList<>();
@@ -215,6 +226,7 @@ public class HomeFragment extends Fragment {
                     sentGiftsAdapter.hideArrow(true);
                     sentGifts.setAdapter(sentGiftsAdapter);
                     ListUtils.setDynamicHeight(sentGifts);
+                    sentCard.setVisibility(View.VISIBLE);
                 }
 
             }
@@ -342,6 +354,8 @@ public class HomeFragment extends Fragment {
                         startActivity(intent);
                     });
                     ListUtils.setDynamicHeight(recievedGifts);
+                    nothingYet.setVisibility(View.GONE);
+                    recCard.setVisibility(View.VISIBLE);
                 }
 
                 Log.d("LPC", "thread done-received gift map: " + receivedGiftsMap.toString());
