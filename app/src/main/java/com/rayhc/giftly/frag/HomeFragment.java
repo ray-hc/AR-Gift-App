@@ -119,11 +119,11 @@ public class HomeFragment extends Fragment {
                 //download the gift
                 Intent intent;
                 intent = new Intent(getContext(), DownloadSplashActivity.class);
-                intent.putExtra("HASH VALUE", giftsReceived.get(label));
+                intent.putExtra("HASH VALUE", startup.getReceivedGiftMap().get(label));
                 intent.putExtra("FROM RECEIVED", true);
                 intent.putExtra("FROM OPEN", true);
                 intent.putExtra("USER ID", mFirebaseUser.getUid());
-                Log.d("LPC", "getting gift w hash: " + giftsReceived.get(label));
+                Log.d("LPC", "getting gift w hash: " + startup.getReceivedGiftMap().get(label));
                 startActivity(intent);
             });
             ListUtils.setDynamicHeight(recievedGifts);
@@ -378,11 +378,11 @@ public class HomeFragment extends Fragment {
                         //download the gift
                         Intent intent;
                         intent = new Intent(getContext(), DownloadSplashActivity.class);
-                        intent.putExtra("HASH VALUE", giftsReceived.get(label));
+                        intent.putExtra("HASH VALUE", receivedGiftsMap.get(label));
                         intent.putExtra("FROM RECEIVED", true);
                         intent.putExtra("FROM OPEN", true);
                         intent.putExtra("USER ID", mFirebaseUser.getUid());
-                        Log.d("LPC", "getting gift w hash: " + giftsReceived.get(label));
+                        Log.d("LPC", "getting gift w hash: " + receivedGiftsMap.get(label));
                         startActivity(intent);
                     });
                     ListUtils.setDynamicHeight(recievedGifts);
