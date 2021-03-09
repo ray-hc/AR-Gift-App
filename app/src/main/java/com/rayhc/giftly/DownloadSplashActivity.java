@@ -117,7 +117,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
                 if(wasOpened){
                     Intent intent = new Intent(getApplicationContext(), CreateGiftActivity.class);
                     intent.putExtra("FROM OPEN", true);
-                    intent.putExtra("HASH VALUE", hashValue);
+                    intent.putExtra("HASH VALUE", giftHash);
                     intent.putExtra("LABEL", label);
                     intent.putExtra(Globals.CURR_GIFT_KEY, loadedGift);
                     Log.d("LPC", "runnable gift download get friend name: "+friendName);
@@ -127,7 +127,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     startActivity(intent);
                 } else {
                     Log.d("LPC", "marking gift as opened in db from get gift thread");
-                    MarkOpenedThread markOpenedThread = new MarkOpenedThread(hashValue);
+                    MarkOpenedThread markOpenedThread = new MarkOpenedThread(giftHash);
                     markOpenedThread.start();
 
                     Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
