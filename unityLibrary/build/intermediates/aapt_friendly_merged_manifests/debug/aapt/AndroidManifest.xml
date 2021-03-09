@@ -8,7 +8,7 @@
 
     <uses-sdk
         android:minSdkVersion="26"
-        android:targetSdkVersion="30" />
+        android:targetSdkVersion="29" />
 
     <uses-feature android:glEsVersion="0x00030000" />
 
@@ -38,12 +38,6 @@
             android:launchMode="singleTask"
             android:screenOrientation="fullSensor"
             android:theme="@style/UnityThemeSelector" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
             <meta-data
                 android:name="unityplayer.UnityActivity"
                 android:value="true" />
@@ -63,7 +57,7 @@
             android:value="portrait|landscape" />
         <meta-data
             android:name="unity.build-id"
-            android:value="dcd3ee8a-22b9-4adc-8b87-28752d9d5ce6" />
+            android:value="66b9debf-908b-4582-9d00-bfd3f1576038" />
         <meta-data
             android:name="unityplayer.SkipPermissionsDialog"
             android:value="true" />
