@@ -99,21 +99,24 @@ public class NotifService extends Service {
                 if(!firstRun){
                     Log.d("LPC", "snapshot: " + snapshot.getValue());
                     if (snapshot.exists()) {
-                        HashMap<String, String> recGifts = (HashMap) snapshot.child("receivedGifts").getValue();
-                        Log.d("notif", "rec gifts from db: "+recGifts.toString());
-                        Set recHashes = recGifts.keySet();
-                        if(recHashes.size() != startup.getReceivedGiftMap().size()){
-                            Log.d("notif", "rec gift lists sizes dont match");
-                            buildNotification();
-                            return;
-                        }
-                        for(String mapKey: startup.getReceivedGiftMap().keySet()){
-                            String giftHash = startup.getReceivedGiftMap().get(mapKey);
-                            Log.d("notif", "looking @ gift hash: "+giftHash);
-                            if(!recHashes.contains(giftHash)){
+                        if(snapshot.child("receivedGifts").getValue() != null) {
+                            HashMap<String, String> recGifts = (HashMap) snapshot.child("receivedGifts").getValue();
+                            Log.d("notif", "rec gifts from db: " + recGifts.toString());
+                            Set recHashes = recGifts.keySet();
+                            if (recHashes.size() != startup.getReceivedGiftMap().size()) {
+                                Log.d("notif", "rec gift lists sizes dont match");
                                 buildNotification();
-                                break;
+                                return;
                             }
+                            for (String mapKey : startup.getReceivedGiftMap().keySet()) {
+                                String giftHash = startup.getReceivedGiftMap().get(mapKey);
+                                Log.d("notif", "looking @ gift hash: " + giftHash);
+                                if (!recHashes.contains(giftHash)) {
+                                    buildNotification();
+                                    break;
+                                }
+                            }
+                            Log.d("notif", "didn't make any changes to rec gifts");
                         }
                     } else {
                         Log.d("LPC", "snapshot doesn't exist");
