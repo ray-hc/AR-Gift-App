@@ -80,16 +80,6 @@ public class LinkActivity extends AppCompatActivity {
             }
         });
 
-        //handle if from the review activity
-        if(startIntent.getBooleanExtra(Globals.FROM_REVIEW_KEY, false)){
-            String label = startIntent.getStringExtra(Globals.FILE_LABEL_KEY);
-            mSaveButton.setEnabled(true);
-            mDeleteButton.setVisibility(View.VISIBLE);
-            mEditText.setText("");
-            mEditText.setText(mGift.getLinks().get(mFileLabel));
-        }
-
-
     }
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
