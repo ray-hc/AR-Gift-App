@@ -107,16 +107,16 @@ public class EditContentsActivity extends AppCompatActivity {
 
     public void handleMedia(ArrayList<String> keyList){
         mFileLabel = keyList.get(currIndex);
-        if(mFileLabel.startsWith("image")){
+        if(mFileLabel.contains("image")){
             mVideoView.setVisibility(View.GONE);
             mImageView.setVisibility(View.VISIBLE);
             mImageView.setImageURI(null);
-            mImageView.setImageURI(Uri.parse(mGift.getContentType().get(mFileLabel)));
+            mImageView.setImageURI(Uri.parse(new File(mGift.getContentType().get(mFileLabel)).getAbsolutePath()));
         } else{
             mImageView.setVisibility(View.GONE);
             mVideoView.setVisibility(View.VISIBLE);
             mVideoView.setVideoURI(null);
-            mVideoView.setVideoURI(Uri.parse(mGift.getContentType().get(mFileLabel)));
+            mVideoView.setVideoURI(Uri.parse(new File(mGift.getContentType().get(mFileLabel)).getAbsolutePath()));
             mVideoView.start();
         }
     }
