@@ -119,7 +119,7 @@ public class DownloadSplashActivity extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), CreateGiftActivity.class);
                     intent.putExtra(Globals.FROM_OPEN_KEY, true);
                     intent.putExtra(Globals.HASH_VALUE_KEY, giftHash);
-                    intent.putExtra(GLobals.LABEL_KEY, label);
+                    intent.putExtra(Globals.LABEL_KEY, label);
                     intent.putExtra(Globals.CURR_GIFT_KEY, loadedGift);
                     Log.d("LPC", "runnable gift download get friend name: "+friendName);
                     intent.putExtra(Globals.FRIEND_NAME_KEY, friendName);

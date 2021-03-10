@@ -175,7 +175,7 @@ public class EditContentsActivity extends AppCompatActivity {
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
         intent.putExtra("MAKING GIFT", true);
         intent.putExtra(Globals.FRIEND_NAME_KEY, friendName);
-        intent.putExtra(Globals.FRIEND_ID_KEY", friendID);
+        intent.putExtra(Globals.FRIEND_ID_KEY, friendID);
         startActivity(intent);
 
     }

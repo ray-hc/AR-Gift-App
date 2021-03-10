@@ -110,7 +110,7 @@ public class CreateGiftActivity extends AppCompatActivity {
         }
 
         //from open data
-        if (extras != null && extras.getBooleanExtra(Globals.FROM_OPENED_KEY, false)) {
+        if (extras != null && extras.getBooleanExtra(Globals.FROM_OPEN_KEY, false)) {
             fromOpen = true;
             wasOpened = extras.getBooleanExtra(Globals.WAS_OPENED_KEY, false);
             Log.d("LPC", "from open is true");

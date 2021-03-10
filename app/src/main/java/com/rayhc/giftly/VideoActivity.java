@@ -147,7 +147,7 @@ public class VideoActivity extends AppCompatActivity {
         Intent intent = new Intent(this, CreateGiftActivity.class);
         intent.putExtra("MAKING GIFT", true);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
-        intent.putExtra(Globals.FRIEND_NAME_KEY", friendName);
+        intent.putExtra(Globals.FRIEND_NAME_KEY, friendName);
         intent.putExtra(Globals.FRIEND_ID_KEY, friendID);
         startActivity(intent);
     }
