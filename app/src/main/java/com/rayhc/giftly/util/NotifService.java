@@ -68,6 +68,7 @@ public class NotifService extends Service {
             userID = mFirebaseUser.getUid();
         }
 
+        Log.d("iandebug", "notification service started");
         Query query = mDatabase.child("users").child(userID);
 
         //listener for the user's receivedGifts data
