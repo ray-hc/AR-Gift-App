@@ -22,19 +22,7 @@ import static com.google.android.gms.tasks.Tasks.await;
 
 public class UserManager {
     /**
-     * EXAMPLE USAGE
-     *             Thread thread = new Thread(() -> {
-     *                 try {
-     *                     UserManager.searchUsersByEmail("iank");
-     *                 } catch (Exception e) {
-     *                     e.printStackTrace();
-     *                 }
-     *             });
-     *             thread.start();
-     * @param email
-     * @return
-     * @throws ExecutionException
-     * @throws InterruptedException
+     * Find users by email
      */
     public static List<User> searchUsersByEmail(String email) throws ExecutionException, InterruptedException {
         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
@@ -51,6 +39,9 @@ public class UserManager {
         return list;
     }
 
+    /**
+     * Remove friend from user data
+     */
     public static void removeFriend(User current, String toRemoveId){
         current.removeFriends(toRemoveId);
         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
@@ -74,6 +65,9 @@ public class UserManager {
         });
     }
 
+    /**
+     * Add db changes for a new friend
+     */
     public static void acceptFriendRequest(User current, String toAcceptUid){
         if(current.getReceivedFriends() == null) return;
         if(!current.getReceivedFriends().containsKey(toAcceptUid)) return;
@@ -103,6 +97,9 @@ public class UserManager {
         }.start();
     }
 
+    /**
+     * Db changes for rejecting a friend request
+     */
     public static void declineFriendRequest(User current, String toRejectUid){
         if(!current.getReceivedFriends().containsKey(toRejectUid)) return;
         current.removeReceivedFriends(toRejectUid);
@@ -129,6 +126,9 @@ public class UserManager {
         }.start();
     }
 
+    /**
+     * Turn a DB entry to an empty user
+     */
     public static User snapshotToEmptyUser(DataSnapshot snapshot, FirebaseUser user){
         User tempUser = new User();
         if(user.getDisplayName() != null) tempUser.setName(user.getDisplayName());
@@ -156,12 +156,18 @@ public class UserManager {
         return tempUser;
     }
 
+    /**
+     * Turn a DB entry into a user object
+     */
     public static User snapshotToUser(DataSnapshot snapshot, String uid){
         DataSnapshot storedUser = snapshot.child(uid);
         return storedUser.getValue(User.class);
     }
 
 
+    /**
+     * DB changes to send a friend request
+     */
     public static void sendFriendRequest(User from, String toFriendUid){
         from.addSentFriends(toFriendUid);
         new Thread() {
@@ -188,6 +194,9 @@ public class UserManager {
         }.start();
     }
 
+    /**
+     * DB changes to send and accept a friend requst at the same time
+     */
     public static void sendAndAcceptFriendRequest(User from, User to){
         from.addSentFriends(to.getUserId());
         new Thread() {

@@ -14,6 +14,9 @@
 
     <string name="send_gift_title">Make \nSomeone\'s Day</string>
     <string name="send_gift_subtitle">Send a gift</string>
+    <string name="no_gifts_title">No gifts yet?</string>
+    <string name="no_gifts">You know what they say: the best gift is being able to give to others. Send one today!</string>
+    <string name="uploading">Uploading new gift...</string>
 
     <string name="sent_gifts_title">Sent</string>
     <string name="received_gifts_title">Received</string>
@@ -36,5 +39,4 @@
         <item quantity="one">This gift has %1$d media file.</item>
         <item quantity="other">This gift has %1$d media files.</item>
     </plurals>
-
 </resources>

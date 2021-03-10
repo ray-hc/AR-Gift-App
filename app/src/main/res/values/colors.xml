@@ -17,4 +17,6 @@
     <color name="dark_grey">#FF535353</color>
     <color name="blackish">#FF0a0a0a</color>
     <color name="half_black">#26000000</color>
+    <color name="steel_grey">#FFE1E5EA</color>
+    <color name="reddish_peach">#FFFFCFCF</color>
 </resources>

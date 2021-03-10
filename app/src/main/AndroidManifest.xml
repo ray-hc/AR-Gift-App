@@ -18,6 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Giftly">
+        <service android:name=".util.NotifService"/>
         <activity android:name=".AddFriendFromQRActivity"
             android:label="Add Friend">
             <intent-filter>
@@ -29,7 +30,7 @@
                     android:pathPrefix="/joyshare"/>
             </intent-filter>
         </activity>
-        <activity android:name=".CreateGiftActivity" />
+        <activity android:name=".CreateGiftActivity" android:windowSoftInputMode="stateHidden"/>
         <activity android:name=".EditContentsActivity" />
         <activity android:name=".ViewContentsActivity" />
         <activity android:name=".ChooseFriendActivity" />

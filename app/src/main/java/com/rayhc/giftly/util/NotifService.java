@@ -28,6 +28,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.rayhc.giftly.MainActivity;
 import com.rayhc.giftly.R;
+import com.rayhc.giftly.Startup;
+
+import java.util.HashMap;
+import java.util.Set;
 
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
@@ -38,16 +42,20 @@ public class NotifService extends Service {
     public static final String CHANNEL_NAME = "Joyshare";
     public static final int NOTIFICATION_ID = 1;
 
+    private boolean firstRun = true;
+
     private DatabaseReference mDatabase;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private String userID;
     private SharedPreferences sharedPref;
 
+    private Startup startup;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        startup = (Startup) getApplication();
         //set up firebase stuff
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -59,6 +67,49 @@ public class NotifService extends Service {
         } else {
             userID = mFirebaseUser.getUid();
         }
+
+        Query query = mDatabase.child("users").child(userID);
+
+        //listener for the user's receivedGifts data
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //edge check for creation
+                if(!firstRun){
+                    if (snapshot.exists()) {
+                        //edge check
+                        if(snapshot.child("receivedGifts").getValue() != null) {
+                            HashMap<String, String> recGifts = (HashMap) snapshot.child("receivedGifts").getValue();
+                            //only fire a notif if the receivedGift data has been altered
+                            Set recHashes = recGifts.keySet();
+                            if (recHashes.size() != startup.getReceivedGiftMap().size()) {
+                                Log.d("notif", "rec gift lists sizes dont match");
+                                buildNotification();
+                                return;
+                            }
+                            for (String mapKey : startup.getReceivedGiftMap().keySet()) {
+                                String giftHash = startup.getReceivedGiftMap().get(mapKey);
+                                Log.d("notif", "looking @ gift hash: " + giftHash);
+                                if (!recHashes.contains(giftHash)) {
+                                    buildNotification();
+                                    break;
+                                }
+                            }
+                            Log.d("notif", "didn't make any changes to rec gifts");
+                        }
+                    } else {
+                        Log.d("LPC", "snapshot doesn't exist");
+                    }
+                } else {
+                    firstRun = false;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         createNotificationChannel();
     }
 
@@ -67,29 +118,12 @@ public class NotifService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    @Nullable
+    @Override
     public IBinder onBind(Intent intent) {
-        //build the listener for the user's received gifts
-        Query query = mDatabase.child("users").child(userID).child("receivedGifts");
-
-        //listener for the user's receivedGifts data
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
-                Log.d("LPC", "snapshot: " + snapshot.getValue());
-                if (snapshot.exists()) {
-                    buildNotification();
-                } else {
-                    Log.d("LPC", "snapshot doesn't exist");
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
         return null;
     }
+
 
     /**
      * Create a notification channel
@@ -113,15 +147,14 @@ public class NotifService extends Service {
 
         Intent intent = new Intent(context, MainActivity.class);
 
-//        intent.putExtras(bundle);
-
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-//                .setSmallIcon(R.drawable.notification_logo)
+                .setSmallIcon(R.drawable.gift_blue)
                 .setContentTitle(notificationTitle)
                 .setContentText(notificationText)
                 .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);

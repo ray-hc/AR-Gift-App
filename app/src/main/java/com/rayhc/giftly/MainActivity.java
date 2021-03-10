@@ -35,6 +35,7 @@ import com.rayhc.giftly.frag.HomeFragment;
 import com.rayhc.giftly.frag.SettingsFragment;
 import com.rayhc.giftly.util.Gift;
 import com.rayhc.giftly.util.Globals;
+import com.rayhc.giftly.util.NotifService;
 import com.rayhc.giftly.util.UserManager;
 import com.rayhc.giftly.util.User;
 
@@ -75,8 +76,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Intent di = new Intent(this, DemoStartUnityActivity.class);
-        //startActivity(di);
 
         // get id to restore state if needed
         if (savedInstanceState != null) {
@@ -119,6 +118,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             Log.d("LPC", "onCreate: made a new gift");
         }
         navId = R.id.nav_home;
+
+        if(mFirebaseUser != null || (prefs != null && prefs.getString(Globals.USER_ID_KEY, null) != null)) {
+            Intent notifIntent = new Intent(getApplicationContext(), NotifService.class);
+            startService(notifIntent);
+        }
 
         navigateToFragment(navId);
     }
@@ -192,6 +196,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         editor.putString(Globals.USER_ID_KEY, currentUser.getUid());
         editor.apply();
 
+        //start notif intent
+        Intent notifIntent = new Intent(getApplicationContext(), NotifService.class);
+        startService(notifIntent);
+
         //go to download splash
         if (firstRun) {
             startup.setFistRun(false);
@@ -221,6 +229,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                             Log.d("LPC", "user exists");
                         } else activityUser = UserManager.snapshotToEmptyUser(snapshot, user);
                         onAuthSuccess(user);
+
+                        Intent notifIntent = new Intent(getApplicationContext(), NotifService.class);
+                        startService(notifIntent);
+
                     }
 
                     @Override
@@ -292,6 +304,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         editor.remove("USER ID");
         editor.commit();
         ExitLogoutActivity.exitApplication(this);
+    }
+
+    public void updateSent() {
+        if (navId == R.id.nav_home) {
+            homeFragment.updateSent();
+            findViewById(R.id.downloading).setVisibility(View.INVISIBLE);
+            Log.d("rhc", "on home : " + navId);
+        } else {
+            Log.d("rhc", "Not on home : " + navId);
+        }
     }
 }
 

@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +30,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.rayhc.giftly.CreateGiftActivity;
 import com.rayhc.giftly.DownloadSplashActivity;
 import com.rayhc.giftly.MainActivity;
@@ -38,6 +41,7 @@ import com.rayhc.giftly.util.Gift;
 import com.rayhc.giftly.util.GiftAdapter;
 import com.rayhc.giftly.util.Globals;
 import com.rayhc.giftly.util.ListUtils;
+import com.rayhc.giftly.util.StorageLoaderThread;
 import com.rayhc.giftly.util.User;
 import com.rayhc.giftly.util.UserManager;
 
@@ -51,6 +55,7 @@ import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 public class HomeFragment extends Fragment {
     private ListView recievedGifts;
     private ListView sentGifts;
+    private View recCard, sentCard, nothingYet;
 
     //create gift button
     private Button createGiftButton;
@@ -102,15 +107,39 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         }
 
+        Intent startIntent = getActivity().getIntent();
+        if (startIntent.hasExtra("SENT GIFT")) {
+            //storage stuff
+            FirebaseStorage mStorage = FirebaseStorage.getInstance();
+            StorageReference storageRef = mStorage.getReference();
+
+            Gift mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
+            String fromID = startIntent.getStringExtra("FROM USER ID");
+            String toID = startIntent.getStringExtra("TO USER ID");
+
+            StorageLoaderThread storageLoaderThread = new StorageLoaderThread(mGift, (MainActivity) getActivity(),
+                    mDatabase, storageRef, mStorage, fromID, toID);
+
+            Log.d("rhc","storage beginning");
+            storageLoaderThread.start();
+        }
+
     }
 
     public View onCreateView(LayoutInflater layoutInflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = layoutInflater.inflate(R.layout.fragment_home, container, false);
 
+        if (getActivity().getIntent().hasExtra("SENT GIFT")) {
+            root.findViewById(R.id.downloading).setVisibility(View.VISIBLE);
+        }
+
         //wire lists
         recievedGifts = root.findViewById(R.id.inbox_gifts_recieved);
         sentGifts = root.findViewById(R.id.inbox_gifts_sent);
+        nothingYet = root.findViewById(R.id.nothing_yet);
+        recCard = root.findViewById(R.id.recGifts);
+        sentCard = root.findViewById(R.id.sentGifts);
 
         //if the sent gift map exists, fill it
         if(!startup.getSentGiftMap().isEmpty()) {
@@ -120,6 +149,8 @@ public class HomeFragment extends Fragment {
             sentGiftsAdapter.hideArrow(true);
             sentGifts.setAdapter(sentGiftsAdapter);
             ListUtils.setDynamicHeight(sentGifts);
+        } else {
+            sentCard.setVisibility(View.GONE);
         }
 
         //if the received gift exists, fill it
@@ -133,14 +164,19 @@ public class HomeFragment extends Fragment {
                 //download the gift
                 Intent intent;
                 intent = new Intent(getContext(), DownloadSplashActivity.class);
-                intent.putExtra("HASH VALUE", startup.getReceivedGiftMap().get(label));
-                intent.putExtra("FROM RECEIVED", true);
-                intent.putExtra("FROM OPEN", true);
+                intent.putExtra(Globals.HASH_VALUE_KEY, startup.getReceivedGiftMap().get(label));
+                intent.putExtra(Globals.FROM_REC_KEY, true);
+                intent.putExtra(Globals.FROM_OPEN_KEY, true);
                 intent.putExtra("USER ID", mFirebaseUser.getUid());
                 Log.d("LPC", "getting gift w hash: " + startup.getReceivedGiftMap().get(label));
                 startActivity(intent);
             });
             ListUtils.setDynamicHeight(recievedGifts);
+            nothingYet.setVisibility(View.GONE);
+            recCard.setVisibility(View.VISIBLE);
+        } else {
+            nothingYet.setVisibility(View.VISIBLE);
+            recCard.setVisibility(View.GONE);
         }
 
         //run sent gifts thread
@@ -166,6 +202,10 @@ public class HomeFragment extends Fragment {
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast toast = Toast.makeText(getActivity(), Globals.UPDATE_TOAST, Toast.LENGTH_SHORT);
+                toast.show();
+
+                //call gift sent & received threads to update list views
                 GetSentGiftsThread getSentGiftsThread1 = new GetSentGiftsThread();
                 GetReceivedGiftsThread getReceivedGiftsThread1 = new GetReceivedGiftsThread();
                 getSentGiftsThread1.start();
@@ -175,6 +215,12 @@ public class HomeFragment extends Fragment {
 
 
         return root;
+    }
+
+    public void updateSent() {
+        //run sent gifts thread
+        GetSentGiftsThread getSentGiftsThread = new GetSentGiftsThread();
+        getSentGiftsThread.start();
     }
 
     /**
@@ -193,12 +239,12 @@ public class HomeFragment extends Fragment {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
+                //force-synchronize all of the data
                 if (giftMsgMap.size() < numSentGifts) {
                     Log.d("LPC", "sent gifts handler didnt run");
                     return;
                 }
                 //make passable strings in form "To: *name* - *message*"
-                Log.d("LPC", "sent gift msg map: " + giftMsgMap.toString());
                 for (String hash : giftMsgMap.keySet()) {
                     String label = giftMsgMap.get(hash);
                     //put in map label -> gift hash
@@ -206,7 +252,8 @@ public class HomeFragment extends Fragment {
                 }
                 Log.d("LPC", "thread done - sent gift map: " + sentGiftMap.toString());
                 Log.d("LPC", "has the sent gift map changed: "+(!sentGiftMap.equals(startup.getSentGiftMap())));
-                if(!sentGiftMap.equals(startup.getSentGiftMap())){
+                //if the sent gift data has changed from last save, update adapter
+                if(!sentGiftMap.equals(startup.getSentGiftMap())) {
                     startup.setSentGiftMap(sentGiftMap);
                     //set the adapter
                     ArrayList<String> sentGiftMessages = new ArrayList<>();
@@ -215,6 +262,7 @@ public class HomeFragment extends Fragment {
                     sentGiftsAdapter.hideArrow(true);
                     sentGifts.setAdapter(sentGiftsAdapter);
                     ListUtils.setDynamicHeight(sentGifts);
+                    sentCard.setVisibility(View.VISIBLE);
                 }
 
             }
@@ -236,6 +284,7 @@ public class HomeFragment extends Fragment {
                     User newUser = new User();
                     if(snapshot.exists()){
                         newUser = UserManager.snapshotToUser(snapshot, userID);
+                        //edge case
                         if(newUser.getSentGifts() == null) {
                             handler.post(runnable);
                         } else {
@@ -243,7 +292,6 @@ public class HomeFragment extends Fragment {
                             numSentGifts = newUser.getSentGifts().keySet().size();
                             Log.d("LPC", "num sentGifts: " + numSentGifts);
                             giftHashes = new ArrayList<>(newUser.getSentGifts().keySet());
-                            Log.d("LPC", "gift hashes when getting name: "+giftHashes.toString());
                             for (String key : newUser.getSentGifts().keySet()) {
                                 String otherUserID = newUser.getSentGifts().get(key);
                                 //get the other user's name
@@ -254,6 +302,7 @@ public class HomeFragment extends Fragment {
                                         String friendName = (String) snapshot.child(otherUserID).child("name").getValue();
                                         giftRecipientNames.add(friendName);
                                         giftMsgMap.put(key, friendName);
+                                        //after getting each gift receiver's name, get the gift's message too
                                         getGiftMessages();
                                     }
 
@@ -270,16 +319,17 @@ public class HomeFragment extends Fragment {
                 public void onCancelled(@NonNull DatabaseError error) { }
             });
         }
+
         private void getGiftMessages(){
             if(giftRecipientNames.size()<numSentGifts) return;
             //get the gift messages
-            Log.d("LPC", "gift hashes when getting msgs: "+giftHashes.toString());
             for(String hash: giftHashes){
                 Query userNameQuery = mDatabase.child("gifts").orderByChild("hashValue").equalTo(hash);
                 userNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String message = (String) snapshot.child(hash).child("message").getValue();
+                        //delimit message and name by a pipe for saving puposes
                         String displayText = giftMsgMap.get(hash)+"|"+message;
                         giftMsgMap.put(hash, displayText);
                         Log.d("LPC", "getting gift with hash: "+hash+" with message: "+message);
@@ -309,6 +359,7 @@ public class HomeFragment extends Fragment {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
+                //force-synchronize all data
                 if (giftMsgMap.size() < numReceivedGifts) {
                     Log.d("LPC", "received gifts handler didnt run");
                     return;
@@ -334,14 +385,16 @@ public class HomeFragment extends Fragment {
                         //download the gift
                         Intent intent;
                         intent = new Intent(getContext(), DownloadSplashActivity.class);
-                        intent.putExtra("HASH VALUE", receivedGiftsMap.get(label));
-                        intent.putExtra("FROM RECEIVED", true);
-                        intent.putExtra("FROM OPEN", true);
+                        intent.putExtra(Globals.HASH_VALUE_KEY, startup.getReceivedGiftMap().get(label));
+                        intent.putExtra(Globals.FROM_REC_KEY, true);
+                        intent.putExtra(Globals.FROM_OPEN_KEY, true);
                         intent.putExtra("USER ID", mFirebaseUser.getUid());
                         Log.d("LPC", "getting gift w hash: " + receivedGiftsMap.get(label));
                         startActivity(intent);
                     });
                     ListUtils.setDynamicHeight(recievedGifts);
+                    nothingYet.setVisibility(View.GONE);
+                    recCard.setVisibility(View.VISIBLE);
                 }
 
                 Log.d("LPC", "thread done-received gift map: " + receivedGiftsMap.toString());
@@ -364,6 +417,7 @@ public class HomeFragment extends Fragment {
                     User newUser = new User();
                     if (snapshot.exists()) {
                         newUser = UserManager.snapshotToUser(snapshot, userID);
+                        //edge case
                         if (newUser.getReceivedGifts() == null) {
                             handler.post(runnable);
                         } else {
@@ -380,6 +434,7 @@ public class HomeFragment extends Fragment {
                                         String friendName = (String) snapshot.child(otherUserID).child("name").getValue();
                                         giftSenderNames.add(friendName);
                                         giftMsgMap.put(key, friendName);
+                                        //after getting sender's name, get the gift's message
                                         getGiftMessages();
                                     }
 
@@ -407,11 +462,13 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String message = (String) snapshot.child(hash).child("message").getValue();
+                        //detemine if gift has been opened or not with string tag (OLD or NEW)
                         boolean opened = false;
                         if (snapshot.child(hash).child("opened").getValue() != null)
                             opened = (boolean) snapshot.child(hash).child("opened").getValue();
                         if (opened) message += "OLD";
                         else message += "NEW";
+                        //delimit entire message with pipe
                         String displayText = giftMsgMap.get(hash) + "|" + message;
                         giftMsgMap.put(hash, displayText);
                         Log.d("LPC", "getting gift with hash: " + hash + " with message: " + message);

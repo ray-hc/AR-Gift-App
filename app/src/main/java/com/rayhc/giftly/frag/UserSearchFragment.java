@@ -36,11 +36,7 @@ import java.util.stream.Collectors;
 
 import static com.google.android.gms.tasks.Tasks.await;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link UserSearchFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class UserSearchFragment extends Fragment {
     private User currentUser;
     private String displayUserID;
@@ -49,14 +45,6 @@ public class UserSearchFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment UserSearchFragment.
-     */
     // TODO: Rename and change types and number of parameters
     public static UserSearchFragment newInstance(String param1, String param2) {
         UserSearchFragment fragment = new UserSearchFragment();
@@ -70,6 +58,7 @@ public class UserSearchFragment extends Fragment {
         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         displayUserID = sharedPref.getString("userId",null);
+        //query for the current user data
         Query query = db.child("users").orderByChild("userId").equalTo(displayUserID);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -93,6 +82,7 @@ public class UserSearchFragment extends Fragment {
         ListView lv = (ListView) view.findViewById(R.id.resultList);
         EditText et = (EditText) view.findViewById(R.id.editTextTextPersonName);
 
+        //implement a live text wathcer for a live friend search
         et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -102,12 +92,14 @@ public class UserSearchFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 new Thread(){
                     List<User> users;
+                    //live search for users with matching names so far
                     Runnable runnable = () -> {
                         users = users.stream()
                                 .filter(u -> !u.getFriends().containsKey(displayUserID))
                                 .filter(u -> !u.getReceivedFriends().containsKey(displayUserID))
                                 .collect(Collectors.toList());
                         replaceAdapter();
+                        //send the selected user a friend request
                         lv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

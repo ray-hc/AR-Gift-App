@@ -60,8 +60,8 @@ public class EditContentsActivity extends AppCompatActivity {
         mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
         contentMap = mGift.getContentType();
         if(currIndex == contentMap.size()-1) mNextButton.setEnabled(false);
-        friendName = startIntent.getStringExtra("FRIEND NAME");
-        friendID = startIntent.getStringExtra("FRIEND ID");
+        friendName = startIntent.getStringExtra(Globals.FRIEND_NAME_KEY);
+        friendID = startIntent.getStringExtra(Globals.FRIEND_ID_KEY);
 
         ArrayList<String> keyList = new ArrayList<>(contentMap.keySet());
         handleMedia(keyList);
@@ -107,16 +107,16 @@ public class EditContentsActivity extends AppCompatActivity {
 
     public void handleMedia(ArrayList<String> keyList){
         mFileLabel = keyList.get(currIndex);
-        if(mFileLabel.startsWith("image")){
+        if(mFileLabel.contains("image")){
             mVideoView.setVisibility(View.GONE);
             mImageView.setVisibility(View.VISIBLE);
             mImageView.setImageURI(null);
-            mImageView.setImageURI(Uri.parse(mGift.getContentType().get(mFileLabel)));
+            mImageView.setImageURI(Uri.parse(new File(mGift.getContentType().get(mFileLabel)).getAbsolutePath()));
         } else{
             mImageView.setVisibility(View.GONE);
             mVideoView.setVisibility(View.VISIBLE);
             mVideoView.setVideoURI(null);
-            mVideoView.setVideoURI(Uri.parse(mGift.getContentType().get(mFileLabel)));
+            mVideoView.setVideoURI(Uri.parse(new File(mGift.getContentType().get(mFileLabel)).getAbsolutePath()));
             mVideoView.start();
         }
     }
@@ -159,8 +159,8 @@ public class EditContentsActivity extends AppCompatActivity {
         Intent intent = new Intent(this, CreateGiftActivity.class);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
         intent.putExtra("MAKING GIFT", true);
-        intent.putExtra("FRIEND NAME", friendName);
-        intent.putExtra("FRIEND ID", friendID);
+        intent.putExtra(Globals.FRIEND_NAME_KEY, friendName);
+        intent.putExtra(Globals.FRIEND_ID_KEY, friendID);
         startActivity(intent);
 
     }
@@ -174,8 +174,8 @@ public class EditContentsActivity extends AppCompatActivity {
         mGift.getContentType().remove(mFileLabel);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
         intent.putExtra("MAKING GIFT", true);
-        intent.putExtra("FRIEND NAME", friendName);
-        intent.putExtra("FRIEND ID", friendID);
+        intent.putExtra(Globals.FRIEND_NAME_KEY, friendName);
+        intent.putExtra(Globals.FRIEND_ID_KEY, friendID);
         startActivity(intent);
 
     }

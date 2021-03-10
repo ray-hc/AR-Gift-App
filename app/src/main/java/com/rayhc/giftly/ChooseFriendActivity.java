@@ -34,8 +34,8 @@ public class ChooseFriendActivity extends AppCompatActivity {
         Intent startIntent = getIntent();
         friendMap = (HashMap<String, String>) startIntent.getSerializableExtra("FRIEND MAP");
         mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
-        friendName = startIntent.getStringExtra("FRIEND NAME");
-        friendID = startIntent.getStringExtra("FRIEND ID");
+        friendName = startIntent.getStringExtra(Globals.FRIEND_NAME_KEY);
+        friendID = startIntent.getStringExtra(Globals.FRIEND_ID_KEY);
 
         friendListView = (ListView) findViewById(R.id.friends_listView);
         //populate the listview for media
@@ -48,12 +48,12 @@ public class ChooseFriendActivity extends AppCompatActivity {
                 String label = (String) parent.getItemAtPosition(position);
                 String friendID = friendMap.get(label);
 
-                //TODO: make sure this is passing the right data around
+                //add the chosen friend as the gift's recipient
                 Intent intent;
                 intent = new Intent(getApplicationContext(), CreateGiftActivity.class);
                 intent.putExtra("MAKING GIFT", true);
-                intent.putExtra("FRIEND ID", friendID);
-                intent.putExtra("FRIEND NAME", label);
+                intent.putExtra(Globals.FRIEND_ID_KEY, friendID);
+                intent.putExtra(Globals.FRIEND_NAME_KEY, label);
                 intent.putExtra("FROM FRIEND CHOOSE", true);
                 intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
                 startActivity(intent);
@@ -61,14 +61,16 @@ public class ChooseFriendActivity extends AppCompatActivity {
         });
     }
 
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        //custom handle back press to persist data
         Intent intent = new Intent(getApplicationContext(), CreateGiftActivity.class);
         intent.putExtra("MAKING GIFT", true);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
-        intent.putExtra("FRIEND NAME", friendName);
-        intent.putExtra("FRIEND ID", friendID);
+        intent.putExtra(Globals.FRIEND_NAME_KEY, friendName);
+        intent.putExtra(Globals.FRIEND_ID_KEY, friendID);
         startActivity(intent);
     }
 }
