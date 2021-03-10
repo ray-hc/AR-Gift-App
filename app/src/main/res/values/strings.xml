@@ -18,6 +18,8 @@
     <string name="no_gifts">You know what they say: the best gift is being able to give to others. Send one today!</string>
     <string name="uploading">Uploading new gift...</string>
 
+    <string name="pick_from_gallery">Pick from Gallery</string>
+
     <string name="sent_gifts_title">Sent</string>
     <string name="received_gifts_title">Received</string>
     <string name="friends_list_title">Friends</string>

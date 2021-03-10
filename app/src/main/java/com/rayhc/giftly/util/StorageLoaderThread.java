@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -63,6 +64,7 @@ public class StorageLoaderThread extends Thread {
             if (activity != null) {
                 activity.findViewById(R.id.downloading).setVisibility(View.INVISIBLE);
                 activity.updateSent();
+                Toast.makeText(activity.getApplicationContext(), "Upload complete!", Toast.LENGTH_SHORT).show();
             }
         }
     };
