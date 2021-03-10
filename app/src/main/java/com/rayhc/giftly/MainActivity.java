@@ -121,8 +121,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         navId = R.id.nav_home;
 
-        Intent notifIntent = new Intent(getApplicationContext(), NotifService.class);
-        startService(notifIntent);
+        if(mFirebaseUser != null || (prefs != null && prefs.getString(Globals.USER_ID_KEY, null) != null)) {
+            Intent notifIntent = new Intent(getApplicationContext(), NotifService.class);
+            startService(notifIntent);
+        }
 
         navigateToFragment(navId);
     }
@@ -195,6 +197,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         editor = prefs.edit();
         editor.putString(Globals.USER_ID_KEY, currentUser.getUid());
         editor.apply();
+
+        //start notif intent
+        Intent notifIntent = new Intent(getApplicationContext(), NotifService.class);
+        startService(notifIntent);
 
         //go to download splash
         if (firstRun) {
