@@ -161,7 +161,7 @@ public class StorageLoaderThread extends Thread {
                 for (String key : saveGift.getContentType().keySet()) {
                     selectedData = (saveGift.getContentType().get(key));
                     fileName = key;
-                    if (selectedData.contains("image"))
+                    if (selectedData.contains(".jpg"))
                         path = "gift/" + saveGift.getHashValue() + "/" + fileName + ".jpg";
                     else path = "gift/" + saveGift.getHashValue() + "/" + fileName + ".mp4";
                     Log.d("LPC", "media upload file path: "+path);
