@@ -127,6 +127,7 @@ public class FriendsFragment extends Fragment {
                 Log.d("CHECKING THREAD", "" + threadFriendsList.toString());
 
                 if (!threadFriendsList.equals(startup.getFriendsList())) {
+                    friendsList = threadFriendsList;
                     startup.setFriendsList(threadFriendsList);
                     friendsListAdapter = new MyFriendsListAdapter(context, 0, threadFriendsList);
                     friendsListView.setAdapter(friendsListAdapter);
@@ -214,6 +215,7 @@ public class FriendsFragment extends Fragment {
 
 
                 if (!threadRequestsList.equals(startup.getFriendRequestsList())) {
+                    requestsList = threadRequestsList;
                     startup.setFriendRequestsList(threadRequestsList);
                     requestsListAdapter = new MyRequestsListAdapter(context, R.layout.friend_request_entry, threadRequestsList);
                     requestsListView.setAdapter(requestsListAdapter);
