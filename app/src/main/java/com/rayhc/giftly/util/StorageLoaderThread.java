@@ -147,36 +147,38 @@ public class StorageLoaderThread extends Thread {
     }
 
 
-    public void uploadFile(int index, ArrayList<String> keys) {
-        Log.d("LPC", "uploadFile: called");
-        String fileName;
-        String path;
-        Uri selectedData;
-        if (index == keys.size()) {
-            Log.d("LPC", "uploadFile: switched the flag to false");
-            handler.post(runnable);
-            return;
-        }
-        if (index < keys.size()) {
-            for (String key : saveGift.getContentType().keySet()) {
-                selectedData = Uri.parse(saveGift.getContentType().get(key));
-                fileName = key;
-                if (selectedData.toString().contains("image"))
-                    path = "gift/" + saveGift.getHashValue() + "/" + fileName + ".jpg";
-                else path = "gift/" + saveGift.getHashValue() + "/" + fileName + ".mp4";
-                Log.d("LPC", "media upload file path: " + path);
-                StorageReference giftRef = storageRef.child(path);
-                UploadTask uploadTask = giftRef.putFile(selectedData);
-                uploadTask.addOnCompleteListener(activity, new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            Log.d("LPC", "media upload complete!");
-                            uploadFile(index + 1, keys);
+    public void uploadFile(int index, ArrayList<String> keys){
+            Log.d("LPC", "uploadFile: called");
+            String fileName;
+            String path;
+            String selectedData;
+            if(index == keys.size()) {
+                Log.d("LPC", "uploadFile: switched the flag to false");
+                handler.post(runnable);
+                return;
+            }
+            if(index<keys.size()) {
+                for (String key : saveGift.getContentType().keySet()) {
+                    selectedData = (saveGift.getContentType().get(key));
+                    fileName = key;
+                    if (selectedData.contains("image"))
+                        path = "gift/" + saveGift.getHashValue() + "/" + fileName + ".jpg";
+                    else path = "gift/" + saveGift.getHashValue() + "/" + fileName + ".mp4";
+                    Log.d("LPC", "media upload file path: "+path);
+                    StorageReference giftRef = storageRef.child(path);
+                    UploadTask uploadTask = giftRef.putFile(Uri.fromFile(new File(selectedData)));
+                    uploadTask.addOnCompleteListener(UploadingSplashActivity.this, new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                Log.d("LPC", "media upload complete!");
+                                uploadFile(index+1, keys);
+                            } else{
+                                Log.d("LPC", "media upload failed: ");
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         }
-    }
 }
