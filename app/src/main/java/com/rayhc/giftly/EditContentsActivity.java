@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.rayhc.giftly.util.Gift;
 import com.rayhc.giftly.util.Globals;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
