@@ -1,7 +1,7 @@
 # JoyShare
 A fun way to share virtual gifts.
 
-##Installation & Testing
+## Installation & Testing
 If you just want the APK, feel free to grab it off of https://ianmkim.com/joyshare.
 
 ## Special Notes
