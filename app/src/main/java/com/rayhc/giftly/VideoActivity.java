@@ -233,7 +233,7 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     private File createTemporalFile() {
-        return new File(getExternalCacheDir(), "tempFile_"+Globals.sdf.format(System.currentTimeMillis())+".mp4"); // context needed
+        return new File(getExternalCacheDir(), "tempVideo_"+(System.currentTimeMillis())+".mp4"); // context needed
     }
 
 
