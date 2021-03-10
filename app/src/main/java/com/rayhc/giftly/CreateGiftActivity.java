@@ -258,10 +258,11 @@ public class CreateGiftActivity extends AppCompatActivity {
 
         sendButton.setOnClickListener(v14 -> {
             if(messageInput.getText().toString() != null) newGift.setMessage(messageInput.getText().toString());
-            Intent intent = new Intent(this, UploadingSplashActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             //set the message of the gift
             newGift.setMessage(messageInput.getText().toString());
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
+            intent.putExtra("SENT GIFT", true);
             intent.putExtra("FROM USER ID", mUserId);
             intent.putExtra("TO USER ID", recipientID);
             startActivity(intent);

@@ -30,6 +30,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.rayhc.giftly.CreateGiftActivity;
 import com.rayhc.giftly.DownloadSplashActivity;
 import com.rayhc.giftly.MainActivity;
@@ -39,6 +41,7 @@ import com.rayhc.giftly.util.Gift;
 import com.rayhc.giftly.util.GiftAdapter;
 import com.rayhc.giftly.util.Globals;
 import com.rayhc.giftly.util.ListUtils;
+import com.rayhc.giftly.util.StorageLoaderThread;
 import com.rayhc.giftly.util.User;
 import com.rayhc.giftly.util.UserManager;
 
@@ -104,11 +107,34 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         }
 
+        Intent startIntent = getActivity().getIntent();
+        if (startIntent.hasExtra("SENT GIFT")) {
+            //storage stuff
+            FirebaseStorage mStorage = FirebaseStorage.getInstance();
+            StorageReference storageRef = mStorage.getReference();
+
+            Gift mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
+            String fromID = startIntent.getStringExtra("FROM USER ID");
+            String toID = startIntent.getStringExtra("TO USER ID");
+
+            Toast.makeText(getActivity(), "Uplooading gift", Toast.LENGTH_SHORT);
+
+            StorageLoaderThread storageLoaderThread = new StorageLoaderThread(mGift, (MainActivity) getActivity(),
+                    mDatabase, storageRef, mStorage, fromID, toID);
+
+            Log.d("rhc","storage beginning");
+            storageLoaderThread.start();
+        }
+
     }
 
     public View onCreateView(LayoutInflater layoutInflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = layoutInflater.inflate(R.layout.fragment_home, container, false);
+
+        if (getActivity().getIntent().hasExtra("SENT GIFT")) {
+            root.findViewById(R.id.downloading).setVisibility(View.VISIBLE);
+        }
 
         //wire lists
         recievedGifts = root.findViewById(R.id.inbox_gifts_recieved);
@@ -190,6 +216,12 @@ public class HomeFragment extends Fragment {
 
 
         return root;
+    }
+
+    public void updateSent() {
+        //run sent gifts thread
+        GetSentGiftsThread getSentGiftsThread = new GetSentGiftsThread();
+        getSentGiftsThread.start();
     }
 
     /**

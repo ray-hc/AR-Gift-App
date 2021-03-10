@@ -301,5 +301,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         editor.commit();
         ExitLogoutActivity.exitApplication(this);
     }
+
+    public void updateSent() {
+        if (navId == R.id.nav_home) {
+            homeFragment.updateSent();
+            findViewById(R.id.downloading).setVisibility(View.INVISIBLE);
+            Log.d("rhc", "on home : " + navId);
+        } else {
+            Log.d("rhc", "Not on home : " + navId);
+        }
+    }
 }
 
