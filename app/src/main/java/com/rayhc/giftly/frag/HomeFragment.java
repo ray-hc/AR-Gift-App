@@ -117,8 +117,6 @@ public class HomeFragment extends Fragment {
             String fromID = startIntent.getStringExtra("FROM USER ID");
             String toID = startIntent.getStringExtra("TO USER ID");
 
-            Toast.makeText(getActivity(), "Uplooading gift", Toast.LENGTH_SHORT);
-
             StorageLoaderThread storageLoaderThread = new StorageLoaderThread(mGift, (MainActivity) getActivity(),
                     mDatabase, storageRef, mStorage, fromID, toID);
 
