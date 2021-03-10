@@ -28,6 +28,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.rayhc.giftly.MainActivity;
 import com.rayhc.giftly.R;
+import com.rayhc.giftly.Startup;
+
+import java.util.HashMap;
+import java.util.Set;
 
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
@@ -46,9 +50,12 @@ public class NotifService extends Service {
     private String userID;
     private SharedPreferences sharedPref;
 
+    private Startup startup;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        startup = (Startup) getApplication();
         Log.d("iandebug", "service started");
         //set up firebase stuff
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -62,8 +69,27 @@ public class NotifService extends Service {
             userID = mFirebaseUser.getUid();
         }
 
+//        //build the listener for the user's received gifts
+//        Query query = mDatabase.child("users").child(userID).child("receivedGifts");
+//
+//        //listener for the user's receivedGifts data
+//        query.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
+//                if(!firstRun){
+//                    Log.d("LPC", "snapshot: " + snapshot.getValue());
+//                    if (snapshot.exists()) {
+//                        buildNotification();
+//                    } else {
+//                        Log.d("LPC", "snapshot doesn't exist");
+//                    }
+//                } else {
+//                    firstRun = false;
+//                }
+//            }
         //build the listener for the user's received gifts
-        Query query = mDatabase.child("users").child(userID).child("receivedGifts");
+        Query query = mDatabase.child("users").child(userID);
 
         //listener for the user's receivedGifts data
         query.addValueEventListener(new ValueEventListener() {
@@ -73,7 +99,22 @@ public class NotifService extends Service {
                 if(!firstRun){
                     Log.d("LPC", "snapshot: " + snapshot.getValue());
                     if (snapshot.exists()) {
-                        buildNotification();
+                        HashMap<String, String> recGifts = (HashMap) snapshot.child("receivedGifts").getValue();
+                        Log.d("notif", "rec gifts from db: "+recGifts.toString());
+                        Set recHashes = recGifts.keySet();
+                        if(recHashes.size() != startup.getReceivedGiftMap().size()){
+                            Log.d("notif", "rec gift lists sizes dont match");
+                            buildNotification();
+                            return;
+                        }
+                        for(String mapKey: startup.getReceivedGiftMap().keySet()){
+                            String giftHash = startup.getReceivedGiftMap().get(mapKey);
+                            Log.d("notif", "looking @ gift hash: "+giftHash);
+                            if(!recHashes.contains(giftHash)){
+                                buildNotification();
+                                break;
+                            }
+                        }
                     } else {
                         Log.d("LPC", "snapshot doesn't exist");
                     }
