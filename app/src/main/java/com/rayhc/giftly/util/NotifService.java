@@ -56,7 +56,6 @@ public class NotifService extends Service {
     public void onCreate() {
         super.onCreate();
         startup = (Startup) getApplication();
-        Log.d("iandebug", "service started");
         //set up firebase stuff
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -69,39 +68,19 @@ public class NotifService extends Service {
             userID = mFirebaseUser.getUid();
         }
 
-//        //build the listener for the user's received gifts
-//        Query query = mDatabase.child("users").child(userID).child("receivedGifts");
-//
-//        //listener for the user's receivedGifts data
-//        query.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
-//                if(!firstRun){
-//                    Log.d("LPC", "snapshot: " + snapshot.getValue());
-//                    if (snapshot.exists()) {
-//                        buildNotification();
-//                    } else {
-//                        Log.d("LPC", "snapshot doesn't exist");
-//                    }
-//                } else {
-//                    firstRun = false;
-//                }
-//            }
-        //build the listener for the user's received gifts
         Query query = mDatabase.child("users").child(userID);
 
         //listener for the user's receivedGifts data
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
+                //edge check for creation
                 if(!firstRun){
-                    Log.d("LPC", "snapshot: " + snapshot.getValue());
                     if (snapshot.exists()) {
+                        //edge check
                         if(snapshot.child("receivedGifts").getValue() != null) {
                             HashMap<String, String> recGifts = (HashMap) snapshot.child("receivedGifts").getValue();
-                            Log.d("notif", "rec gifts from db: " + recGifts.toString());
+                            //only fire a notif if the receivedGift data has been altered
                             Set recHashes = recGifts.keySet();
                             if (recHashes.size() != startup.getReceivedGiftMap().size()) {
                                 Log.d("notif", "rec gift lists sizes dont match");
@@ -131,7 +110,6 @@ public class NotifService extends Service {
 
             }
         });
-        Log.d("iandebug","userid in service: " + userID);
         createNotificationChannel();
     }
 
@@ -168,8 +146,6 @@ public class NotifService extends Service {
         String notificationText = "You just received a new gift";
 
         Intent intent = new Intent(context, MainActivity.class);
-
-//        intent.putExtras(bundle);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 

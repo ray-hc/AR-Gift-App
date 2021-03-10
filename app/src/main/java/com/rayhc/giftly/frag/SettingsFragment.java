@@ -48,6 +48,7 @@ public class SettingsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
+        //wire in views
         tv1 = view.findViewById(R.id.tv_name);
         tv2 = view.findViewById(R.id.tv_email);
         iv = (ImageView)view.findViewById(R.id.qrview);
@@ -55,11 +56,15 @@ public class SettingsFragment extends Fragment {
 
         context = getContext();
 
+        //get the user's data
         loadEntry();
 
         return view;
     }
 
+    /**
+     * Close the app on logout and clear userID from shared preferences
+     */
     public void onLogoutClicked(View view){
         SharedPreferences mSharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = mSharedPref.edit();
@@ -69,6 +74,9 @@ public class SettingsFragment extends Fragment {
         System.exit(0);
     }
 
+    /**
+     * Load user data for viewing
+     */
     public void loadEntry() {
         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
 
@@ -88,6 +96,7 @@ public class SettingsFragment extends Fragment {
         dimen = dimen * 3 / 4;
 
 
+        //create a QR code to add this user as a friend via scan
         QRGEncoder qrEncoder = new QRGEncoder("https://ianmkim.com/joyshare?userId=" +  displayUserID, null, QRGContents.Type.TEXT, dimen);
 
         try {
@@ -98,6 +107,7 @@ public class SettingsFragment extends Fragment {
         }
         Log.d("kitani", "User ID: " + displayUserID);
 
+        //query for user data
         Query query = db.child("users").orderByChild("userId").equalTo(displayUserID);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

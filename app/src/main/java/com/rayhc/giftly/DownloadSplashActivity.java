@@ -67,20 +67,20 @@ public class DownloadSplashActivity extends AppCompatActivity {
         //recipient and hash
         Intent startIntent = getIntent();
         mGift = (Gift) startIntent.getSerializableExtra(Globals.CURR_GIFT_KEY);
-        recipientName = startIntent.getStringExtra("FRIEND NAME");
-        recipientID = startIntent.getStringExtra("FRIEND ID");
+        recipientName = startIntent.getStringExtra(Globals.FRIEND_NAME_KEY);
+        recipientID = startIntent.getStringExtra(Globals.FRIEND_ID_KEY);
         userID = startIntent.getStringExtra("USER ID");
-        fromOpen = startIntent.getBooleanExtra("FROM OPEN", false);
-        giftHash = startIntent.getStringExtra("HASH VALUE");
-        label = startIntent.getStringExtra("LABEL");
+        fromOpen = startIntent.getBooleanExtra(Globals.FROM_OPEN_KEY, false);
+        giftHash = startIntent.getStringExtra(Globals.HASH_VALUE_KEY);
+        label = startIntent.getStringExtra(Globals.LABEL_KEY);
         fromReceive = startIntent.getBooleanExtra("FROM RECEIVED", false);
         //if its getting friends
         if(startIntent.getBooleanExtra("GET FRIENDS", false)){
 
             Intent intent = new Intent(this, ChooseFriendActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
-            intent.putExtra("FRIEND NAME", recipientName);
-            intent.putExtra("FRIEND ID", recipientID);
+            intent.putExtra(Globals.FRIEND_NAME_KEY, recipientName);
+            intent.putExtra(Globals.FRIEND_ID_KEY, recipientID);
             GetFriendsThread getFriendsThread = new GetFriendsThread(intent);
             getFriendsThread.start();
 
@@ -114,19 +114,21 @@ public class DownloadSplashActivity extends AppCompatActivity {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
+                //if previously opened, don't run AR scene; just show contents
                 if(wasOpened){
                     Intent intent = new Intent(getApplicationContext(), CreateGiftActivity.class);
-                    intent.putExtra("FROM OPEN", true);
-                    intent.putExtra("HASH VALUE", giftHash);
-                    intent.putExtra("LABEL", label);
+                    intent.putExtra(Globals.FROM_OPEN_KEY, true);
+                    intent.putExtra(Globals.HASH_VALUE_KEY, giftHash);
+                    intent.putExtra(GLobals.LABEL_KEY, label);
                     intent.putExtra(Globals.CURR_GIFT_KEY, loadedGift);
                     Log.d("LPC", "runnable gift download get friend name: "+friendName);
-                    intent.putExtra("FRIEND NAME", friendName);
+                    intent.putExtra(Globals.FRIEND_NAME_KEY, friendName);
                     intent.putExtra("IS RECEIVED", isReceived);
-                    intent.putExtra("WAS OPENED", wasOpened);
+                    intent.putExtra(Globals.WAS_OPENED_KEY, wasOpened);
                     startActivity(intent);
                 } else {
                     Log.d("LPC", "marking gift as opened in db from get gift thread");
+                    //mark gift as opened if previously unopened
                     MarkOpenedThread markOpenedThread = new MarkOpenedThread(giftHash);
                     markOpenedThread.start();
 
@@ -156,8 +158,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
-                    Log.d("LPC", "snapshot: " + snapshot.getValue());
                     if (snapshot.exists()) {
                         loadedGift = snapshot.getValue(Gift.class);
                         //prevent changes on the sender side
@@ -174,7 +174,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
                         showErrorDialog();
                         Log.d("LPC", "snapshot doesn't exist");
                     }
-                    Log.d("LPC","get gift listener was removed");
                 }
 
 
@@ -193,7 +192,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
                     if (snapshot.exists()) {
                         friendName = (String) snapshot.child("name").getValue();
                         handler.post(runnable);
@@ -201,7 +199,6 @@ public class DownloadSplashActivity extends AppCompatActivity {
                         showErrorDialog();
                         Log.d("LPC", "snapshot doesn't exist");
                     }
-                    Log.d("LPC","get friend name listener was removed");
                 }
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {

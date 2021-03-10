@@ -17,11 +17,6 @@ import java.util.HashMap;
  * - *user id of recipient*
  * - - *all of the gift data*
  *
- * Gifts will go through "validation" as follows:
- * 1. the gift being opened was actually sent to the user (matching user id of recipient)
- * 2. double checking the sender & recipient ID's match
- *
- * new edit
  */
 public class Gift implements Serializable {
     //public keys
@@ -31,26 +26,19 @@ public class Gift implements Serializable {
 
 
     //attributes
-//    private String id;                                  //synonymous to pin
-    private HashMap<String, String> links;                                //nulled out if not sending a link
-    private HashMap<String, String> contentType;        /*i think it'll be something like "1" is a link,
-                                                        "2" is a multimedia file, etc.
-                                                        Need to be a map of strings (but will hold ints) for sending multiple
-                                                        "gifts" (many images, some images and some videos, etc.) in one gift object*/
-
-    private int giftType;           //follows the same principle as contentType
-    private String sender;                              //user id of the gift's sender from firebase authentication
-    private String receiver;                            //user id of the gift's sender from firebase authentication
+    private HashMap<String, String> links;
+    private HashMap<String, String> contentType;
+    private int giftType;
+    private String sender;
+    private String receiver;
     private String message;
     private boolean isEncrypted;
     private long timeCreated;
     private long timeOpened;
     private String hashValue;
     private String qrCode;
-    private boolean opened;                             //look at this value when opening the app + unopened gift page
+    private boolean opened;
 
-    // comment by ray: :)
-    // comment by uhuru (:
 
     /**
      * Default Constructor
@@ -78,16 +66,11 @@ public class Gift implements Serializable {
         this.opened = opened;
     }
 
-    //TODO: Probably need an intermediate constructor that doesn't take every parameter?
-    //RESOLVED: just use intermediate setters as the gift is being built up
 
 
     /**
      * Getters & Setters
      */
-//    public String getId() {
-//        return id;
-//    }
 
     public HashMap<String, String> getLinks() { return links; }
 
@@ -136,9 +119,6 @@ public class Gift implements Serializable {
         return hashValue;
     }
 
-//    public void setId(String id) {
-//        this.id = id;
-//    }
 
 
     public void setLinks(HashMap<String, String> links) { this.links = links; }
@@ -185,8 +165,10 @@ public class Gift implements Serializable {
         this.opened = opened;
     }
 
+    /**
+     * Create MD5 hash from sender and time created
+     */
     public String createHashValue() {
-        Log.d("LPC", "createHashValue: time created & sender: "+timeCreated+", "+sender);
         String base =  timeCreated +
                 " " + sender;
         try {
@@ -198,7 +180,6 @@ public class Gift implements Serializable {
             while (hashtext.length() < 32) {
                 hashtext = "0" + hashtext;
             }
-            Log.d("LPC", "createHashValue: new hash = "+hashtext);
             return hashtext;
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
@@ -223,18 +204,5 @@ public class Gift implements Serializable {
     @Override
     public String toString() {
         return "Gift From " + sender;
-        /*return "Gift{" +
-                "id='" + id + '\'' +
-                ", link='" + link + '\'' +
-                ", file=" + file +
-                ", contentType=" + contentType +
-                ", giftType=" + giftType +
-                ", sender='" + sender + '\'' +
-                ", receiver='" + receiver + '\'' +
-                ", isEncrypted=" + isEncrypted +
-                ", hashValue='" + hashValue + '\'' +
-                ", qrCode='" + qrCode + '\'' +
-                ", opened=" + opened +
-                '}';*/
     }
 }

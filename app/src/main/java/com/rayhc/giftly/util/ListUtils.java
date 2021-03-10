@@ -6,7 +6,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 /**
- * Util class so the listviews all fit
+ * Util class so the listviews all fit and show all contents
  */
 public class ListUtils {
     public static void setDynamicHeight(ListView mListView) {

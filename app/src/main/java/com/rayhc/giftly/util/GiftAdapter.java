@@ -35,13 +35,12 @@ public class GiftAdapter extends ArrayAdapter<String> {
         packageName = context.getPackageName();
         res = context.getResources();
         this.giftTitles = giftTitles;
-        Log.d("LPC", "gift titles in adapter "+giftTitles);
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         // make a randomized list of the color options.
         colors = new ArrayList<>();
 
-        //a brute fix for occasional OOB errors - Logan
+        //a brute fix for occasional IOB errors
         for (int drawId : GIFT_COLORS) {
             colors.add(drawId);
         }
@@ -80,7 +79,7 @@ public class GiftAdapter extends ArrayAdapter<String> {
             Log.d("LPC", "gift title: "+giftTitle+", at pos: "+pos);
 
 
-            //TODO: truncate last 3 characters in giftTitleSplit[1]
+            //truncate last 3 characters in giftTitleSplit[1] as opened tags
             TextView senderTitle = view.findViewById(R.id.sender_info);
             TextView msgTitle = view.findViewById(R.id.message_info);
 
