@@ -24,6 +24,7 @@ import com.rayhc.giftly.MainActivity;
 import com.rayhc.giftly.R;
 import com.rayhc.giftly.UploadingSplashActivity;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -167,15 +168,12 @@ public class StorageLoaderThread extends Thread {
                     Log.d("LPC", "media upload file path: "+path);
                     StorageReference giftRef = storageRef.child(path);
                     UploadTask uploadTask = giftRef.putFile(Uri.fromFile(new File(selectedData)));
-                    uploadTask.addOnCompleteListener(UploadingSplashActivity.this, new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                Log.d("LPC", "media upload complete!");
-                                uploadFile(index+1, keys);
-                            } else{
-                                Log.d("LPC", "media upload failed: ");
-                            }
+                    uploadTask.addOnCompleteListener(activity, task -> {
+                        if (task.isSuccessful()) {
+                            Log.d("LPC", "media upload complete!");
+                            uploadFile(index+1, keys);
+                        } else{
+                            Log.d("LPC", "media upload failed: ");
                         }
                     });
                 }
