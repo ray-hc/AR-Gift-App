@@ -124,8 +124,26 @@ public class VideoActivity extends AppCompatActivity {
      */
     public void onSave() {
         String key = "video_" + Globals.sdf.format(new Date(System.currentTimeMillis()));
-        mGift.getContentType().put(key, "content://media/" + currentData.getPath());
-        //delete the old file if its a replacement
+        if(currentData.getPath().contains("content://media/")){
+            String PATH = currentData.getPath();
+            PATH = PATH.substring(PATH.indexOf("external/"));
+            String[] split = PATH.split("/");
+            int i = 0;
+            String res = "";
+            for(String part : split){
+                res += part+"/";
+                if(isNumeric(part)){
+                    System.out.println(part);
+                    break;
+                }
+                i++;
+            }
+            res = (res.substring(0,res.length()-1));
+            Log.d("patch", "saving this path: "+res);
+            mGift.getContentType().put(key, "content://media/"+res);
+        } else{
+            mGift.getContentType().put(key, "content://media/"+currentData.getPath());
+        }       //delete the old file if its a replacement
         if(mFileLabel != null) mGift.getContentType().remove(mFileLabel);
         Log.d("LPC", "just video image: "+mGift.getContentType().get(key));
         Intent intent = new Intent(this, CreateGiftActivity.class);
@@ -147,6 +165,11 @@ public class VideoActivity extends AppCompatActivity {
         intent.putExtra("FRIEND NAME", friendName);
         intent.putExtra("FRIEND ID", friendID);
         startActivity(intent);
+    }
+
+    public static boolean isNumeric(String str) {
+        return str.matches("-?\\d+(\\.\\d+)?");
+        //match a number with optional '-' and decimal.
     }
 
     //******ON ACTIVITY RESULT******//
