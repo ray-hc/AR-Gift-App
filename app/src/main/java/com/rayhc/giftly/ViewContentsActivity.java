@@ -112,8 +112,8 @@ public class ViewContentsActivity extends AppCompatActivity {
             fromMedia = true;
             contentMap = mOpenedGift.getContentType();
             if (currIndex == contentMap.size() - 1) mNextButton.setEnabled(false);
-            friendName = startIntent.getStringExtra("FRIEND NAME");
-            friendID = startIntent.getStringExtra("FRIEND ID");
+            friendName = startIntent.getStringExtra(Globals.FRIEND_NAME_KEY);
+            friendID = startIntent.getStringExtra(Globals.FRIEND_ID_KEY);
             keyList = new ArrayList<>(contentMap.keySet());
             mLabel = keyList.get(currIndex);
             //wire prev and next buttons
@@ -138,8 +138,8 @@ public class ViewContentsActivity extends AppCompatActivity {
         else{
             mPreviousButton.setVisibility(View.GONE);
             mNextButton.setVisibility(View.GONE);
-            friendName = startIntent.getStringExtra("FRIEND NAME");
-            friendID = startIntent.getStringExtra("FRIEND ID");
+            friendName = startIntent.getStringExtra(Globals.FRIEND_NAME_KEY);
+            friendID = startIntent.getStringExtra(Globals.FRIEND_ID_KEY);
             keyList = new ArrayList<>(mOpenedGift.getLinks().keySet());
             mLabel = startIntent.getStringExtra(Globals.FILE_LABEL_KEY);
         }

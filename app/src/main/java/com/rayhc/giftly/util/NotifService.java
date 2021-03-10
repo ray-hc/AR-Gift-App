@@ -28,6 +28,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.rayhc.giftly.MainActivity;
 import com.rayhc.giftly.R;
+import com.rayhc.giftly.Startup;
+
+import java.util.HashMap;
+import java.util.Set;
 
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
@@ -46,10 +50,12 @@ public class NotifService extends Service {
     private String userID;
     private SharedPreferences sharedPref;
 
+    private Startup startup;
+
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d("iandebug", "service started");
+        startup = (Startup) getApplication();
         //set up firebase stuff
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -62,18 +68,35 @@ public class NotifService extends Service {
             userID = mFirebaseUser.getUid();
         }
 
-        //build the listener for the user's received gifts
-        Query query = mDatabase.child("users").child(userID).child("receivedGifts");
+        Query query = mDatabase.child("users").child(userID);
 
         //listener for the user's receivedGifts data
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                //BAD QUERIES (i.e. wrong pin) == !snapshot.exists()
+                //edge check for creation
                 if(!firstRun){
-                    Log.d("LPC", "snapshot: " + snapshot.getValue());
                     if (snapshot.exists()) {
-                        buildNotification();
+                        //edge check
+                        if(snapshot.child("receivedGifts").getValue() != null) {
+                            HashMap<String, String> recGifts = (HashMap) snapshot.child("receivedGifts").getValue();
+                            //only fire a notif if the receivedGift data has been altered
+                            Set recHashes = recGifts.keySet();
+                            if (recHashes.size() != startup.getReceivedGiftMap().size()) {
+                                Log.d("notif", "rec gift lists sizes dont match");
+                                buildNotification();
+                                return;
+                            }
+                            for (String mapKey : startup.getReceivedGiftMap().keySet()) {
+                                String giftHash = startup.getReceivedGiftMap().get(mapKey);
+                                Log.d("notif", "looking @ gift hash: " + giftHash);
+                                if (!recHashes.contains(giftHash)) {
+                                    buildNotification();
+                                    break;
+                                }
+                            }
+                            Log.d("notif", "didn't make any changes to rec gifts");
+                        }
                     } else {
                         Log.d("LPC", "snapshot doesn't exist");
                     }
@@ -87,7 +110,6 @@ public class NotifService extends Service {
 
             }
         });
-        Log.d("iandebug","userid in service: " + userID);
         createNotificationChannel();
     }
 
@@ -124,8 +146,6 @@ public class NotifService extends Service {
         String notificationText = "You just received a new gift";
 
         Intent intent = new Intent(context, MainActivity.class);
-
-//        intent.putExtras(bundle);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 

@@ -85,7 +85,6 @@ public class CreateGiftActivity extends AppCompatActivity {
         Intent extras = getIntent();
         if (extras != null && extras.getSerializableExtra(Globals.CURR_GIFT_KEY) != null) {
             newGift = (Gift) extras.getSerializableExtra(Globals.CURR_GIFT_KEY);
-            Log.d("LPC", "create frag: got gift from bundle");
             Log.d("LPC", "got gift: " + newGift.toString());
         }
         //otherwise make a new gift
@@ -103,17 +102,17 @@ public class CreateGiftActivity extends AppCompatActivity {
 
 
         //get possible recipient user data
-        if (extras != null && extras.getStringExtra("FRIEND NAME") != null &&
-                extras.getStringExtra("FRIEND ID") != null) {
-            recipientID = extras.getStringExtra("FRIEND ID");
-            recipientName = extras.getStringExtra("FRIEND NAME");
+        if (extras != null && extras.getStringExtra(Globals.FRIEND_NAME_KEY) != null &&
+                extras.getStringExtra(Globals.FRIEND_ID_KEY) != null) {
+            recipientID = extras.getStringExtra(Globals.FRIEND_ID_KEY);
+            recipientName = extras.getStringExtra(Globals.FRIEND_NAME_KEY);
 
         }
 
         //from open data
-        if (extras != null && extras.getBooleanExtra("FROM OPEN", false)) {
+        if (extras != null && extras.getBooleanExtra(Globals.FROM_OPEN_KEY, false)) {
             fromOpen = true;
-            wasOpened = extras.getBooleanExtra("WAS OPENED", false);
+            wasOpened = extras.getBooleanExtra(Globals.WAS_OPENED_KEY, false);
             Log.d("LPC", "from open is true");
             otherName = extras.getStringExtra("OTHER NAME");
         }
@@ -129,7 +128,7 @@ public class CreateGiftActivity extends AppCompatActivity {
 
             //turn off message input & recipient
             messageInput.setFocusable(false);
-            recipientLabel.setText(extras.getStringExtra("FRIEND NAME"));
+            recipientLabel.setText(extras.getStringExtra(Globals.FRIEND_NAME_KEY));
             if(extras.getBooleanExtra("IS RECEIVED", false))
                 toTitle.setText("From: ");
             spinnerCard.setVisibility(View.GONE);
@@ -179,7 +178,7 @@ public class CreateGiftActivity extends AppCompatActivity {
                 String label = (String) parent.getItemAtPosition(position);
                 Intent intent;
                 //open link if opening a gift, else go to LinkActivity
-                if (fromOpen) { // open link
+                if (fromOpen) {
                     intent = new Intent(Intent.ACTION_VIEW, Uri.parse(label));
                     startActivity(intent);
                 }
@@ -188,8 +187,8 @@ public class CreateGiftActivity extends AppCompatActivity {
                     intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
                     intent.putExtra(Globals.FILE_LABEL_KEY, displayMap.get(label));
                     intent.putExtra(Globals.FROM_REVIEW_KEY, true);
-                    intent.putExtra("FRIEND NAME", recipientName);
-                    intent.putExtra("FRIEND ID", recipientID);
+                    intent.putExtra(Globals.FRIEND_NAME_KEY, recipientName);
+                    intent.putExtra(Globals.FRIEND_ID_KEY, recipientID);
                 }
                 startActivity(intent);
             });
@@ -204,8 +203,8 @@ public class CreateGiftActivity extends AppCompatActivity {
             if(messageInput.getText().toString() != null) newGift.setMessage(messageInput.getText().toString());
             Intent intent = new Intent(this, LinkActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
-            intent.putExtra("FRIEND NAME", recipientName);
-            intent.putExtra("FRIEND ID", recipientID);
+            intent.putExtra(Globals.FRIEND_NAME_KEY, recipientName);
+            intent.putExtra(Globals.FRIEND_ID_KEY, recipientID);
             startActivity(intent);
         });
 
@@ -232,17 +231,18 @@ public class CreateGiftActivity extends AppCompatActivity {
                 intent.putExtra("GET MEDIA", true);
             } else intent = new Intent(this, EditContentsActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
-            intent.putExtra("FRIEND NAME", recipientName);
-            intent.putExtra("FRIEND ID", recipientID);
+            intent.putExtra(Globals.FRIEND_NAME_KEY, recipientName);
+            intent.putExtra(Globals.FRIEND_ID_KEY, recipientID);
             startActivity(intent);
         });
 
+        //set up buttons to add contents to the gift
         imageButton.setOnClickListener(v1 -> {
             if(messageInput.getText().toString() != null) newGift.setMessage(messageInput.getText().toString());
             Intent intent = new Intent(this, ImageActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
-            intent.putExtra("FRIEND NAME", recipientName);
-            intent.putExtra("FRIEND ID", recipientID);
+            intent.putExtra(Globals.FRIEND_NAME_KEY, recipientName);
+            intent.putExtra(Globals.FRIEND_ID_KEY, recipientID);
             startActivity(intent);
         });
 
@@ -250,8 +250,8 @@ public class CreateGiftActivity extends AppCompatActivity {
             if(messageInput.getText().toString() != null) newGift.setMessage(messageInput.getText().toString());
             Intent intent = new Intent(this, VideoActivity.class);
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
-            intent.putExtra("FRIEND NAME", recipientName);
-            intent.putExtra("FRIEND ID", recipientID);
+            intent.putExtra(Globals.FRIEND_NAME_KEY, recipientName);
+            intent.putExtra(Globals.FRIEND_ID_KEY, recipientID);
             startActivity(intent);
         });
 
@@ -274,7 +274,7 @@ public class CreateGiftActivity extends AppCompatActivity {
             intent.putExtra(Globals.CURR_GIFT_KEY, newGift);
             intent.putExtra("GET FRIENDS", true);
             intent.putExtra("USER ID", mUserId);
-            intent.putExtra("FRIEND NAME", recipientName);
+            intent.putExtra(Globals.FRIEND_NAME_KEY, recipientName);
             intent.putExtra("FRIEND ID", recipientID);
             startActivity(intent);
         });

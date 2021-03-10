@@ -58,8 +58,8 @@ public class ImageActivity extends AppCompatActivity {
         Log.d("LPC", "image activity: gift contentType: "+mGift.getContentType().toString());
         mFromReview = startIntent.getBooleanExtra(Globals.FROM_REVIEW_KEY, false);
         mFileLabel = startIntent.getStringExtra(Globals.FILE_LABEL_KEY);
-        friendName = startIntent.getStringExtra("FRIEND NAME");
-        friendID = startIntent.getStringExtra("FRIEND ID");
+        friendName = startIntent.getStringExtra(Globals.FRIEND_NAME_KEY);
+        friendID = startIntent.getStringExtra(Globals.FRIEND_ID_KEY);
 
         //wire button and image view
         mChooseButton = (Button) findViewById(R.id.image_choose_button);
@@ -130,15 +130,31 @@ public class ImageActivity extends AppCompatActivity {
      */
     public void onSave() {
         String key = "image_" + Globals.sdf.format(new Date(System.currentTimeMillis()));
-        mGift.getContentType().put(key, "content://media/" + currentData.getPath());
-        //delete the old file if its a replacement
+        if(currentData.getPath().contains("content://media/")){
+            String PATH = currentData.getPath();
+            PATH = PATH.substring(PATH.indexOf("external/"));
+            String[] split = PATH.split("/");
+            String res = "";
+            for(String part : split){
+                res += part+"/";
+                if(isNumeric(part)){
+                    System.out.println(part);
+                    break;
+                }
+            }
+            res = (res.substring(0,res.length()-1));
+            Log.d("patch", "saving this path: "+res);
+            mGift.getContentType().put(key, "content://media/"+res);
+        } else{
+            mGift.getContentType().put(key, "content://media/"+currentData.getPath());
+        }       //delete the old file if its a replacement
         if(mFileLabel != null) mGift.getContentType().remove(mFileLabel);
         Log.d("LPC", "just saved image: "+mGift.getContentType().get(key));
         Intent intent = new Intent(this, CreateGiftActivity.class);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
         intent.putExtra("MAKING GIFT", true);
-        intent.putExtra("FRIEND NAME", friendName);
-        intent.putExtra("FRIEND ID", friendID);
+        intent.putExtra(Globals.FRIEND_NAME_KEY, friendName);
+        intent.putExtra(Globals.FRIEND_ID_KEY, friendID);
         startActivity(intent);
 
     }
@@ -151,10 +167,15 @@ public class ImageActivity extends AppCompatActivity {
         mGift.getContentType().remove(mFileLabel);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
         intent.putExtra("MAKING GIFT", true);
-        intent.putExtra("FRIEND NAME", friendName);
-        intent.putExtra("FRIEND ID", friendID);
+        intent.putExtra(Globals.FRIEND_NAME_KEY, friendName);
+        intent.putExtra(Globals.FRIEND_ID_KEY, friendID);
         startActivity(intent);
 
+    }
+
+    public static boolean isNumeric(String str) {
+        return str.matches("-?\\d+(\\.\\d+)?");
+        //match a number with optional '-' and decimal.
     }
 
     //******ON ACTIVITY RESULT******//

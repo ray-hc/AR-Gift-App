@@ -12,8 +12,6 @@ import java.util.Map;
 public class User implements Serializable {
     private String id;
     private String userId;
-    // Apparently maps with non string keys are not supported
-    // also using arrays is not encouraged because they get stored as a map anyways
     private Map<String, String> receivedGifts;
     private Map<String, String> sentGifts;
     private Map<String, String> receivedFriends;
@@ -37,20 +35,6 @@ public class User implements Serializable {
         return ret;
     }
 
-    /*
-    public void deepCopy(User user){
-        this.userId = user.getUserId();
-        this.receivedGifts = user.getReceivedGifts();
-        this.sentGifts = user.getSentGifts();
-        this.receivedFriends = user.getReceivedFriends();
-        this.sentFriends = user.getSentFriends();
-        this.friends = user.getFriends();
-        this.name = user.getName();
-        this.email = user.getEmail();
-        this.photoUri = user.getPhotoUri();
-        this.emailVerified = user.isEmailVerified();
-    }
-     */
 
     public User(String id, String userId, Map<String, String> receivedGifts, Map<String, String> sentGifts, Map<String, String> receivedFriends, Map<String, String> sentFriends, Map<String, String> friends, String name, String email, String photoUri, boolean emailVerified) {
         this.id = id;

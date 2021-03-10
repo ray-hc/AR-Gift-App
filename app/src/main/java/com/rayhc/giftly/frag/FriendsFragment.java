@@ -22,6 +22,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,6 +45,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
+
 public class FriendsFragment extends Fragment {
     private User activityUser;
     private ArrayList<String> friendsList;
@@ -55,11 +59,17 @@ public class FriendsFragment extends Fragment {
     private ListView friendsListView;
     private ListView requestsListView;
 
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+
     private Startup startup;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.friends_list_fragment, container, false);
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         friendsList = new ArrayList<>();
         requestsList = new ArrayList<>();
@@ -68,8 +78,9 @@ public class FriendsFragment extends Fragment {
 
         startup = (Startup) getActivity().getApplication();
 
-        Button b = view.findViewById(R.id.add_friend);
-        b.setOnClickListener(new View.OnClickListener() {
+        //wire button to search for friends
+        Button freindsSearch = view.findViewById(R.id.add_friend);
+        freindsSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), FindFriendsActivity.class);
@@ -77,10 +88,11 @@ public class FriendsFragment extends Fragment {
             }
         });
 
+        //wite in list views
         friendsListView = view.findViewById(R.id.friends_list);
         requestsListView = view.findViewById(R.id.requests_list);
 
-        Log.d("CHECKING THREAD", "is friends list empty from startup: "+(startup.getFriendsList().isEmpty()));
+        //populate list views if there is persistent data
         if(!startup.getFriendsList().isEmpty()) {
             friendsList = new ArrayList<>();
             friendsList = startup.getFriendsList();
@@ -88,7 +100,6 @@ public class FriendsFragment extends Fragment {
             friendsListView.setAdapter(friendsListAdapter);
             ListUtils.setDynamicHeight(friendsListView);
         }
-
         if(!startup.getFriendRequestsList().isEmpty()) {
             requestsList = new ArrayList<>();
             requestsList = startup.getFriendRequestsList();
@@ -97,11 +108,15 @@ public class FriendsFragment extends Fragment {
             ListUtils.setDynamicHeight(requestsListView);
         }
 
+        //start threads to possibly update friends lists data
         getUserFromDB();
 
         return view;
     }
 
+    /**
+     * Start threads to possibly update friends lists data
+     */
     public void getUserFromDB() {
         GetFriendsListThread friendThread = new GetFriendsListThread();
         GetRequestsThread reqThread = new GetRequestsThread();
@@ -126,6 +141,7 @@ public class FriendsFragment extends Fragment {
 
                 Log.d("CHECKING THREAD", "" + threadFriendsList.toString());
 
+                //if the db data is different than application data, update it and the list view
                 if (!threadFriendsList.equals(startup.getFriendsList())) {
                     friendsList = threadFriendsList;
                     startup.setFriendsList(threadFriendsList);
@@ -146,11 +162,17 @@ public class FriendsFragment extends Fragment {
 
             DatabaseReference db = FirebaseDatabase.getInstance().getReference();
 
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-            String displayUserID = sharedPref.getString("userId",null);
+            String displayUserID;
+            if(mFirebaseUser == null) {
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                 displayUserID = sharedPref.getString("userId", null);
+            } else {
+                displayUserID = mFirebaseUser.getUid();
+            }
 
             Log.d("kitani", "User ID: " + displayUserID);
 
+            //query db for the user's friends
             Query query = db.child("users").orderByChild("userId").equalTo(displayUserID);
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -158,6 +180,7 @@ public class FriendsFragment extends Fragment {
                     if (snapshot.exists()) {
                         activityUser = UserManager.snapshotToUser(snapshot, displayUserID);
 
+                        //edge checks
                         if (activityUser == null){
                             Log.d("kitani", "User object is null.");
                         }
@@ -165,6 +188,7 @@ public class FriendsFragment extends Fragment {
                             handler.post(runnable);
                         }
 
+                        //get the friends data
                         if(activityUser.getFriends() != null){
                             numFriends = activityUser.getFriends().keySet().size();
                             for(String key: activityUser.getFriends().keySet()) {
@@ -211,9 +235,7 @@ public class FriendsFragment extends Fragment {
 
                 Log.d("kitani", "Requests Added");
 
-//                Log.d("CHECKING THREAD", "" + threadFriendsList.toString());
-
-
+                //if the db data is different than application data, update it and the list view
                 if (!threadRequestsList.equals(startup.getFriendRequestsList())) {
                     requestsList = threadRequestsList;
                     startup.setFriendRequestsList(threadRequestsList);
@@ -232,12 +254,17 @@ public class FriendsFragment extends Fragment {
         public void run() {
 
             DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-            String displayUserID = sharedPref.getString("userId",null);
+            String displayUserID;
+            if(mFirebaseUser == null) {
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                displayUserID = sharedPref.getString("userId", null);
+            } else {
+                displayUserID = mFirebaseUser.getUid();
+            }
 
             Log.d("kitani", "User ID: " + displayUserID);
 
+            //query the friend request data from db
             Query query = db.child("users").orderByChild("userId").equalTo(displayUserID);
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -245,13 +272,15 @@ public class FriendsFragment extends Fragment {
                     if (snapshot.exists()) {
                         activityUser = UserManager.snapshotToUser(snapshot, displayUserID);
 
+                        //edge checks
                         if (activityUser == null){
                             Log.d("kitani", "User object is null.");
                         }
-
                         if(activityUser.getReceivedFriends() == null){
                             handler.post(runnable);
                         }
+
+                        //get the friend request data
                         if (activityUser.getReceivedFriends() != null){
                             numFriendRequests = activityUser.getReceivedFriends().keySet().size();
                             for(String key: activityUser.getReceivedFriends().keySet()) {
@@ -283,6 +312,9 @@ public class FriendsFragment extends Fragment {
 
     }
 
+    /**
+     * Adapter for friends list
+     */
     public class MyFriendsListAdapter extends ArrayAdapter<String> {
         Context context;
         ArrayList<String> f;
@@ -303,12 +335,12 @@ public class FriendsFragment extends Fragment {
                 convertView = inflater.inflate(R.layout.friend_entry, null);
                 Log.d(Globals.TAG, "Friend: " + friend);
 
+                //fill in text view with friend name
                 TextView friendName = convertView.findViewById(R.id.friend);
                 friendName.setText(friend);
 
+                //wiring and callback for remove freind
                 Button remove = convertView.findViewById(R.id.remove_button);
-
-
                 remove.setOnClickListener(v -> {
                     Thread thread = new Thread(() -> {
                         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
@@ -322,6 +354,7 @@ public class FriendsFragment extends Fragment {
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                                         String friendName1 = (String) snapshot.child(friendID).child("name").getValue();
 
+                                        //handle removing friend from db and the list views
                                         if (friend.equals(friendName1)) {
                                             UserManager.removeFriend(activityUser, friendID);
                                             friendsList.remove(friendName1);
@@ -348,6 +381,9 @@ public class FriendsFragment extends Fragment {
         }
     }
 
+    /**
+     * Friend Request list adapter
+     */
     public class MyRequestsListAdapter extends ArrayAdapter<String> {
         Context context;
         ArrayList<String> r;
@@ -369,12 +405,15 @@ public class FriendsFragment extends Fragment {
             if (convertView == null) {
                 convertView = inflater.inflate(R.layout.friend_request_entry, null);
 
+                //text view of friend requestor's name
                 TextView friendName = convertView.findViewById(R.id.friend_request);
                 friendName.setText(request);
 
+                //wire buttons for add and decline friend request
                 Button add = convertView.findViewById(R.id.add_button);
                 Button decline = convertView.findViewById(R.id.decline_button);
 
+                //add frend callback
                 add.setOnClickListener(v -> {
                     Thread thread = new Thread(() -> {
                         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
@@ -388,6 +427,7 @@ public class FriendsFragment extends Fragment {
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                                         String requestName = (String) snapshot.child(requestID).child("name").getValue();
 
+                                        //add the friend in the db and in the list views
                                         if (request.equals(requestName)) {
                                             UserManager.acceptFriendRequest(activityUser, requestID);
                                             requestsList.remove(requestName);
@@ -429,6 +469,7 @@ public class FriendsFragment extends Fragment {
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                                         String requestName = (String) snapshot.child(requestID).child("name").getValue();
 
+                                        //remove the friend request from db and list views
                                         if (request.equals(requestName)) {
                                             UserManager.declineFriendRequest(activityUser, requestID);
                                             requestsList.remove(requestName);

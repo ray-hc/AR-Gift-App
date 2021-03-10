@@ -28,10 +28,12 @@ public class AddFriendFromQRActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend_from_q_r);
 
+        //add a friend by scanning their QR code
         Intent intent = getIntent();
         String[] list = intent.getData().toString().split("\\?");
         String userId = "";
         if(list.length == 2) userId = list[1].replace("userId=", "");
+        //get current user id
         SharedPreferences mSharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String currentUserId= mSharedPref.getString("userId","");
         Log.d("iandebug", currentUserId + " | " + userId);
@@ -39,6 +41,7 @@ public class AddFriendFromQRActivity extends AppCompatActivity {
             DatabaseReference db = FirebaseDatabase.getInstance().getReference();
             Query query = db.child("users").orderByChild("userId").equalTo(userId);
             String finalUserId = userId;
+            //handle friend adding after successful scan
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
