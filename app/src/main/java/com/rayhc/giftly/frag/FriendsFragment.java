@@ -22,6 +22,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,6 +45,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
+
 public class FriendsFragment extends Fragment {
     private User activityUser;
     private ArrayList<String> friendsList;
@@ -55,11 +59,17 @@ public class FriendsFragment extends Fragment {
     private ListView friendsListView;
     private ListView requestsListView;
 
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+
     private Startup startup;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.friends_list_fragment, container, false);
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         friendsList = new ArrayList<>();
         requestsList = new ArrayList<>();
@@ -152,8 +162,13 @@ public class FriendsFragment extends Fragment {
 
             DatabaseReference db = FirebaseDatabase.getInstance().getReference();
 
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-            String displayUserID = sharedPref.getString("userId",null);
+            String displayUserID;
+            if(mFirebaseUser == null) {
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                 displayUserID = sharedPref.getString("userId", null);
+            } else {
+                displayUserID = mFirebaseUser.getUid();
+            }
 
             Log.d("kitani", "User ID: " + displayUserID);
 
@@ -239,8 +254,13 @@ public class FriendsFragment extends Fragment {
         public void run() {
 
             DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-            String displayUserID = sharedPref.getString("userId",null);
+            String displayUserID;
+            if(mFirebaseUser == null) {
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                displayUserID = sharedPref.getString("userId", null);
+            } else {
+                displayUserID = mFirebaseUser.getUid();
+            }
 
             Log.d("kitani", "User ID: " + displayUserID);
 
