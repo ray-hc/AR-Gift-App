@@ -19,6 +19,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.rayhc.giftly.util.Gift;
 import com.rayhc.giftly.util.Globals;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -124,32 +130,35 @@ public class VideoActivity extends AppCompatActivity {
      */
     public void onSave() {
         String key = "video_" + Globals.sdf.format(new Date(System.currentTimeMillis()));
-        if(currentData.getPath().contains("content://media/")){
-            String PATH = currentData.getPath();
-            PATH = PATH.substring(PATH.indexOf("external/"));
-            String[] split = PATH.split("/");
-            String res = "";
-            for(String part : split){
-                res += part+"/";
-                if(isNumeric(part)){
-                    System.out.println(part);
-                    break;
-                }
-            }
-            res = (res.substring(0,res.length()-1));
-            Log.d("patch", "saving this path: "+res);
-            mGift.getContentType().put(key, "content://media/"+res);
-        } else{
-            mGift.getContentType().put(key, "content://media/"+currentData.getPath());
-        }       //delete the old file if its a replacement
+        //        if(currentData.getPath().contains("content://media/")){
+//            String PATH = currentData.getPath();
+//            PATH = PATH.substring(PATH.indexOf("external/"));
+//            String[] split = PATH.split("/");
+//            String res = "";
+//            for(String part : split){
+//                res += part+"/";
+//                if(isNumeric(part)){
+//                    System.out.println(part);
+//                    break;
+//                }
+//            }
+//            res = (res.substring(0,res.length()-1));
+//            Log.d("patch", "saving this path: "+res);
+//            mGift.getContentType().put(key, "content://media/"+res);
+//        } else{
+//            mGift.getContentType().put(key, "content://media/"+currentData.getPath());
+//        }
+        mGift.getContentType().put(key, getImagePathFromInputStreamUri(currentData));
+        //delete the old file if its a replacement
         if(mFileLabel != null) mGift.getContentType().remove(mFileLabel);
-        Log.d("LPC", "just video image: "+mGift.getContentType().get(key));
+        Log.d("LPC", "just saved image: "+mGift.getContentType().get(key));
         Intent intent = new Intent(this, CreateGiftActivity.class);
-        intent.putExtra("MAKING GIFT", true);
         intent.putExtra(Globals.CURR_GIFT_KEY, mGift);
+        intent.putExtra("MAKING GIFT", true);
         intent.putExtra(Globals.FRIEND_NAME_KEY, friendName);
         intent.putExtra(Globals.FRIEND_ID_KEY, friendID);
         startActivity(intent);
+
     }
 
     /**
@@ -169,6 +178,64 @@ public class VideoActivity extends AppCompatActivity {
         return str.matches("-?\\d+(\\.\\d+)?");
         //match a number with optional '-' and decimal.
     }
+
+
+    public String getImagePathFromInputStreamUri(Uri uri) {
+        InputStream inputStream = null;
+        String filePath = null;
+
+        if (uri.getAuthority() != null) {
+            try {
+                inputStream = getContentResolver().openInputStream(uri); // context needed
+                File photoFile = createTemporalFileFrom(inputStream);
+
+                filePath = photoFile.getPath();
+
+            } catch (FileNotFoundException e) {
+                // log
+            } catch (IOException e) {
+                // log
+            }finally {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return filePath;
+    }
+
+    private File createTemporalFileFrom(InputStream inputStream) throws IOException {
+        File targetFile = null;
+
+        if (inputStream != null) {
+            int read;
+            byte[] buffer = new byte[8 * 1024];
+
+            targetFile = createTemporalFile();
+            OutputStream outputStream = new FileOutputStream(targetFile);
+
+            while ((read = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, read);
+            }
+            outputStream.flush();
+
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return targetFile;
+    }
+
+    private File createTemporalFile() {
+        return new File(getExternalCacheDir(), "tempFile_"+Globals.sdf.format(System.currentTimeMillis())+".jpg"); // context needed
+    }
+
 
     //******ON ACTIVITY RESULT******//
 
