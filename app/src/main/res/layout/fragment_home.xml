@@ -129,7 +129,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="You have no unopened gifts"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/recGiftsTitle" />
@@ -178,8 +177,7 @@
                 android:id="@+id/downloading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:text="Uploading..."
+                android:text="@string/uploading"
                 android:visibility="invisible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/sentGiftsTitle" />
@@ -189,7 +187,6 @@
                 style="@style/body"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="You haven't sent any gifts yet"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/downloading" />
